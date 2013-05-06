@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace DRMFSS.BLL
+{
+    /// <summary>
+    /// 
+    /// </summary>
+   public partial class Account
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+       public class Constants
+       {
+           /// <summary>
+           /// 
+           /// </summary>
+           public const string DONOR = "Donor";
+           public const string FDP = "FDP";
+           public const string HUBOWNER = "HubOwner";
+           public const string HUB = "Hub";
+       }
+
+       IUnitOfWork unitOfWork;
+       /// <summary>
+       /// Gets the name of the entity.
+       /// </summary>
+       /// <value>
+       /// The name of the entity.
+       /// </value>
+       public string EntityName
+       {
+           get
+           {
+               if (unitOfWork == null)
+               {
+                   unitOfWork = new UnitOfWork();
+               }
+               if (this.EntityID != 0)
+               {
+                   switch (this.EntityType)
+                   {
+                       case Constants.DONOR:
+                           return unitOfWork.Donor.FindById(this.EntityID).Name;
+                           break;
+                       case Constants.FDP:
+                           return unitOfWork.FDP.FindById(EntityID).Name;
+                           break;
+                       case Constants.HUBOWNER:
+                           return unitOfWork.HubOwner.FindById(EntityID).Name;
+                           break;
+                       case Constants.HUB:
+                           return unitOfWork.Hub.FindById(EntityID).Name;
+                           break;
+                   }
+               }
+               return "Unknown";
+           }
+       }
+    }
+}

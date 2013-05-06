@@ -1,0 +1,247 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@ include file="EF.Utility.CS.ttinclude"#><#@
+ output extension=".cs"#><#
+
+    CodeGenerationTools code = new CodeGenerationTools(this);
+    MetadataLoader loader = new MetadataLoader(this);
+    CodeRegion region = new CodeRegion(this, 1);
+    MetadataTools ef = new MetadataTools(this);
+
+    string inputFile = @"../../DRMFSS.edmx";
+    EdmItemCollection ItemCollection = loader.CreateEdmItemCollection(inputFile);
+    string namespaceName = "DRMFSS.BLL.Repository";
+
+    EntityFrameworkTemplateFileManager fileManager = EntityFrameworkTemplateFileManager.Create(this);
+
+    // Write out support code to primary template output file
+    WriteHeader(fileManager);
+    BeginNamespace(namespaceName, code);
+    //WriteCustomObservableCollection();
+    EndNamespace(namespaceName);
+    EntityContainer container = ItemCollection.GetItems<EntityContainer>().FirstOrDefault();
+    // Emit Entity Types
+    foreach (EntityType entity in ItemCollection.GetItems<EntityType>().OrderBy(e => e.Name))
+    {
+        if(!code.Escape(entity).StartsWith("Error")  && !code.Escape(entity).StartsWith("sys")){  
+            fileManager.StartNewFile(entity.Name + "Repository.cs");
+            BeginNamespace(namespaceName, code);
+            EntitySetBase entitySet = container.BaseEntitySets.FirstOrDefault(set => set.ElementType == entity);
+            bool entityHasNullableFKs = entity.NavigationProperties.Any(np => np.GetDependentProperties().Any(p=>ef.IsNullable(p)));
+#>
+<#= Accessibility.ForType(entity)#> partial<#= code.SpaceAfter(code.AbstractOption(entity))#> class <#=                code.Escape(entity)#>Repository
+    { 
+            DRMFSSEntities1 db;
+			IUnitOfWork repository;
+            
+            public <#= code.Escape(entity)#>Repository(DRMFSSEntities1 _db, IUnitOfWork uow){
+                db = _db;
+				repository = uow;
+                //db.<#= code.Escape(entitySet.Name)#>.MergeOption = System.Data.Objects.MergeOption.NoTracking;
+            }
+            
+            public bool Add(<#= code.Escape(entity)#> entity)
+            {
+                db.AddTo<#= code.Escape(entitySet.Name)#>(entity);
+                db.SaveChanges();
+                return true;
+            }
+
+            public bool SaveChanges(<#= code.Escape(entity)#> entity)
+            {
+                   	if (entity.EntityState == EntityState.Detached)
+                	{
+                    	db.<#= code.Escape(entitySet.Name)#>.Attach(entity);
+					}
+                    db.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
+                    db.SaveChanges();
+                    return true;
+            }
+
+
+            public bool Delete(<#= code.Escape(entity)#> entity)
+            {
+
+                <#= code.Escape(entity)#> original = db.<#= code.Escape(entitySet.Name)#>.SingleOrDefault(p => p.<#=                code.Escape(entity)#>ID == entity.<#=                code.Escape(entity)#>ID);
+                if (original != null)
+                {
+                    db.DeleteObject(original);
+                    db.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+
+            public bool DeleteByID(int id)
+            {
+				<#
+					if(ef.ClrType(entity.Members[entity.Name + "ID"].TypeUsage).Name == "Guid")
+					{ #>
+						return false;
+					<# }else{ #>
+                <#=  code.Escape(entity)#> original = db.<#= code.Escape(entitySet.Name)#>.SingleOrDefault(p => p.<#=                code.Escape(entity)#>ID == id);
+                if (original != null)
+                {
+                    db.DeleteObject(original);
+                    db.SaveChanges();
+                    return true;
+                }
+                return false;
+				<# } #>
+            }
+
+			public bool DeleteByID(Guid id)
+            {
+				<#
+					
+					if(ef.ClrType(entity.Members[entity.Name + "ID"].TypeUsage).Name != "Guid")
+					{ #>
+						return false;
+					<#	}else{ #>
+                	<#=  code.Escape(entity)#> original = db.<#= code.Escape(entitySet.Name)#>.SingleOrDefault(p => p.<#=                code.Escape(entity)#>ID == id);
+	                if (original != null)
+	                {
+	                    db.DeleteObject(original);
+	                    db.SaveChanges();
+	                    return true;
+	                }
+	                return false;
+				<# } #>
+            }
+
+            public List<<#= code.Escape(entity)#>> GetAll()
+            {
+                return db.<#= code.Escape(entitySet.Name)#>.ToList();
+            }
+
+            public <#= code.Escape(entity)#> FindById(int id)
+            {
+				<#
+					if(ef.ClrType(entity.Members[entity.Name + "ID"].TypeUsage).Name != "Guid")
+					{ #>
+                		return db.<#= code.Escape(entitySet.Name)#>.ToList().SingleOrDefault(p => p.<#= code.Escape(entity)#>ID == id);
+				<# }else{ #>
+						return null;
+				<# } #>
+            }
+			
+			public <#= code.Escape(entity)#> FindById(Guid id)
+            {
+				<#
+					if(ef.ClrType(entity.Members[entity.Name + "ID"].TypeUsage).Name == "Guid")
+					{ #>
+                		return db.<#= code.Escape(entitySet.Name)#>.ToList().SingleOrDefault(p => p.<#= code.Escape(entity)#>ID == id);
+				<# }else{ #>
+						return null;
+				<# } #>
+            }
+    }
+}
+<#
+        }
+    }
+    
+    fileManager.Process();
+
+#>
+<#+
+void WriteHeader(EntityFrameworkTemplateFileManager fileManager, params string[] extraUsings)
+{
+    fileManager.StartHeader();
+#>
+using System.Collections.Generic;
+using System.Linq;
+using DRMFSS.BLL.Interfaces;
+using System.Data;
+using System;
+
+<#=String.Join(String.Empty, extraUsings.Select(u => "using " + u + ";" + Environment.NewLine).ToArray())#>
+<#+
+    fileManager.EndBlock();
+}
+
+void BeginNamespace(string namespaceName, CodeGenerationTools code)
+{
+    CodeRegion region = new CodeRegion(this);
+    if (!String.IsNullOrEmpty(namespaceName))
+    {
+#>
+namespace <#=code.EscapeNamespace(namespaceName)#>
+{
+<#+
+       // PushIndent(CodeRegion.GetIndent(1));
+    }
+}
+
+
+void EndNamespace(string namespaceName)
+{
+    if (!String.IsNullOrEmpty(namespaceName))
+    {
+        PopIndent();
+#>
+}
+<#+
+    }
+}
+
+bool IsReadWriteAccessibleProperty(EdmMember member)
+{
+    string setter = Accessibility.ForWriteOnlyProperty(member);
+    string getter = Accessibility.ForReadOnlyProperty(member);
+
+    return getter != "private" && getter != "protected" && setter != "private" && setter != "protected";
+}
+
+string PropertyVirtualModifier(string accessibility)
+{
+    return accessibility + (accessibility != "private" ? " virtual" : "");
+}
+
+void WriteCustomObservableCollection()
+{
+#>
+// An System.Collections.ObjectModel.ObservableCollection that raises
+// individual item removal notifications on clear and prevents adding duplicates.
+public class FixupCollection<T> : ObservableCollection<T>
+{
+    protected override void ClearItems()
+    {
+        new List<T>(this).ForEach(t => Remove(t));
+    }
+
+    protected override void InsertItem(int index, T item)
+    {
+        if (!this.Contains(item))
+        {
+            base.InsertItem(index, item);
+        }
+    }
+}
+<#+
+}
+
+bool VerifyTypesAreCaseInsensitiveUnique(EdmItemCollection itemCollection)
+{
+    Dictionary<string, bool> alreadySeen = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+    foreach(StructuralType type in itemCollection.GetItems<StructuralType>())
+    {
+        if (!(type is EntityType || type is ComplexType))
+        {
+            continue;
+        }
+
+        if (alreadySeen.ContainsKey(type.FullName))
+        {
+            Error(String.Format(CultureInfo.CurrentCulture, "This template does not support types that differ only by case, the types {0} are not supported", type.FullName));
+            return false;
+        }
+        else
+        {
+            alreadySeen.Add(type.FullName, true);
+        }
+
+    }
+
+    return true;
+}
+#>

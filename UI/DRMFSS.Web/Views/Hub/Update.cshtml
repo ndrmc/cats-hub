@@ -1,0 +1,36 @@
+﻿@using DRMFSS.HelperClasses
+@model IEnumerable<DRMFSS.BLL.Warehouse>
+
+<table width="100%">
+    <tr>
+        <th style="width: 20px"></th>
+        <th>
+            Name
+        </th>
+        <th>
+            Warehouse Owner
+        </th>
+        <th></th>
+    </tr>
+    @{
+        var i = 1;
+    }
+@foreach (var item in Model) {
+    
+    <tr>
+    <td>@i</td>
+        <td>  
+            @Html.DialogFormLink(@Html.DisplayFor(modelItem => item.Name).ToString(), Url.Action("Edit/" + item.WarehouseID), "Edit Hub", "list", Url.Action("Update"))
+
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.WarehouseOwner.Name)
+        </td>
+         <td>
+            @Html.ActionLink("Delete", "Delete", new { id=item.WarehouseID })
+        </td>
+    </tr>
+    i =i+1;
+}
+
+</table>

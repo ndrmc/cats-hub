@@ -1,0 +1,9 @@
+﻿@model DRMFSS.Web.Models.UserRoleModel
+           
+
+<div>
+         @Html.HiddenFor(modelItem => modelItem.RoleId,"name=kummsa")
+         @Html.CheckBoxFor(modelItem => modelItem.Selected)
+        @Html.Label(Model.RoleName)
+        </div>
+

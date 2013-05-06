@@ -1,0 +1,21 @@
+/* -- WebChartControl -- */
+.dxchartsuiLoadingDiv_DevEx
+{
+	background-color:Gray;	
+	opacity: 0.01;
+	filter:progid:DXImageTransform.Microsoft.Alpha(Style=0, Opacity=1);
+}
+.dxchartsuiLoadingPanel_DevEx
+{
+	font: 11px Verdana;
+    color: #201f35;
+    background: White;
+	border: 1px solid #9da0aa;
+}
+.dxchartsuiLoadingPanel_DevEx td.dx
+{
+	white-space: nowrap;
+	text-align: center;
+	padding: 7px 10px;
+}
+

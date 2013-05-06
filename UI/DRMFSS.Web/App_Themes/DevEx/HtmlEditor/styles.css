@@ -1,0 +1,254 @@
+/* ----------------- Main ----------------- */
+/* Loading panel */
+.dxheLoadingDiv_DevEx
+{
+    background: White;
+    opacity: 0.85;
+    filter: alpha(opacity=85);
+    cursor: wait;
+}
+.dxheLoadingPanel_DevEx
+{
+    font: 11px Verdana;
+    color: #201f35;
+}
+.dxheLoadingPanel_DevEx td.dx
+{
+    white-space: nowrap;
+    text-align: center;
+    padding: 7px 10px;
+}
+
+.dxheControl_DevEx
+{
+    border: 1px solid #9da0aa;
+}
+
+/* Area */
+.dxheContentArea_DevEx
+{
+    padding: 0;
+    background-color: #ebecef;
+}
+.dxheContentArea_DevEx .dxheErrorFrame_DevEx
+{
+    font-size: 11px;
+    font-family: Verdana;
+    color: #D00707;
+    background-color: #fbc7c7;
+    border-bottom: solid 1px #dec0c0;
+}
+.dxheContentArea_DevEx .dxheErrorFrame_DevEx .dxhe {
+    padding: 5px;
+}
+.dxheContentArea_DevEx .dxheErrorFrame_DevEx .dxhe td {
+    padding: 0px;
+}
+.dxheContentArea_DevEx .dxheErrorFrame_DevEx .dxheErrorFrameCloseButton_DevEx {
+    cursor: pointer;
+}
+.dxheControl_DevEx .dxheViewArea_DevEx
+{
+    border-width: 0;
+}
+
+.dxheHtmlViewArea_DevEx,
+.dxheDesignViewArea_DevEx,
+.dxhePreviewArea_DevEx
+{
+    margin: 0px;
+    background-color: White;
+    background-image: none;
+    font-size: smaller;
+    font: normal 12px Arial;
+}
+.dxheContentArea_DevEx .dxeMemo_DevEx td, 
+body.dxheDesignViewArea_DevEx, 
+body.dxhePreviewArea_DevEx
+{
+    padding: 4px 0 0 4px;
+}
+.dxheControl_DevEx.dxhe-rtl .dxheContentArea_DevEx .dxeMemo_DevEx td, 
+body.dxheDesignViewArea_DevEx.dxhe-rtl, 
+body.dxhePreviewArea_DevEx.dxhe-rtl
+{
+	padding: 0 4px 0 1px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+    .dxheControl_DevEx.dxhe-rtl .dxheContentArea_DevEx .dxeMemo_DevEx td
+    {
+	    padding: 0 0 0 4px;
+    }
+}
+.dxheControl_DevEx .dxeMemo_DevEx textarea 
+{
+	resize:none;
+}
+/* Element appearance in DesignView */
+body.dxheDesignViewArea_DevEx table.dxEmptyBorderTable,
+body.dxheDesignViewArea_DevEx table.dxEmptyBorderTable td
+{
+    border: 1px dotted Gray;
+}
+@media print
+{
+	body.dxheDesignViewArea_DevEx table.dxEmptyBorderTable,
+	body.dxheDesignViewArea_DevEx table.dxEmptyBorderTable td
+	{
+		border:0px;
+	}
+}
+
+/* Status Bar */
+.dxheStatusBar_DevEx
+{
+}
+.dxheStatusBar_DevEx .dxheStatusBarTab_DevEx
+{
+    padding-left: 34px;
+    padding-right: 35px;
+    padding-bottom: 5px;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+.dxheControl_DevEx.dxhe-rtl .dxheStatusBar_DevEx .dxheStatusBarTab_DevEx
+{
+    border-left-width: 1px;
+    border-right-width: 0;
+}
+.dxheStatusBarActiveTab_DevEx
+{
+}
+.dxHtmlEditor_heSizeGrip_DevEx
+{
+    cursor: se-resize;
+}
+.dxHtmlEditor_heSizeGripRtl_DevEx
+{
+    cursor: ne-resize;
+}
+.dxheSizeGripContainer_DevEx
+{
+    float: left;
+    height: 0;
+    width: 100%;
+    text-align: right;
+    font-size: 0;
+    margin-top: -13px;
+}
+.dxheControl_DevEx.dxhe-rtl .dxheSizeGripContainer_DevEx
+{
+	text-align: left;
+}
+.dxheStatusBar_DevEx .dxtcTabWithTabPositionBottom_DevEx
+{
+    background: #f1f2f6 url('SBTabBack.png') repeat-x left top;
+}
+.dxheStatusBar_DevEx .dxtcTabHoverWithTabPositionBottom_DevEx
+{
+    background: #f7f9fe url('SBTabHoverBack.png') repeat-x left top;
+}
+.dxheStatusBar_DevEx .dxtcRightAlignCell_DevEx
+{
+    background: #f1f2f6 url('SBTabBack.png') repeat-x left top;
+}
+
+/* ----------------- Dialog Forms ----------------- */
+#dxInsertTableForm .buttonsCell,
+#dxInsertLinkForm .buttonsCell,
+#dxInsertImageForm .buttonsCell,
+#dxPasteFromWordForm .buttonsCell,
+#dxTableColumnPropertiesForm .buttonsCell,
+.dxheCustomDialog_DevEx .dxhecd-Buttons
+{
+    background-color: #ebecef;
+    border-top: 1px solid #abacb9;
+    padding: 11px;
+}
+#dxInsertImageForm .imagePreviewCell
+{
+    color: #737373;
+    border: 1px dashed #cac8c8;
+}
+#dxPasteFromWordForm .pasteContainerCell td
+{
+	border: 1px solid #9da0aa;
+}
+
+/*----------------- Toolbars -----------------*/
+.dxtbSpacing_DevEx
+{
+	height: 1px;
+}
+.dxtbControl_DevEx
+{
+    font: 11px Verdana;
+    color: #201f35;
+    background: #f1f2f6 url('ToolbarBack.png') no-repeat right top;
+    width: 100%;
+    border-bottom: 1px solid #9da0aa;
+}
+.dxheControl_DevEx.dxhe-rtl .dxtbControl_DevEx 
+{
+	background: #f1f2f6 url('ToolbarBackRtl.png') no-repeat left top;
+}
+.dxtbControl_DevEx td.dxmMenu_DevEx
+{
+	border: 0;
+}
+.dxtbComboBoxMenuItem_DevEx
+{
+    padding: 2px 2px 1px;
+}
+
+/* Toolbars Lightweight Mode */
+.dxtbControl_DevEx .dxmLite_DevEx .dxm-main
+{
+    border-width: 0;
+}
+.dxmLite_DevEx .dxm-horizontal.dxmtb .dxtb-comboBoxMenuItem
+{
+	border-width: 0;
+	padding: 2px 2px 1px !important;
+}
+.dxtbControl_DevEx .dxmLite_DevEx .dxm-horizontal.dxmtb .dxm-image-l .dxm-dropDownMode.dxtb-cb .dxm-content, 
+.dxtbControl_DevEx .dxmLite_DevEx .dxm-horizontal.dxmtb .dxm-image-r .dxm-dropDownMode.dxtb-cb .dxm-content
+{
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.dxtbControl_DevEx .dxmLite_DevEx .dxm-horizontal.dxmtb .dxm-image-l .dxm-item.dxtb-cddi .dxm-content, 
+.dxtbControl_DevEx .dxmLite_DevEx .dxm-horizontal.dxmtb .dxm-image-r .dxm-item.dxtb-cddi .dxm-content
+{
+	padding-top: 4px;
+	padding-bottom: 3px;
+}
+.dxtbControl_DevEx .dxmLite_DevEx .dxm-horizontal.dxmtb .dxm-image-l .dxm-item.dxtb-cddi .dxm-content img, 
+.dxtbControl_DevEx .dxmLite_DevEx .dxm-horizontal.dxmtb .dxm-image-r .dxm-item.dxtb-cddi .dxm-content img
+{
+	margin-top: -1px;
+}
+.dxmLite_DevEx .dxhetipControl_DevEx img
+{
+	vertical-align: top;
+}
+
+/* ToolbarColorButton */
+.dxtcbControl_DevEx
+{
+}
+.dxtcbColorDiv_DevEx
+{
+	width: 16px;
+	height: 3px;
+	font-size: 0px;
+	background-color: Transparent;
+}
+
+/*----------------- RoundPanel -----------------*/
+.dxheRP.dxrpControl_DevEx .dxrpcontent
+{
+    padding: 9px 8px;
+}
+

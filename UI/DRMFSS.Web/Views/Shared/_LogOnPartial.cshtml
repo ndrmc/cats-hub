@@ -1,0 +1,13 @@
+﻿@model DRMFSS.BLL.UserProfile
+@using DRMFSS.Web.Helpers
+@if (Request.IsAuthenticated && Model != null)
+    {
+   
+    <text>@Html.Translate("Welcome ") <strong>@Model.GetFullName()</strong> ! 
+     @Html.ActionLink(@DRMFSS.Resources.Resources.LogOff, "LogOff", "Account") | </text>
+    }
+else
+    {
+    @:[ @Html.ActionLink(@DRMFSS.Resources.Resources.LogOn, "LogOn", "Account") ]
+   
+}

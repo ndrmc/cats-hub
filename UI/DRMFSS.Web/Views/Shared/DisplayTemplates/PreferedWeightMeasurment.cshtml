@@ -1,0 +1,9 @@
+﻿@using DRMFSS.Web.Helpers
+@model Decimal
+           
+@{
+    if(Model != null)
+    {
+        @Model.ToPreferedWeightMeasurment(@Html.GetCurrentUser().PreferedWeightMeasurment);
+    }
+}
