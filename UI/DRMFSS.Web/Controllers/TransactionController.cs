@@ -22,7 +22,7 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Journal()
         {
             
-            return View(repository.Transaction.GetAll().OrderByDescending(o=> o.TransactionID).ToList());
+            return View(repository.Transaction.GetAll().OrderByDescending(o=>o.TransactionDate).ThenByDescending(o=> o.TransactionGroupID).ToList());
         }
 
         public ActionResult Ledger()
