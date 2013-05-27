@@ -23,6 +23,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{F6BB5F7B-0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRMFSS.Test", "Tests\DRMFSS.Test\DRMFSS.Test.csproj", "{B8C78A8B-7A46-4DDB-87BE-9D6D88551637}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EndToEndTest", "EndToEndTest", "{F7CCB91F-B488-4C89-B905-8107898A67D9}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Selenium files\Final Cats Test\Authentication.cs = ..\..\Selenium files\Final Cats Test\Authentication.cs
+		..\..\Selenium files\Cats Test Html Version\DispatchStatusReport.cs = ..\..\Selenium files\Cats Test Html Version\DispatchStatusReport.cs
+		..\..\Selenium files\Final Cats Test\HubManagement.cs = ..\..\Selenium files\Final Cats Test\HubManagement.cs
+		..\..\Selenium files\Final Cats Test\LookUps.cs = ..\..\Selenium files\Final Cats Test\LookUps.cs
+		..\..\Selenium files\Cats Test Html Version\LossAndAdjustments.cs = ..\..\Selenium files\Cats Test Html Version\LossAndAdjustments.cs
+		..\..\Selenium files\Cats Test Html Version\StackEvents.cs = ..\..\Selenium files\Cats Test Html Version\StackEvents.cs
+		..\..\Selenium files\Final Cats Test\StartingBalance.cs = ..\..\Selenium files\Final Cats Test\StartingBalance.cs
+		..\..\Selenium files\Cats Test Html Version\StartingBalance.cs = ..\..\Selenium files\Cats Test Html Version\StartingBalance.cs
+		..\..\Selenium files\Final Cats Test\transporter.cs = ..\..\Selenium files\Final Cats Test\transporter.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,5 +112,6 @@ Global
 		{85DD7228-1691-4BF3-86DC-2CCF813A7940} = {2CD75EE2-A2BB-4FCB-B467-C6ECC356438F}
 		{5027D4A9-0C59-4A41-80CA-F5A40717116D} = {2CD75EE2-A2BB-4FCB-B467-C6ECC356438F}
 		{B8C78A8B-7A46-4DDB-87BE-9D6D88551637} = {F6BB5F7B-0E89-4EE8-A48F-5CBFFFEA88EB}
+		{F7CCB91F-B488-4C89-B905-8107898A67D9} = {F6BB5F7B-0E89-4EE8-A48F-5CBFFFEA88EB}
 	EndGlobalSection
 EndGlobal

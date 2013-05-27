@@ -32,7 +32,7 @@ namespace DRMFSS.BLL.Repository
         public List<AdminUnit> GetRegions()
         {
             return new DRMFSSEntities1().AdminUnits
-                .Where(u => u.AdminUnitTypeID == 2).ToList();
+                .Where(u => u.AdminUnitTypeID == 1).ToList();
         }
 
         /// <summary>
