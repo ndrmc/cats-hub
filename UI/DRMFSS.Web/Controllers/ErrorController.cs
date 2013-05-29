@@ -11,7 +11,7 @@ namespace DRMFSS.Web.Controllers
 {
     public partial class ErrorController : BaseController
     {
-        private DRMFSSEntities1 db = new DRMFSSEntities1();
+        private CTSContext db = new CTSContext();
 
         public virtual ActionResult NotFound(string url)
         {

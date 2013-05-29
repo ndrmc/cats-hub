@@ -11,7 +11,7 @@ namespace DRMFSS.Web.Controllers
 {
     public class RolesController : BaseController
     {
-        private DRMFSSEntities1 db = new DRMFSSEntities1();
+        private CTSContext db = new CTSContext();
 
         //
         // GET: /Admin/
@@ -52,7 +52,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)//testing(role))//
             {
-                db.Roles.AddObject(role);
+                db.Roles.Add(role);
                 db.SaveChanges();
                 return Json(new { success = true }); 
             }
@@ -80,7 +80,7 @@ namespace DRMFSS.Web.Controllers
             if (ModelState.IsValid)
             {
                 db.Roles.Attach(role);
-                db.ObjectStateManager.ChangeObjectState(role, EntityState.Modified);
+                db.Entry(role).State = EntityState.Modified;
                 db.SaveChanges();
                 return Json(new { success = true }); 
             }
@@ -104,7 +104,7 @@ namespace DRMFSS.Web.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Role role = db.Roles.Single(u => u.RoleID == id);
-            db.Roles.DeleteObject(role);
+            db.Roles.Remove(role);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -3,7 +3,7 @@ using DRMFSS.BLL.ViewModels.Report;
 using DRMFSS.BLL.ViewModels.Common;
 namespace DRMFSS.BLL.Interfaces
 {
-    public interface IShippingInstructionRepository : IRepository<ShippingInstruction>
+    public interface IShippingInstructionRepository : IGenericRepository<ShippingInstruction>,IRepository<ShippingInstruction>
     {
         /// <summary>
         /// Gets the shiping instruction id.

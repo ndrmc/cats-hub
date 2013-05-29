@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Infrastructure;
 using System.Data.Objects;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace DRMFSS.BLL
         /// <summary>
         /// Gets the old values list.
         /// </summary>
+         [NotMapped]
         public List<string> OldValuesList
         {
             get
@@ -24,6 +26,7 @@ namespace DRMFSS.BLL
         /// <summary>
         /// Gets the new values list.
         /// </summary>
+         [NotMapped]
         public List<string> NewValuesList
         {
             get
@@ -46,7 +49,7 @@ namespace DRMFSS.BLL
             if(id != null)
             {
                 string stringId = id.ToString();
-                DRMFSSEntities1 db = new DRMFSSEntities1();
+                CTSContext db = new CTSContext();
                 var count = (from audit in db.Audits
                              where audit.TableName == table && audit.PrimaryKey.Equals(stringId) && audit.NewValue.Contains(property)
                              select audit).Count();
@@ -65,7 +68,7 @@ namespace DRMFSS.BLL
         /// </returns>
         public static bool HasUpdated(int id, string table)
         {
-            DRMFSSEntities1 db = new DRMFSSEntities1();
+            CTSContext db = new CTSContext();
             var count = (from audit in db.Audits
                          where audit.TableName == table && audit.PrimaryKey == id.ToString()
                          select audit).Count();
@@ -82,7 +85,7 @@ namespace DRMFSS.BLL
         public static List<FieldChange> GetChanges(int id, string table, string property)
         {
             string key = id.ToString();
-            DRMFSSEntities1 db = new DRMFSSEntities1();
+            CTSContext db = new CTSContext();
             var changes = (from audit in db.Audits
                            where audit.TableName == table && audit.PrimaryKey == key && audit.NewValue.Contains(property)
                           orderby audit.DateTime descending
@@ -186,7 +189,7 @@ namespace DRMFSS.BLL
         public FieldChange(Audit a, string property, string foreignTable, string foreignFeildName, string foreignFeildKey)
         {
             //FieldChange x = new FieldChange(a, property);
-            DRMFSSEntities1 db = new DRMFSSEntities1();
+            CTSContext db = new CTSContext();
             
             this.ChangeDate = a.DateTime;
             BLL.UserProfile user = BLL.UserProfile.GetUserById(a.LoginID);
@@ -200,9 +203,9 @@ namespace DRMFSS.BLL
 
             var prevKey = Convert.ToInt32(this.PreviousValue);
             var CurrentKey = Convert.ToInt32(this.ChangedValue);
-           
-            var Prev = db.ExecuteStoreQuery<string>(" SELECT " + foreignFeildName +" as field FROM " + foreignTable + " WHERE "+ foreignFeildKey + " = " +  prevKey).FirstOrDefault();
-            var now = db.ExecuteStoreQuery<string>(" SELECT " + foreignFeildName +" as field FROM " + foreignTable + " WHERE "+ foreignFeildKey + " = " +  CurrentKey).FirstOrDefault();;
+            //modified Banty:24/5/2013 from db.ExecuteStoreQuery to (db as IObjectContextAdapter).ObjectContext.ExecuteStoreQuery
+            var Prev = (db as IObjectContextAdapter).ObjectContext.ExecuteStoreQuery<string>(" SELECT " + foreignFeildName + " as field FROM " + foreignTable + " WHERE " + foreignFeildKey + " = " + prevKey).FirstOrDefault();
+            var now = (db as IObjectContextAdapter).ObjectContext.ExecuteStoreQuery<string>(" SELECT " + foreignFeildName + " as field FROM " + foreignTable + " WHERE " + foreignFeildKey + " = " + CurrentKey).FirstOrDefault(); ;
          // var Prev = db.AuditForeignFeild(foreignTable,foreignFeildName,prevKey,foreignFeildKey).SingleOrDefault();
          // var now = db.AuditForeignFeild(foreignTable, foreignFeildName, CurrentKey, foreignFeildKey).SingleOrDefault();
 

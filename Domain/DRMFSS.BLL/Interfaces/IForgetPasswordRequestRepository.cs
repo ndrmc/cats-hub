@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Interfaces
 {
-    public interface IForgetPasswordRequestRepository : IRepository<ForgetPasswordRequest>
+    public interface IForgetPasswordRequestRepository : IGenericRepository<ForgetPasswordRequest>,IRepository<ForgetPasswordRequest>
     {
         /// <summary>
         /// Gets the valid request.

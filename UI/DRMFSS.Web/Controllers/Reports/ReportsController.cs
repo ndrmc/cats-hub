@@ -20,7 +20,7 @@ namespace DRMFSS.Web.Controllers.Reports
             return View();
         }
 
-        DRMFSS.BLL.DRMFSSEntities1 db = new BLL.DRMFSSEntities1();
+        DRMFSS.BLL.CTSContext db = new BLL.CTSContext();
         public virtual ActionResult SIReport(string siNumber)
         {
             if (!string.IsNullOrEmpty(siNumber))

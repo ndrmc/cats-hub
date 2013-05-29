@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace DRMFSS.BLL
@@ -8,7 +10,7 @@ namespace DRMFSS.BLL
     {
         public void ChangeLanguage(string lang)
         {
-            BLL.DRMFSSEntities1 context = new BLL.DRMFSSEntities1();         
+            BLL.CTSContext context = new BLL.CTSContext();         
 
             UserProfile profile = context.UserProfiles.Where(p=>p.UserName == this.UserName).SingleOrDefault();
             if(profile != null)
@@ -20,7 +22,7 @@ namespace DRMFSS.BLL
 
         public void ChangeHub(int warehouseId)
         {
-            BLL.DRMFSSEntities1 entities = new BLL.DRMFSSEntities1();
+            BLL.CTSContext entities = new BLL.CTSContext();
             var newDefault = (from w in entities.UserHubs
                               where w.HubID == warehouseId && w.UserProfileID == this.UserProfileID
                               select w).Single();
@@ -36,13 +38,13 @@ namespace DRMFSS.BLL
             entities.SaveChanges();
         }
 
-       
 
+         [NotMapped]
         public List<BLL.Hub> UserAllowedHubs
         {
             get
             {
-                DRMFSSEntities1 entities = new DRMFSSEntities1();
+                CTSContext entities = new CTSContext();
                 return (from w in entities.UserHubs
                                                   where w.UserProfileID == this.UserProfileID
                                                   select w.Hub).ToList();
@@ -51,25 +53,26 @@ namespace DRMFSS.BLL
 
         public static UserProfile GetUserById(int p)
         {
-            BLL.DRMFSSEntities1 entities = new BLL.DRMFSSEntities1();
+            BLL.CTSContext entities = new BLL.CTSContext();
             return (from u in entities.UserProfiles
                     where u.UserProfileID == p && !u.LockedInInd && u.ActiveInd
                     select u).FirstOrDefault();
         }
-
+        [NotMapped]
         public Hub DefaultHub
         {
             get
             {
-                DRMFSSEntities1 entities = new DRMFSSEntities1();
-                var hub =  (from w in entities.UserHubs
-                        where w.UserProfileID == this.UserProfileID && w.IsDefault.Trim().Equals("1")
-                        select w.Hub).FirstOrDefault();
+                
+                CTSContext entities = new CTSContext();
+                var hub = (from w in entities.UserHubs
+                           where w.UserProfileID == this.UserProfileID && w.IsDefault.Trim().Equals("1")
+                           select w.Hub).FirstOrDefault();
                 if (hub == null)
                 {
                     hub = (from w in entities.UserHubs
-                     where w.UserProfileID == this.UserProfileID
-                     select w.Hub).FirstOrDefault();
+                           where w.UserProfileID == this.UserProfileID
+                           select w.Hub).FirstOrDefault();
                 }
                 return hub;
             }

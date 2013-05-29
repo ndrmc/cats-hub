@@ -11,8 +11,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class StoreRepository : IStoreRepository
+    public partial class StoreRepository :GenericRepository<CTSContext,Store>, IStoreRepository
     {
+        public StoreRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the store by hub.
         /// </summary>
@@ -163,7 +168,7 @@ namespace DRMFSS.BLL.Repository
                                         Transporter = res.Transporter,
                                         TransporterAM = res.TransporterAM,
                                         Date = res.Date,
-                                        Project = res.Project,
+                                        Project = res.Projesct,
                                         Dispatched = res.Dispatched,
                                         Received = res.Received,
                                         Balance = balance,
@@ -174,6 +179,29 @@ namespace DRMFSS.BLL.Repository
             }
 
             return returnValue;
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var origin = FindById(id);
+            if(origin==null) return false;
+            db.Stores.Remove(origin);
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Store FindById(int id)
+        {
+            return db.Stores.FirstOrDefault(t => t.StoreID == id);
+        }
+
+        public Store FindById(System.Guid id)
+        {
+            return null;
         }
     }
 }

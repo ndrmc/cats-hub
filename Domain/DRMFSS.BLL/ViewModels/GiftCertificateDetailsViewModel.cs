@@ -73,7 +73,8 @@ namespace DRMFSS.Web.Models
             this.DCurrencyID = 1;
             this.BillOfLoading = "";
         }
-        public static List<GiftCertificateDetailsViewModel> GenerateListOfGiftCertificateDetailsViewModel(System.Data.Objects.DataClasses.EntityCollection<GiftCertificateDetail> entityCollection)
+        //Modified:Banty 24/5/2013 from EntityCollection<> to ICollection<>
+        public static List<GiftCertificateDetailsViewModel> GenerateListOfGiftCertificateDetailsViewModel(ICollection<GiftCertificateDetail> entityCollection)
         {
             var details = new List<GiftCertificateDetailsViewModel>();
             foreach (var giftDetail in entityCollection)

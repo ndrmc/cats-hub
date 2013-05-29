@@ -74,8 +74,8 @@ namespace DRMFSS.Web.Models
         [Range(0.1, 999999.99)]
       //  [UIHint("PreferedWeightMeasurment")]
         public decimal? SentQuantityInMT { get; set; }
-
-        public static List<ReceiveDetailViewModel> GenerateReceiveDetailModels(System.Data.Objects.DataClasses.EntityCollection<ReceiveDetail> entityCollection)
+        //Banty:Modified 23_5_2013 from EntityCollection to ICollection
+        public static List<ReceiveDetailViewModel> GenerateReceiveDetailModels(ICollection<ReceiveDetail> entityCollection)
         {
             var details = new List<ReceiveDetailViewModel>();
             int count = 0;

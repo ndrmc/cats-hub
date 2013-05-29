@@ -6,8 +6,8 @@ using DRMFSS.BLL.ViewModels;
 
 namespace DRMFSS.BLL.Interfaces
 {
-   public interface  IInternalMovementRepository : IRepository<InternalMovement>
-    {
+   public interface  IInternalMovementRepository : IGenericRepository<InternalMovement>,IRepository<InternalMovement>
+   {
        void AddNewInternalMovement(InternalMovementViewModel viewModel, UserProfile user);
        List<ViewModels.InternalMovementLogViewModel> GetAllInternalMovmentLog();
     }

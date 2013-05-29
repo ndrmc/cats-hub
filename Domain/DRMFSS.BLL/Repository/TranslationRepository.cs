@@ -6,8 +6,13 @@ using DRMFSS.BLL.Interfaces;
 
 namespace DRMFSS.BLL.Repository
 {
-    partial class TranslationRepository: ITranslationRepository
+    partial class TranslationRepository:GenericRepository<CTSContext,Translation>, ITranslationRepository
     {
+        public TranslationRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         public string GetForText(string text, string langauge)
         {
             var Translation = (from v in db.Translations
@@ -56,6 +61,35 @@ namespace DRMFSS.BLL.Repository
             return (from v in db.Translations
                     where v.LanguageCode == languageCode
                     select v).OrderBy(o=>o.Phrase).ToList();
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+
+            this.db.Translations.Remove(original);
+            this.db.SaveChanges();
+            return true;
+
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            return false;
+        }
+
+        public Translation FindById(Guid id)
+        {
+            return null;
+
+        }
+
+        public Translation FindById(int id)
+        {
+            return db.Translations.SingleOrDefault(p => p.TranslationID == id);
+
+
         }
     }
 }

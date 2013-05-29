@@ -45,7 +45,7 @@ namespace DRMFSS.Web
 
         public override string[] GetRolesForUser(string username)
         {
-            BLL.DRMFSSEntities1 entities = new BLL.DRMFSSEntities1();
+            BLL.CTSContext entities = new BLL.CTSContext();
             var roles = from role in entities.UserRoles
                         where role.UserProfile.UserName == username
                         select role.Role.Name;
@@ -60,7 +60,7 @@ namespace DRMFSS.Web
 
         public override bool IsUserInRole(string username, string roleName)
         {
-            BLL.DRMFSSEntities1 entities = new BLL.DRMFSSEntities1();
+            BLL.CTSContext entities = new BLL.CTSContext();
             var count = entities.UserRoles.Where(u => u.UserProfile.UserName == username && u.Role.Name == roleName).Count();
             return (count > 0);
         }

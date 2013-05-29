@@ -14,8 +14,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class DispatchAllocationRepository : IDispatchAllocationRepository
+    public partial class DispatchAllocationRepository :GenericRepository<CTSContext,DispatchAllocation>, IDispatchAllocationRepository
     {
+        public DispatchAllocationRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the balance of an SI number commodity .
         /// </summary>
@@ -492,5 +497,29 @@ namespace DRMFSS.BLL.Repository
         }
 
 
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.DispatchAllocations.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public DispatchAllocation FindById(int id)
+        {
+             return null;
+        }
+
+        public DispatchAllocation FindById(System.Guid id)
+        {return db.DispatchAllocations.FirstOrDefault(t => t.DispatchAllocationID == id);
+           
+        }
     }
 }

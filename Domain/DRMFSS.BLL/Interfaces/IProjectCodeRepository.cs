@@ -6,7 +6,7 @@ namespace DRMFSS.BLL.Interfaces
     /// <summary>
     /// 
     /// </summary>d
-    public interface IProjectCodeRepository : IRepository<ProjectCode>
+    public interface IProjectCodeRepository : IGenericRepository<ProjectCode>,IRepository<ProjectCode>
     {
         /// <summary>
         /// Gets the project code id.

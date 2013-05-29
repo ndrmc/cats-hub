@@ -14,19 +14,19 @@ namespace DRMFSS.BLL.Interfaces
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        bool Add(T entity);
+       // bool Add(T entity);
         /// <summary>
         /// Saves the changes.
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        bool SaveChanges(T entity);
+      //  bool SaveChanges(T entity);
         /// <summary>
         /// Deletes the specified entity.
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        bool Delete(T entity);
+       // bool Delete(T entity);
         /// <summary>
         /// Deletes the by ID.
         /// </summary>
@@ -44,7 +44,7 @@ namespace DRMFSS.BLL.Interfaces
         /// Gets all.
         /// </summary>
         /// <returns></returns>
-        List<T> GetAll();
+       // List<T> GetAll();
         /// <summary>
         /// Finds the by id.
         /// </summary>

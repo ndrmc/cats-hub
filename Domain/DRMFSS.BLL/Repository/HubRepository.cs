@@ -14,9 +14,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class HubRepository : IHubRepository
+    public partial class HubRepository :GenericRepository<CTSContext,Hub>, IHubRepository
     {
-
+        public HubRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         public List<ViewModels.Common.StoreViewModel> GetAllStoreByUser(UserProfile user)
         {
             if(user == null || user.DefaultHub == null)
@@ -121,6 +125,29 @@ namespace DRMFSS.BLL.Repository
                                                                                  }).OrderBy(c=>c.Product).ToList()
                                                   }).ToList();
 
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var origin = FindById(id);
+            if(origin==null) return false;
+            db.Hubs.Remove(origin);
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Hub FindById(int id)
+        {
+            return db.Hubs.FirstOrDefault(t => t.HubID == id);
+        }
+
+        public Hub FindById(System.Guid id)
+        {
+            return null;
         }
     }
 }

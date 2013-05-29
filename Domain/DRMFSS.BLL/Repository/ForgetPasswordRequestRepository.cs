@@ -6,8 +6,13 @@ using DRMFSS.BLL.Interfaces;
 
 namespace DRMFSS.BLL.Repository
 {
-    public partial class ForgetPasswordRequestRepository : IForgetPasswordRequestRepository
+    public partial class ForgetPasswordRequestRepository :GenericRepository<CTSContext,ForgetPasswordRequest>, IForgetPasswordRequestRepository
     {
+        public ForgetPasswordRequestRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the valid password reset request.
         /// </summary>
@@ -35,6 +40,35 @@ namespace DRMFSS.BLL.Repository
                 }
                 db.SaveChanges();
             }
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+
+            this.db.ForgetPasswordRequests.Remove(original);
+            this.db.SaveChanges();
+            return true;
+
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            return false;
+        }
+
+        public ForgetPasswordRequest FindById(Guid id)
+        {
+              return null;
+
+        }
+
+        public ForgetPasswordRequest FindById(int id)
+        {
+            return db.ForgetPasswordRequests.SingleOrDefault(p => p.ForgetPasswordRequestID == id);
+           
+
         }
     }
 }

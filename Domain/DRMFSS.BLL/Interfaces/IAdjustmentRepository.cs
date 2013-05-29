@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DRMFSS.BLL.ViewModels;
+﻿using System.Collections.Generic;
 
 namespace DRMFSS.BLL.Interfaces
 {
-   public  interface IAdjustmentRepository : IRepository<Adjustment>
-    {
-       List<LossAndAdjustmentLogViewModel> GetAllLossAndAdjustmentLog(int hubId);
 
-       void AddNewLossAndAdjustment(LossesAndAdjustmentsViewModel viewModel, UserProfile user);
-       
+    public interface IAdjustmentRepository :
+          IGenericRepository<Adjustment>,IRepository<Adjustment>
+    {
+        List<ViewModels.LossAndAdjustmentLogViewModel> GetAllLossAndAdjustmentLog(int hubId);
+        void AddNewLossAndAdjustment(ViewModels.LossesAndAdjustmentsViewModel viewModel, UserProfile user);
+
     }
+         
+      
 }

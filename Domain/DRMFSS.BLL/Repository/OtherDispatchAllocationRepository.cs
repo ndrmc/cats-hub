@@ -8,9 +8,13 @@ using DRMFSS.BLL.ViewModels.Dispatch;
 
 namespace DRMFSS.BLL.Repository
 {
-    public partial class OtherDispatchAllocationRepository : IOtherDispatchAllocationRepository
+    public partial class OtherDispatchAllocationRepository :GenericRepository<CTSContext,OtherDispatchAllocation>, IOtherDispatchAllocationRepository
     {
-
+        public OtherDispatchAllocationRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        } 
         public void Save(ViewModels.Dispatch.OtherDispatchAllocationViewModel model)
         {
             OtherDispatchAllocation oAllocation = new OtherDispatchAllocation();
@@ -36,7 +40,9 @@ namespace DRMFSS.BLL.Repository
                 oAllocation.QuantityInMT = model.QuantityInMT;
                 oAllocation.QuantityInUnit = model.QuantityInUnit;
                 oAllocation.Remark = model.Remark;
-                repository.OtherDispatchAllocation.SaveChanges(oAllocation);
+                //Modify Banty :From SaveChanges(oAllocation) to SaveChanges()
+             repository.OtherDispatchAllocation.SaveChanges(oAllocation);
+
             }
             else
             {
@@ -247,5 +253,28 @@ namespace DRMFSS.BLL.Repository
         }
 
 
+
+        public bool DeleteByID(int id)
+        {
+            return false;
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            var original = FindById(id);
+            if(original==null) return false;
+            db.OtherDispatchAllocations.Remove(original);
+            return true;
+        }
+
+        public OtherDispatchAllocation FindById(int id)
+        {
+            return null;
+        }
+
+        public OtherDispatchAllocation FindById(Guid id)
+        {
+            return db.OtherDispatchAllocations.FirstOrDefault(t => t.OtherDispatchAllocationID == id);
+        }
     }
 }

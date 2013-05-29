@@ -10,8 +10,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class ShippingInstructionRepository : IShippingInstructionRepository
+    public partial class ShippingInstructionRepository :GenericRepository<CTSContext,ShippingInstruction>, IShippingInstructionRepository
     {
+        public ShippingInstructionRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the shiping instruction id.
         /// </summary>
@@ -68,7 +73,7 @@ namespace DRMFSS.BLL.Repository
                                                          {
                                                              Value = SiNumber.ToUpperInvariant()
                                                          };
-                db.ShippingInstructions.AddObject(newInstruction);
+                db.ShippingInstructions.Add(newInstruction);
                 db.SaveChanges();
                 return newInstruction;
             }
@@ -302,6 +307,29 @@ namespace DRMFSS.BLL.Repository
                                           (siBalance.CommitedToFDP + siBalance.CommitedToOthers);
             return siBalance;
 
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if(original==null) return false;
+            db.ShippingInstructions.Remove(original);
+            return true;
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+           return  false;
+        }
+
+        public ShippingInstruction FindById(int id)
+        {
+            return db.ShippingInstructions.FirstOrDefault(t => t.ShippingInstructionID == id);
+        }
+
+        public ShippingInstruction FindById(Guid id)
+        {
+            return null;
         }
     }
 }

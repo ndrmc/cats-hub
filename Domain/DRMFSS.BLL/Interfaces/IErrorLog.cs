@@ -11,7 +11,7 @@ namespace DRMFSS.BLL.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    public interface IErrorLogRepository : IRepository<ErrorLog>
+    public interface IErrorLogRepository : IGenericRepository<ErrorLog>,IRepository<ErrorLog>
     {
             
     }

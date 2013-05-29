@@ -8,7 +8,7 @@ namespace DRMFSS.Web.Controllers
 {
     public partial class ReceiveDetailController : BaseController
     {
-        private DRMFSSEntities1 db = new DRMFSSEntities1();
+        private CTSContext db = new CTSContext();
 
         //
         // GET: /ReceiveDetail/
@@ -40,7 +40,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.ReceiveDetails.AddObject(ReceiveDetail);
+                db.ReceiveDetails.Add(ReceiveDetail);
                 db.SaveChanges();
                 return RedirectToAction("Index");  
             }
@@ -74,7 +74,7 @@ namespace DRMFSS.Web.Controllers
             if (ModelState.IsValid)
             {
                 db.ReceiveDetails.Attach(ReceiveDetail);
-                db.ObjectStateManager.ChangeObjectState(ReceiveDetail, EntityState.Modified);
+                db.Entry(ReceiveDetail).State= EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

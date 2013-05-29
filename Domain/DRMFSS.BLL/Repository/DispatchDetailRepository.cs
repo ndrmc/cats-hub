@@ -12,8 +12,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class DispatchDetailRepository : IDispatchDetailRepository
+    public partial class DispatchDetailRepository :GenericRepository<CTSContext,DispatchDetail>, IDispatchDetailRepository
     {
+        public DispatchDetailRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the dispatch detail list.
         /// </summary>
@@ -68,6 +73,31 @@ namespace DRMFSS.BLL.Repository
                 dispatchDetais.Add(DDMD);
             }
             return dispatchDetais;
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.DispatchDetails.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public DispatchDetail FindById(int id)
+        {
+            return null;
+        }
+
+        public DispatchDetail FindById(System.Guid id)
+        {
+            return db.DispatchDetails.FirstOrDefault(t => t.DispatchDetailID == id);
+
         }
     }
 }

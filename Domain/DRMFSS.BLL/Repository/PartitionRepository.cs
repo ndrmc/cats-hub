@@ -8,8 +8,13 @@ using System.Configuration;
 
 namespace DRMFSS.BLL.Repository
 {
-    public partial class PartitionRepository : IPartitionRepository
+    public partial class PartitionRepository :GenericRepository<CTSContext,Partition>, IPartitionRepository
     {
+        public PartitionRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        } 
        public List<ViewModels.ReplicationViewModel> GetHubsSyncrtonizationDetails(int publication)
         {
             List<ViewModels.ReplicationViewModel> replications = new List<ViewModels.ReplicationViewModel>();
@@ -51,6 +56,32 @@ namespace DRMFSS.BLL.Repository
             return replications;
         }
 
-        
+
+
+       public bool DeleteByID(int id)
+       {
+           var original = FindById(id);
+           if (original == null) return false;
+           db.Partitions.Remove(original);
+
+           return true;
+       }
+
+       public bool DeleteByID(System.Guid id)
+       {
+           return false;
+       }
+
+       public Partition FindById(int id)
+       {
+
+           return db.Partitions.FirstOrDefault(t => t.PartitionID == id);
+       }
+
+       public Partition FindById(System.Guid id)
+       {
+
+           return null;
+       }
     }
 }

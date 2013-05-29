@@ -3,17 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DRMFSS.BLL.Interfaces;
-using System.Data.Objects.DataClasses;
+
 
 namespace DRMFSS.BLL.Repository
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public partial class AccountRepository : IAccountRepository
+    public class AccountRepository :
+          GenericRepository<CTSContext, Account>, IAccountRepository
     {
+        public AccountRepository(CTSContext _db,IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
+        public bool DeleteByID(int id)
+        {
+            Account original =this.db.Accounts.SingleOrDefault(p => p.AccountID == id);
+            if (original != null)
+            {
+                this.db.Accounts.Remove(original);
+                this.db.SaveChanges();
+                return true;
+            }
+            return false;
+        }
 
-      
+        public bool DeleteByID(Guid id)
+        {
+            return false;
+        }
+
+        public Account FindById(Guid id)
+        {
+            return null;
+        }
+
+        public Account FindById(int id)
+        {
+            return db.Accounts.ToList().SingleOrDefault(p => p.AccountID == id);
+				
+        }
+
 
         /// <summary>
         /// Gets the account ID.
@@ -24,8 +53,8 @@ namespace DRMFSS.BLL.Repository
         public int GetAccountID(string EntityType, int EntityID)
         {
             var account = (from v in db.Accounts
-                          where v.EntityType == EntityType && v.EntityID == EntityID
-                          select v).FirstOrDefault();
+                           where v.EntityType == EntityType && v.EntityID == EntityID
+                           select v).FirstOrDefault();
             if (account != null)
             {
                 return account.AccountID;
@@ -51,7 +80,7 @@ namespace DRMFSS.BLL.Repository
                 Account acc = new Account();
                 acc.EntityID = EntityID;
                 acc.EntityType = EntityType;
-                db.AddToAccounts(acc);
+                db.Accounts.Add(acc);
                 db.SaveChanges();
                 return acc.AccountID;
             }
@@ -59,6 +88,5 @@ namespace DRMFSS.BLL.Repository
             return account.FirstOrDefault().AccountID;
         }
 
-        
     }
 }
