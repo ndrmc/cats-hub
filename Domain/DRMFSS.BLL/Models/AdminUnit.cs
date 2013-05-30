@@ -1,0 +1,24 @@
+using System;
+using System.Collections.Generic;
+
+namespace DRMFSS.BLL
+{
+    public partial class AdminUnit
+    {
+        public AdminUnit()
+        {
+            this.AdminUnit1 = new List<AdminUnit>();
+            this.FDPs = new List<FDP>();
+        }
+
+        public int AdminUnitID { get; set; }
+        public string Name { get; set; }
+        public string NameAM { get; set; }
+        public Nullable<int> AdminUnitTypeID { get; set; }
+        public Nullable<int> ParentID { get; set; }
+        public virtual ICollection<AdminUnit> AdminUnit1 { get; set; }
+        public virtual AdminUnit AdminUnit2 { get; set; }
+        public virtual AdminUnitType AdminUnitType { get; set; }
+        public virtual ICollection<FDP> FDPs { get; set; }
+    }
+}
