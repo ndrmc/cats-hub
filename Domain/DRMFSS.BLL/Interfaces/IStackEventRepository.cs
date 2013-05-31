@@ -6,8 +6,8 @@ using DRMFSS.BLL.ViewModels;
 
 namespace DRMFSS.BLL.Interfaces
 {
-  public interface IStackEventRepository : IRepository<StackEvent>
-    {
+  public interface IStackEventRepository : IGenericRepository<StackEvent>,IRepository<StackEvent>
+  {
       List<StackEventLogViewModel> GetAllStackEvents(UserProfile user);
 
       List<StackEventLogViewModel> GetAllStackEventsByStoreIdStackId(UserProfile user, int StackId, int StoreId);

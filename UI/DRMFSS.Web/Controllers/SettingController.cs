@@ -11,7 +11,7 @@ namespace DRMFSS.Web.Controllers
      [Authorize]
     public class SettingController : BaseController
     {
-        DRMFSSEntities1 context = new DRMFSSEntities1();
+         CTSContext context = new CTSContext();
         Setting syssetting = new Setting();
         //
         // GET: /Setting/
@@ -30,7 +30,7 @@ namespace DRMFSS.Web.Controllers
                 smtp_info = Session["SMTPInfo"] as SMTPInfo;
             else
             {
-                //DRMFSSEntities1 context = new DRMFSSEntities1();
+                //CTSContext context = new CTSContext();
                 BLL.Setting setting = new BLL.Setting();
 
                 setting = syssetting.GetSetting("SMTPServer");
@@ -62,7 +62,7 @@ namespace DRMFSS.Web.Controllers
             if (Session["SMTPInfo"] != null)
                 smtp_info = Session["SMTPInfo"] as SMTPInfo;            
             
-            //DRMFSSEntities1 context = new DRMFSSEntities1();
+            //CTSContext context = new CTSContext();
             BLL.Setting setting = new BLL.Setting();
 
             setting = syssetting.GetSetting("SMTPServer");

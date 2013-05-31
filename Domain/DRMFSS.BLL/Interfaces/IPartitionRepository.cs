@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Interfaces
 {
-    public interface IPartitionRepository : IRepository<Partition>
+    public interface IPartitionRepository : IGenericRepository<Partition>,IRepository<Partition>
     {
         List<ViewModels.ReplicationViewModel> GetHubsSyncrtonizationDetails(int publication);
     }

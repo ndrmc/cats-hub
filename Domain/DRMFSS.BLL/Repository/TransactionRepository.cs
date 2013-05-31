@@ -10,17 +10,24 @@ using DRMFSS.BLL.ViewModels;
 
 namespace DRMFSS.BLL.Repository
 {
+
     /// <summary>
     /// 
     /// </summary>
-   public partial class TransactionRepository : ITransactionRepository
+   public partial class TransactionRepository :GenericRepository<CTSContext,Transaction>, ITransactionRepository
     {
-
+       public TransactionRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the active accounts for ledger.
         /// </summary>
         /// <param name="LedgerID">The ledger ID.</param>
         /// <returns></returns>
+        /// 
+         
         public List<Account> GetActiveAccountsForLedger(int LedgerID)
         {
             var accounts = (from v in db.Transactions
@@ -39,6 +46,7 @@ namespace DRMFSS.BLL.Repository
         /// <returns></returns>
         public List<Transaction> GetTransactionsForLedger(int LedgerID, int AccountID, int Commodity)
         {
+            
             var transactions = (from v in db.Transactions
                                 where v.LedgerID == LedgerID && v.AccountID == AccountID && (v.CommodityID == Commodity || v.ParentCommodityID == Commodity)
                                 select v).ToList();
@@ -276,8 +284,8 @@ namespace DRMFSS.BLL.Repository
 
             }
             // Try to save this transaction
-            db.Connection.Open();
-            DbTransaction dbTransaction = db.Connection.BeginTransaction();
+            db.Database.Connection.Open();
+            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             { 
                 repository.Receive.Add(receive);
@@ -425,8 +433,8 @@ namespace DRMFSS.BLL.Repository
 
             }
             // Try to save this transaction
-            db.Connection.Open();
-            DbTransaction dbTransaction = db.Connection.BeginTransaction();
+            db.Database.Connection.Open();
+            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
                 repository.Dispatch.Add(dispatch);
@@ -687,8 +695,8 @@ namespace DRMFSS.BLL.Repository
             
 
             // Try to save this transaction
-            db.Connection.Open();
-            DbTransaction dbTransaction = db.Connection.BeginTransaction();
+            db.Database.Connection.Open();
+            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
                 repository.InternalMovement.Add(internalMovement);
@@ -781,8 +789,8 @@ namespace DRMFSS.BLL.Repository
             
 
             // Try to save this transaction
-            db.Connection.Open();
-            DbTransaction dbTransaction = db.Connection.BeginTransaction();
+            db.Database.Connection.Open();
+            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
                 repository.Adjustment.Add(lossAndAdjustment);
@@ -867,8 +875,8 @@ namespace DRMFSS.BLL.Repository
             lossAndAdjustment.StoreManName = viewModel.StoreMan;
 
             // Try to save this transaction
-            db.Connection.Open();
-            DbTransaction dbTransaction = db.Connection.BeginTransaction();
+            db.Database.Connection.Open();
+            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
                 repository.Adjustment.Add(lossAndAdjustment);
@@ -1002,8 +1010,8 @@ namespace DRMFSS.BLL.Repository
             //transactionGroup.Transactions.Add(transactionTwo);
             //db.SaveChanges();
             // Try to save this transaction
-            db.Connection.Open();
-            DbTransaction dbTransaction = db.Connection.BeginTransaction();
+            db.Database.Connection.Open();
+            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {     
                  transactionGroup.Transactions.Add(transactionOne);
@@ -1120,7 +1128,7 @@ namespace DRMFSS.BLL.Repository
                                 StartDate = StartTime,
                                 Month = Convert.ToString(b.Key.PeriodMonth),
                                 Round = Convert.ToString(b.Key.Round),
-                                Year = b.Key.PeriodYear??0,
+                                Year = b.Key.PeriodYear,//??0, modified Banty 23_5_13
                                 Region = b.Key.RegionName,
                                 Program = b.Key.ProgramName,
                                 OffloadingDetails = b.Select(t1 => new OffloadingDetail(){
@@ -1286,6 +1294,31 @@ namespace DRMFSS.BLL.Repository
                             Quarter = t.Quarter.Value,
                             Region = t.RegionName
                         }).ToList();
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.Transactions.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Transaction FindById(int id)
+        {
+            return null;
+        }
+
+        public Transaction FindById(System.Guid id)
+        {
+            return db.Transactions.FirstOrDefault(t => t.TransactionID == id);
+
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Interfaces
 {
-    public interface ITranslationRepository : IRepository<Translation>
+    public interface ITranslationRepository : IGenericRepository<Translation>,IRepository<Translation>
     {
         string GetForText(string text, string langauge);
 

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using DRMFSS.BLL.Interfaces;
 
+
 namespace DRMFSS.BLL
 {
     /// <summary>
     /// 
     /// </summary>
-   public interface IReleaseNoteRepository : IRepository<ReleaseNote>
+   public interface IReleaseNoteRepository : IGenericRepository<ReleaseNote>,IRepository<ReleaseNote>
     {
     }
 }

@@ -1,6 +1,6 @@
 namespace DRMFSS.BLL.Interfaces
 {
-    public interface ILedgerRepository :IRepository<Ledger>
+    public interface ILedgerRepository :IGenericRepository<Ledger>,IRepository<Ledger>
     {
     }
 }

@@ -10,8 +10,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class UserProfileRepository : IUserProfileRepository
+    public partial class UserProfileRepository :GenericRepository<CTSContext,UserProfile>, IUserProfileRepository
     {
+        public UserProfileRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Changes the password.
         /// </summary>
@@ -64,6 +69,29 @@ namespace DRMFSS.BLL.Repository
             return false;
         }
 
-        
+
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if(original==null) return false;
+            db.UserProfiles.Remove(original);
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public UserProfile FindById(int id)
+        {
+            return db.UserProfiles.FirstOrDefault(t => t.UserProfileID == id);
+        }
+
+        public UserProfile FindById(System.Guid id)
+        {
+            return null;
+        }
     }
 }

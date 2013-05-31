@@ -141,8 +141,8 @@ namespace DRMFSS.Web.Models
             Validator.TryValidateObject(this, validationContext, validationResults, false);
             return validationResults;
         }
-
-        public static List<DispatchDetailModel> GenerateDispatchDetailModels(EntityCollection<DispatchDetail> dispatchDetails)
+        //Modified Banty:23_5_2013 from EntityCollection<DipatchDetail> to ICollection<DispatchDetail>
+        public static List<DispatchDetailModel> GenerateDispatchDetailModels(ICollection<DispatchDetail> dispatchDetails)
         {
             var details = new List<DispatchDetailModel>();
             int count = 0;

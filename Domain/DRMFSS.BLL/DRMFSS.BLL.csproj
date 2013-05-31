@@ -43,6 +43,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.4.3.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
@@ -73,146 +76,108 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DRMFSS.Designer.cs">
-      <DependentUpon>DRMFSS.edmx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
+    <Compile Include="Helpers\BaseEntities.cs">
+      <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interfaces\IRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IStackEventTypeRepository.cs" />
     <Compile Include="Interfaces\IAccountRepository.cs" />
     <Compile Include="Interfaces\IAdjustmentReasonRepository.cs" />
     <Compile Include="Interfaces\IAdjustmentRepository.cs" />
-    <Compile Include="Interfaces\IAdminUnit.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\IAdminUnitRepository.cs" />
+    <Compile Include="Interfaces\IAdminUnitTypeRepository.cs" />
+    <Compile Include="Interfaces\IAuditRepository.cs" />
+    <Compile Include="Interfaces\ICommodityRepository.cs" />
+    <Compile Include="Interfaces\ICommodityGradeRepository.cs" />
+    <Compile Include="Interfaces\ICommoditySourceRepository.cs" />
+    <Compile Include="Interfaces\ICommodityTypeRepository.cs" />
+    <Compile Include="Interfaces\IContactRepository.cs" />
+    <Compile Include="Interfaces\IDetailRepository.cs" />
+    <Compile Include="Interfaces\IDispatchRepository.cs" />
+    <Compile Include="Interfaces\IDispatchAllocationRepository.cs" />
+    <Compile Include="Interfaces\IDispatchDetailRepository.cs" />
+    <Compile Include="Interfaces\IDonorRepository.cs" />
+    <Compile Include="Interfaces\IErrorLog.cs" />
+    <Compile Include="Interfaces\IFDPRepository.cs" />
+    <Compile Include="Interfaces\IForgetPasswordRequestRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IAdminUnitType.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\IGiftCertificateRepository.cs" />
+    <Compile Include="Interfaces\IGiftCertificateDetailRepository.cs" />
+    <Compile Include="Interfaces\IHubRepository.cs" />
+    <Compile Include="Interfaces\IHubOwnerRepository.cs" />
+    <Compile Include="Interfaces\IHubSettingRepository.cs" />
+    <Compile Include="Interfaces\IHubSettingValueRepository.cs" />
+    <Compile Include="Interfaces\IInternalMovementRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IAudit.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\ILedgerRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\ICommodity.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\ILedgerTypeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\ICommodityGrade.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\ILetterTemplateRepository.cs" />
+    <Compile Include="Interfaces\IMasterRepository.cs" />
+    <Compile Include="Interfaces\IOtherDispatchAllocationRepository.cs" />
+    <Compile Include="Interfaces\IPartitionRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\ICommoditySource.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\IPeriodRepository.cs" />
+    <Compile Include="Interfaces\IProgramRepository.cs" />
+    <Compile Include="Interfaces\IProjectCodeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\ICommodityType.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\IReceiptAllocationRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IContact.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\IReceiveRepository.cs" />
+    <Compile Include="Interfaces\IReceiveDetailRepository.cs" />
+    <Compile Include="Interfaces\IReleaseNoteRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IDetail.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\IRoleRepository.cs" />
+    <Compile Include="Interfaces\ISessionAttemptRepository.cs" />
+    <Compile Include="Interfaces\ISessionHistoryRepository.cs" />
+    <Compile Include="Interfaces\ISettingRepository.cs" />
+    <Compile Include="Interfaces\IShippingInstructionRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IDispatch.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\ISMSRepository.cs" />
+    <Compile Include="Interfaces\IStackEventRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IDispatchAllocation.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\IStoreRepository.cs" />
+    <Compile Include="Interfaces\ITransactionGroupRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IDispatchCommodity.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\ITransactionRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IDonor.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Interfaces\ITranslationRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Interfaces\IErrorLog.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IFDP.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IForgetPasswordRequestRepository.cs" />
-    <Compile Include="Interfaces\IGiftCertificate.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IGiftCertificateDetail.cs" />
-    <Compile Include="Interfaces\IInternalMovementRepository.cs" />
-    <Compile Include="Interfaces\ILedgerRepository.cs" />
-    <Compile Include="Interfaces\ILedgerTypeRepository.cs" />
-    <Compile Include="Interfaces\ILetterTemplate.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IMaster.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IOtherDispatchAllocation.cs" />
-    <Compile Include="Interfaces\IPartitionRepository.cs" />
-    <Compile Include="Interfaces\IPeriod.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IProgram.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IProjectCodeRepository.cs" />
-    <Compile Include="Interfaces\IReceiptAllocationRepository.cs" />
-    <Compile Include="Interfaces\IReceive.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IReceiveCommodity.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IRole.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ISessionAttempt.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ISessionHistory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ISetting.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IShippingInstructionRepository.cs" />
-    <Compile Include="Interfaces\ISMS.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IStackEventRepository.cs" />
-    <Compile Include="Interfaces\IStackEventTypeRepository.cs" />
-    <Compile Include="Interfaces\IStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITransactionGroupRepository.cs" />
-    <Compile Include="Interfaces\ITransactionRepository.cs" />
-    <Compile Include="Interfaces\ITranslationRepository.cs" />
-    <Compile Include="Interfaces\ITransporter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IUnit.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IUserProfile.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IUserRole.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IUserHub.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IHub.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IHubOwner.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IHubSetting.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IHubSettingValue.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IReleaseNoteRepository.cs" />
-    <Compile Include="IUnitOfWork.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IUnitOfWork.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Interfaces\ITransporterRepository.cs" />
+    <Compile Include="Interfaces\IUnitRepository.cs" />
+    <Compile Include="Interfaces\IUserHubRepository.cs" />
+    <Compile Include="Interfaces\IUserProfileRepository.cs" />
+    <Compile Include="Interfaces\IUserRoleRepository.cs" />
+    <Compile Include="IUnitOfWork.cs" />
     <Compile Include="MetaModels\AccountMetaModel.cs">
     </Compile>
     <Compile Include="MetaModels\AdjustmentMetaModel.cs">
@@ -274,7 +239,6 @@
     </Compile>
     <Compile Include="MetaModels\MasterMetaModel.cs">
     </Compile>
-    <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="MetaModels\OtherDispatchAllocationMetaModel.cs">
     </Compile>
     <Compile Include="MetaModels\PeriodMetaModel.cs">
@@ -325,6 +289,132 @@
     </Compile>
     <Compile Include="MetaModels\UserRoleMetaModel.cs">
     </Compile>
+    <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\Adjustment.cs" />
+    <Compile Include="Models\AdjustmentReason.cs" />
+    <Compile Include="Models\AdminUnit.cs" />
+    <Compile Include="Models\AdminUnitType.cs" />
+    <Compile Include="Models\Audit.cs" />
+    <Compile Include="Models\BinCardReport.cs" />
+    <Compile Include="Models\Commodity.cs" />
+    <Compile Include="Models\CommodityGrade.cs" />
+    <Compile Include="Models\CommoditySource.cs" />
+    <Compile Include="Models\CommodityType.cs" />
+    <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\CTSContext.cs" />
+    <Compile Include="Models\Detail.cs" />
+    <Compile Include="Models\Dispatch.cs" />
+    <Compile Include="Models\DispatchAllocation.cs" />
+    <Compile Include="Models\DispatchDetail.cs" />
+    <Compile Include="Models\DispatchFulfillmentStatus_Result.cs" />
+    <Compile Include="Models\Donor.cs" />
+    <Compile Include="Models\ErrorLog.cs" />
+    <Compile Include="Models\FDP.cs" />
+    <Compile Include="Models\ForgetPasswordRequest.cs" />
+    <Compile Include="Models\GiftCertificate.cs" />
+    <Compile Include="Models\GiftCertificateDetail.cs" />
+    <Compile Include="Models\Hub.cs" />
+    <Compile Include="Models\HubOwner.cs" />
+    <Compile Include="Models\HubSetting.cs" />
+    <Compile Include="Models\HubSettingValue.cs" />
+    <Compile Include="Models\InternalMovement.cs" />
+    <Compile Include="Models\Ledger.cs" />
+    <Compile Include="Models\LedgerType.cs" />
+    <Compile Include="Models\LetterTemplate.cs" />
+    <Compile Include="Models\Mapping\AccountMap.cs" />
+    <Compile Include="Models\Mapping\AdjustmentMap.cs" />
+    <Compile Include="Models\Mapping\AdjustmentReasonMap.cs" />
+    <Compile Include="Models\Mapping\AdminUnitMap.cs" />
+    <Compile Include="Models\Mapping\AdminUnitTypeMap.cs" />
+    <Compile Include="Models\Mapping\AuditMap.cs" />
+    <Compile Include="Models\Mapping\CommodityGradeMap.cs" />
+    <Compile Include="Models\Mapping\CommodityMap.cs" />
+    <Compile Include="Models\Mapping\CommoditySourceMap.cs" />
+    <Compile Include="Models\Mapping\CommodityTypeMap.cs" />
+    <Compile Include="Models\Mapping\ContactMap.cs" />
+    <Compile Include="Models\Mapping\DetailMap.cs" />
+    <Compile Include="Models\Mapping\DispatchAllocationMap.cs" />
+    <Compile Include="Models\Mapping\DispatchDetailMap.cs" />
+    <Compile Include="Models\Mapping\DispatchMap.cs" />
+    <Compile Include="Models\Mapping\DonorMap.cs" />
+    <Compile Include="Models\Mapping\ErrorLogMap.cs" />
+    <Compile Include="Models\Mapping\FDPMap.cs" />
+    <Compile Include="Models\Mapping\ForgetPasswordRequestMap.cs" />
+    <Compile Include="Models\Mapping\GiftCertificateDetailMap.cs" />
+    <Compile Include="Models\Mapping\GiftCertificateMap.cs" />
+    <Compile Include="Models\Mapping\HubMap.cs" />
+    <Compile Include="Models\Mapping\HubOwnerMap.cs" />
+    <Compile Include="Models\Mapping\HubSettingMap.cs" />
+    <Compile Include="Models\Mapping\HubSettingValueMap.cs" />
+    <Compile Include="Models\Mapping\InternalMovementMap.cs" />
+    <Compile Include="Models\Mapping\LedgerMap.cs" />
+    <Compile Include="Models\Mapping\LedgerTypeMap.cs" />
+    <Compile Include="Models\Mapping\LetterTemplateMap.cs" />
+    <Compile Include="Models\Mapping\MasterMap.cs" />
+    <Compile Include="Models\Mapping\OtherDispatchAllocationMap.cs" />
+    <Compile Include="Models\Mapping\PartitionMap.cs" />
+    <Compile Include="Models\Mapping\PeriodMap.cs" />
+    <Compile Include="Models\Mapping\ProgramMap.cs" />
+    <Compile Include="Models\Mapping\ProjectCodeMap.cs" />
+    <Compile Include="Models\Mapping\ReceiptAllocationMap.cs" />
+    <Compile Include="Models\Mapping\ReceiveDetailMap.cs" />
+    <Compile Include="Models\Mapping\ReceiveMap.cs" />
+    <Compile Include="Models\Mapping\ReleaseNoteMap.cs" />
+    <Compile Include="Models\Mapping\RoleMap.cs" />
+    <Compile Include="Models\Mapping\SessionAttemptMap.cs" />
+    <Compile Include="Models\Mapping\SessionHistoryMap.cs" />
+    <Compile Include="Models\Mapping\SettingMap.cs" />
+    <Compile Include="Models\Mapping\ShippingInstructionMap.cs" />
+    <Compile Include="Models\Mapping\SMMap.cs" />
+    <Compile Include="Models\Mapping\StackEventMap.cs" />
+    <Compile Include="Models\Mapping\StackEventTypeMap.cs" />
+    <Compile Include="Models\Mapping\StoreMap.cs" />
+    <Compile Include="Models\Mapping\sysdiagramMap.cs" />
+    <Compile Include="Models\Mapping\TransactionGroupMap.cs" />
+    <Compile Include="Models\Mapping\TransactionMap.cs" />
+    <Compile Include="Models\Mapping\TranslationMap.cs" />
+    <Compile Include="Models\Mapping\TransporterMap.cs" />
+    <Compile Include="Models\Mapping\UnitMap.cs" />
+    <Compile Include="Models\Mapping\UserHubMap.cs" />
+    <Compile Include="Models\Mapping\UserProfileMap.cs" />
+    <Compile Include="Models\Mapping\UserRoleMap.cs" />
+    <Compile Include="Models\Master.cs" />
+    <Compile Include="Models\OtherDispatchAllocation.cs" />
+    <Compile Include="Models\Partition.cs" />
+    <Compile Include="Models\Period.cs" />
+    <Compile Include="Models\Program.cs" />
+    <Compile Include="Models\ProjectCode.cs" />
+    <Compile Include="Models\ReceiptAllocation.cs" />
+    <Compile Include="Models\Receive.cs" />
+    <Compile Include="Models\ReceiveDetail.cs" />
+    <Compile Include="Models\ReleaseNote.cs" />
+    <Compile Include="Models\ReportBinCard.cs" />
+    <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\RPT_Distribution_Result.cs" />
+    <Compile Include="Models\RPT_MonthGiftSummary_Result.cs" />
+    <Compile Include="Models\RPT_MonthlyGiftSummary_Result.cs" />
+    <Compile Include="Models\RPT_Offloading_Result.cs" />
+    <Compile Include="Models\RPT_ReceiptReport_Result.cs" />
+    <Compile Include="Models\SessionAttempt.cs" />
+    <Compile Include="Models\SessionHistory.cs" />
+    <Compile Include="Models\Setting.cs" />
+    <Compile Include="Models\ShippingInstruction.cs" />
+    <Compile Include="Models\SMS.cs" />
+    <Compile Include="Models\StackEvent.cs" />
+    <Compile Include="Models\StackEventType.cs" />
+    <Compile Include="Models\StatusReportBySI_Result.cs" />
+    <Compile Include="Models\StockStatusReport.cs" />
+    <Compile Include="Models\Store.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
+    <Compile Include="Models\Transaction.cs" />
+    <Compile Include="Models\TransactionGroup.cs" />
+    <Compile Include="Models\Translation.cs" />
+    <Compile Include="Models\Transporter.cs" />
+    <Compile Include="Models\Unit.cs" />
+    <Compile Include="Models\UserHub.cs" />
+    <Compile Include="Models\UserProfile.cs" />
+    <Compile Include="Models\UserRole.cs" />
+    <Compile Include="Models\util_GetDispatchedAllocationFromSI_Result.cs" />
     <Compile Include="Partials\Account.cs">
     </Compile>
     <Compile Include="Partials\AdminUnit.cs">
@@ -420,189 +510,222 @@
     </Compile>
     <Compile Include="Partials\UserRole.cs">
     </Compile>
-    <Compile Include="Repository\AdjustmentReasonRepository.cs" />
-    <Compile Include="Repository\AdjustmentRepository.cs" />
     <Compile Include="Repository\ConstantsRepository.cs" />
-    <Compile Include="Repository\DispatchDetailRepository.cs" />
-    <Compile Include="Repository\ForgetPasswordRequestRepository.cs" />
-    <Compile Include="Repository\Generated\AccountRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\GenericRepository.cs" />
+    <Compile Include="Interfaces\IGenericRepository.cs" />
+    <Compile Include="Repository\AccountRepository.cs" />
+    <Compile Include="Repository\AdjustmentReasonRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\AdjustmentReasonRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\AdjustmentRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\AdjustmentRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\AdminUnitRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\AdminUnitRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\AdminUnitTypeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\AdminUnitTypeRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\AuditRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\AuditRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\CommodityGradeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\CommodityGradeRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\CommodityRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\CommodityRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\CommoditySourceRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\CommoditySourceRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\CommodityTypeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\CommodityTypeRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ContactRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ContactRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\DetailRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\DetailRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\DispatchAllocationRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\DispatchAllocationRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\DispatchDetailRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\DispatchDetailRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\DispatchRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\DispatchRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\DonorRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\DonorRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\FDPRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\FDPRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ForgetPasswordRequestRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ForgetPasswordRequestRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\GiftCertificateDetailRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\GiftCertificateDetailRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\GiftCertificateRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\GiftCertificateRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\HubOwnerRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\HubOwnerRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\HubRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\HubRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\HubSettingRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\HubSettingRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\HubSettingValueRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\HubSettingValueRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\InternalMovementRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\InternalMovementRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\LedgerRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\LedgerRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\LedgerTypeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\LedgerTypeRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\LetterTemplateRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\LetterTemplateRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\MasterRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\MasterRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\OtherDispatchAllocationRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\OtherDispatchAllocationRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\PartitionRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\PartitionRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\PeriodRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\PeriodRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ProgramRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ProgramRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ProjectCodeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ProjectCodeRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ReceiptAllocationRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ReceiptAllocationRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ReceiveDetailRepository.cs" />
+    <Compile Include="Repository\ReceiveRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ReceiveDetailRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ReleaseNoteRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ReceiveRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\RoleRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ReleaseNoteRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\SessionAttemptRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\RepositoryGenerator.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
+    <Compile Include="Repository\SessionHistoryRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\RoleRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\SettingRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\SessionAttemptRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\ShippingInstructionRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\SessionHistoryRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\SMSRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\SettingRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\StackEventRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\ShippingInstructionRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\StackEventTypeRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\SMSRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\StoreRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\StackEventRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\TransactionGroupRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\StackEventTypeRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\TransactionRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\StoreRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\TranslationRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\TransactionGroupRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\TransporterRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\TransactionRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\UnitRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\TranslationRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\UserHubRepository.cs" />
+    <Compile Include="Repository\UserProfileRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\TransporterRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
+    <Compile Include="Repository\UserRoleRepository.cs">
+      <SubType>
+      </SubType>
     </Compile>
-    <Compile Include="Repository\Generated\UnitRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Repository\Generated\UserHubRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Repository\Generated\UserProfileRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Repository\Generated\UserRoleRepository.cs">
-      <DependentUpon>RepositoryGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Repository\InternalMovementRepository.cs" />
-    <Compile Include="Repository\OtherDispatchAllocationRepository.cs" />
-    <Compile Include="Repository\PartitionRepository.cs" />
-    <Compile Include="Repository\ReceiptAllocationRepository.cs" />
-    <Compile Include="Repository\ReleaseNoteRepository.cs" />
-    <Compile Include="Repository\StackEventRepository.cs" />
-    <Compile Include="Repository\StackEventTypeRepository.cs" />
     <Compile Include="Repository\viewModel.cs" />
+    <Compile Include="UnitOfWork.cs" />
     <Compile Include="ViewModels\Common\BidRefViewModel.cs" />
     <Compile Include="ViewModels\Report\Data\DeliveryReport.cs" />
     <Compile Include="ViewModels\Report\Data\DistributionReport.cs" />
@@ -612,126 +735,7 @@
     <Compile Include="ViewModels\TreeViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Repository\TranslationRepository.cs" />
-    <Compile Include="Repository\AccountRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\AdminUnitRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\AdminUnitTypeRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\AuditRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\CommodityGradeRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\CommodityRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\CommoditySourceRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\CommodityTypeRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\ContactRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\DetailRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\DispatchAllocationRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\DispatchRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\DonorRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\FDPRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\GiftCertificateDetailRepository.cs" />
-    <Compile Include="Repository\GiftCertificateRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\LedgerRepository.cs" />
-    <Compile Include="Repository\LedgerTypeRepository.cs" />
-    <Compile Include="Repository\LetterTemplateRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\MasterRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\PeriodRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\ProgramRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\ProjectCodeRepository.cs" />
-    <Compile Include="Repository\ReceiveCommodityRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\ReceiveRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\RoleRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\SessionAttemptRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\SessionHistoryRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\SettingRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\ShippingInstructionRepository.cs" />
-    <Compile Include="Repository\SMSRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\StoreRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\TransactionGroupRepository.cs" />
-    <Compile Include="Repository\TransactionRepository.cs" />
-    <Compile Include="Repository\TransporterRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\UnitRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\UserProfileRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\UserRoleRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\UserWarehouseRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\HubOwnerRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\HubRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\HubSettingRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Repository\HubSettingValueRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UnitOfWork.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UnitOfWork.tt</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\Account.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -748,9 +752,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\AvailableReceiptAllocations.cs" />
-    <Compile Include="Helpers\BaseEntities.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ViewModels\BinCardModels.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -901,28 +902,11 @@
     <None Include="App.Config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Repository\Generated\RepositoryGenerator.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>RepositoryGenerator.cs</LastGenOutput>
-    </None>
-    <None Include="UnitOfWork.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>UnitOfWork.cs</LastGenOutput>
-    </None>
-    <None Include="IUnitOfWork.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IUnitOfWork.cs</LastGenOutput>
-    </None>
+    <None Include="Properties\DataSources\DRMFSSEntities1.datasource" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EntityDeploy Include="DRMFSS.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DRMFSS.Designer.cs</LastGenOutput>
-    </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Partials\Generator\" />

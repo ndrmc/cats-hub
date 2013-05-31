@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Data;
 using System.Data.Objects;
@@ -8,10 +10,15 @@ using System.Reflection;
 using System.Data.Objects.DataClasses;
 using System.Runtime.Serialization;
 using System.IO;
+using System.Data.Entity;
+using System.Data.SqlClient;
+
 
 namespace DRMFSS.BLL
 {
-    partial class DRMFSSEntities1
+   
+  
+    partial class CTSContext
     {
         /// <summary>
         /// 
@@ -23,15 +30,22 @@ namespace DRMFSS.BLL
             D
         }
 
-        private string userName;
+        public class ProcParam
+        {
+           
+            public object Value { get; set; }
+            public string ParmName { get; set; }
+        }
 
+        private string userName;
+       
 
         private List<BLL.Audit> auditTrailList = new List<BLL.Audit>();
 
         /// <summary>
         /// Called when [context created].
         /// </summary>
-        partial void OnContextCreated()
+      /*  partial void OnContextCreated()
         {
             HttpContext context = HttpContext.Current;
             if (context != null && context.Request.IsAuthenticated && context.User != null)
@@ -43,14 +57,14 @@ namespace DRMFSS.BLL
                 userName = "Anonymous";
             }
             this.SavingChanges += new EventHandler(DRMFSSEntities_SavingChanges);
-        }
+        }*/
 
         /// <summary>
         /// Handles the SavingChanges event of the DRMFSSEntities control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void DRMFSSEntities_SavingChanges(object sender, EventArgs e)
+      /*  private void DRMFSSEntities_SavingChanges(object sender, EventArgs e)
         {
             IEnumerable<ObjectStateEntry> changes =
                 this.ObjectStateManager.GetObjectStateEntries(EntityState.Added | EntityState.Deleted |
@@ -78,7 +92,7 @@ namespace DRMFSS.BLL
                     this.AddToAudits(audit);
                 }
             }
-        }
+        }*/
 
         //TODO: Revise this method and make it work again.
         /// <summary>
@@ -89,6 +103,7 @@ namespace DRMFSS.BLL
         /// <returns></returns>
         private List<BLL.Audit> AuditTrailFactory(ObjectStateEntry entry, string UserName)
         {
+           
             //return null;
             IUnitOfWork repository = new UnitOfWork();
             List<BLL.Audit> audits = new List<BLL.Audit>();
@@ -146,8 +161,9 @@ namespace DRMFSS.BLL
                 }
                 else
                 {
+                    /*
                     //entry is modified
-                    DRMFSSEntities1 entities = new DRMFSSEntities1();
+                    CTSContext entities = new CTSContext();
                     object orgentry = entities.GetObjectByKey(entry.EntityKey);
                     if (orgentry != null)
                     {
@@ -183,7 +199,7 @@ namespace DRMFSS.BLL
                         }
                         entities.Dispose(true);
 
-                    }
+                    }*/
                 }
 
                 return audits;
@@ -194,5 +210,137 @@ namespace DRMFSS.BLL
             }
         }
 
+
+        private ObjectResult<T> ExecProcedure<T>(string procedureName,string entitySetName,params ProcParam[] param) where T:class
+        {
+            
+                // If using Code First we need to make sure the model is built before we open the connection
+                // This isn't required for models created with the EF Designer
+                Database.Initialize(force: false);
+              
+                // Create a SQL command to execute the sproc
+                var cmd = Database.Connection.CreateCommand();
+                cmd.CommandText = procedureName;
+
+                foreach (var procParam in param)
+                {
+                    var dbParam = new SqlParameter(procParam.ParmName, procParam.Value);
+
+                    cmd.Parameters.Add(dbParam);
+                }
+
+                try
+                {
+
+                    Database.Connection.Open();
+                    // Run the sproc 
+                    var reader = cmd.ExecuteReader();
+
+                    // Read Blogs from the first result set
+                    var result = ((IObjectContextAdapter)this)
+                        .ObjectContext
+                        .Translate<T>(reader, entitySetName, MergeOption.AppendOnly);
+
+                    return result;
+
+                }
+                finally
+                {
+                    Database.Connection.Close();
+                }
+            
+        } 
+    
+        public ObjectResult<RPT_MonthGiftSummary_Result> GetMonthlySummary()
+        {
+            return ExecProcedure<RPT_MonthGiftSummary_Result>("GetMonthlyGiftSummary", "RPT_MonthGiftSummary_Results");
+        }
+        public ObjectResult<RPT_Distribution_Result> RPT_Distribution(int hubId)
+        {
+            return ExecProcedure<RPT_Distribution_Result>("RPT_Distribution", "RPT_Distributions", new ProcParam() { ParmName = "hubId",Value=hubId });
+        } 
+         public ObjectResult<RPT_Distribution_Result> RPT_ReceiptReport(int hubID, DateTime sTime, DateTime eTime)
+        {
+            return ExecProcedure<RPT_Distribution_Result>("RPT_Distribution", "RPT_Distributions", 
+                new ProcParam() { ParmName = "hubId",Value=hubID },
+                new ProcParam(){ParmName="sTime",Value=sTime},
+                new ProcParam(){ParmName="eTime",Value=eTime}
+                );
+        } 
+     
+public ObjectResult<RPT_Distribution_Result> RPT_Offloading(int hubID, DateTime sTime, DateTime eTime)
+        {
+            return ExecProcedure<RPT_Distribution_Result>("RPT_Offloading", "RPT_Offloadings", 
+                new ProcParam() { ParmName = "hubId",Value=hubID },
+                new ProcParam(){ParmName="sTime",Value=sTime},
+                new ProcParam(){ParmName="eTime",Value=eTime}
+                );
+        }
+        public ObjectResult<RPT_Distribution_Result> util_GetDispatchedAllocationFromSI(int hubId, int sis)
+        {
+            return ExecProcedure<RPT_Distribution_Result>("util_GetDispatchedAllocationFromSI_Result", "util_GetDispatchedAllocationFromSI_Results",
+                new ProcParam() { ParmName = "hubId", Value = hubId },
+                new ProcParam() { ParmName = "sis", Value = sis }
+                );
+        }
+        public ObjectResult<BinCardReport> RPT_BinCardNonFood(int hubID, int? StoreID, int? CommodityID, string ProjectID)
+        {
+            return ExecProcedure<BinCardReport>("RPT_BinCardNonFood", "RPT_BinCardNonFoods",
+                new ProcParam() { ParmName = "hubId", Value = hubID },
+                new ProcParam() { ParmName = "StoreID", Value = StoreID },
+                  new ProcParam() { ParmName = "CommodityID", Value = CommodityID },
+                new ProcParam() { ParmName = "ProjectID", Value = ProjectID }
+                );
+        }
+        public ObjectResult<BinCardReport> RPT_BinCard(int hubID, int? StoreID, int? CommodityID, string ProjectID)
+       {
+            return ExecProcedure<BinCardReport>("RPT_BinCard", "RPT_BinCardNonFoods",
+                new ProcParam() { ParmName = "hubId", Value = hubID },
+                new ProcParam() { ParmName = "StoreID", Value = StoreID },
+                  new ProcParam() { ParmName = "CommodityID", Value = CommodityID },
+                new ProcParam() { ParmName = "ProjectID", Value = ProjectID }
+                );
+        }
+
+        public ObjectResult<RPT_MonthlyGiftSummary_Result> GetMonthlyGiftSummaryETA()
+        {
+            return ExecProcedure<RPT_MonthlyGiftSummary_Result>("GetMonthlyGiftSummaryETA", "RPT_MonthlyGiftSummary_Results");
+        }
+        public ObjectResult<RPT_MonthlyGiftSummary_Result> GetMonthlyGiftSummary()
+        {
+            return ExecProcedure<RPT_MonthlyGiftSummary_Result>("RPT_MonthlyGiftSummary", "RPT_MonthlyGiftSummary_Results");
+        }
+        public ObjectResult<StockStatusReport> RPT_StockStatus(int hubID, int commodityID)
+        {
+            return ExecProcedure<StockStatusReport>("RPT_StockStatus", "StockStatusReports",
+                new ProcParam() { ParmName = "hubId", Value = hubID },
+                  new ProcParam() { ParmName = "CommodityID", Value = commodityID });
+        } 
+        public ObjectResult<StockStatusReport> RPT_StockStatusNonFood(int? hubID, int? commodityID)
+        {
+            return ExecProcedure<StockStatusReport>("RPT_StockStatusNonFood", "StockStatusReports",
+                new ProcParam() { ParmName = "hubId", Value = hubID },
+                  new ProcParam() { ParmName = "CommodityID", Value = commodityID });
+        }
+        public ObjectResult<StatusReportBySI_Result> GetStatusReportBySI(int? hubID)
+        {
+            return ExecProcedure<StatusReportBySI_Result>("GetStatusReportBySI", "StatusReportBySI_Results",
+                new ProcParam() { ParmName = "hubId", Value = hubID });
+        }
+        public ObjectResult<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int? hubID)
+        {
+            return ExecProcedure<DispatchFulfillmentStatus_Result>("GetDispatchFulfillmentStatus", "DispatchFulfillmentStatus_Results",
+                new ProcParam() { ParmName = "hubId", Value = hubID });
+        }
+
+        public ObjectResult<DispatchFulfillmentStatus_Result> GetAllLossAndAdjustmentLog( )
+        {
+            return ExecProcedure<DispatchFulfillmentStatus_Result>("GetDispatchFulfillmentStatus", "DispatchFulfillmentStatus_Results" );
+        } 
+        /**
+         * 
+         * 
+         */
+ 
     }
 }

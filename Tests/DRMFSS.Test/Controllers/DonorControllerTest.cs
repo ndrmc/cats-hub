@@ -82,7 +82,7 @@ namespace DRMFSS.Test.Controllers
         {
             DonorController controller = new DonorController();
             ViewResult view = controller.Index();
-            Assert.AreEqual(((List<BLL.Donor>)view.ViewData.Model).Count, new BLL.DRMFSSEntities1().Donors.Count());
+            Assert.AreEqual(((List<BLL.Donor>)view.ViewData.Model).Count, new BLL.CTSContext().Donors.Count());
         }
 
 

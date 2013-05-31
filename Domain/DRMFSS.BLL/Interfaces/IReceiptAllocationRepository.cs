@@ -8,7 +8,7 @@ using DRMFSS.Web.Models;
 
 namespace DRMFSS.BLL.Interfaces
 {
-    public interface IReceiptAllocationRepository : IRepository<ReceiptAllocation>
+    public interface IReceiptAllocationRepository : IGenericRepository<ReceiptAllocation>,IRepository<ReceiptAllocation>
     {
         /// <summary>
         /// Finds the by SI number.

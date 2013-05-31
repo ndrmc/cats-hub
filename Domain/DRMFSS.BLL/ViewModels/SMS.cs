@@ -12,7 +12,7 @@ namespace DRMFSS.BLL
     {
         public static void SendSMS(int fdpId, string text)
         {
-            DRMFSSEntities1 db = new DRMFSSEntities1();
+            CTSContext db = new CTSContext();
             var contacts = (from contact in db.Contacts
                             where contact.FDPID == fdpId
                             select contact).ToList();
@@ -20,7 +20,7 @@ namespace DRMFSS.BLL
             {
   //              INSERT SMS (InOutInd, MobileNumber, Text, RequestDate, SendAfterDate, Status, StatusDate, Attempts, EventTag)
   //VALUES ('O', @MobileNumber, @SMSMessage, @Today, @SendAfterDate, 'pending', @Today, 0, 'SEND_SMS')
-                SMS sms = new SMS();
+                SMS sms = new DRMFSS.BLL.SMS();
                 sms.Attempts = 0;
                 sms.EventTag = "SEND_SMS";
                 sms.InOutInd = "O";
@@ -32,7 +32,7 @@ namespace DRMFSS.BLL
                 sms.Status = "pending";
                 sms.StatusDate = DateTime.Today;
 
-                db.SMS.AddObject(sms);
+                db.SMS.Add(sms);
                 //try
                 //{
                     

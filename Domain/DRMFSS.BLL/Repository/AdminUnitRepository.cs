@@ -8,9 +8,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class AdminUnitRepository : IAdminUnitRepository
+    public partial class AdminUnitRepository : GenericRepository<CTSContext,AdminUnit>,IAdminUnitRepository
     {
-     
+        public AdminUnitRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         public const int  WOREDATYPE = 4;
         public const int REGIONTYPE = 2;
         public const int ZONETYPE = 3;
@@ -31,8 +35,10 @@ namespace DRMFSS.BLL.Repository
         /// <returns>List<AdminUnit></returns>
         public List<AdminUnit> GetRegions()
         {
-            return new DRMFSSEntities1().AdminUnits
-                .Where(u => u.AdminUnitTypeID == 1).ToList();
+
+            return new CTSContext().AdminUnits
+                .Where(u => u.AdminUnitTypeID == 2).ToList();
+
         }
 
         /// <summary>
@@ -42,7 +48,7 @@ namespace DRMFSS.BLL.Repository
         /// <returns></returns>
         public int GetRegionByZoneId(int zoneId)
         {
-            return (from u in new DRMFSSEntities1().AdminUnits
+            return (from u in new CTSContext().AdminUnits
                     where u.AdminUnitID == zoneId
                     select u.ParentID.Value).Single();
         }
@@ -82,7 +88,7 @@ namespace DRMFSS.BLL.Repository
         /// <returns></returns>
         public List<AdminUnit> GetAllWoredas()
         {
-            return new DRMFSSEntities1().AdminUnits.Include("AdminUnit2").
+            return new CTSContext().AdminUnits.Include("AdminUnit2").
                 Where(p => p.AdminUnitTypeID == WOREDATYPE).OrderBy(q => q.Name).ToList();
         }
 
@@ -93,7 +99,7 @@ namespace DRMFSS.BLL.Repository
         /// <returns></returns>
         public List<AdminUnit> GetWoredasByRegion(int regionId)
         {
-            return new DRMFSSEntities1().AdminUnits.Include("AdminUnit2").
+            return new CTSContext().AdminUnits.Include("AdminUnit2").
                 Where(p => p.AdminUnitTypeID == WOREDATYPE && p.AdminUnit2.ParentID == regionId).OrderBy(q => q.Name).ToList();
         }
 
@@ -195,6 +201,29 @@ namespace DRMFSS.BLL.Repository
          );
 
 
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if(original==null) return false;
+            db.AdminUnits.Remove(original);
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public AdminUnit FindById(int id)
+        {
+            return db.AdminUnits.FirstOrDefault(t => t.AdminUnitID == id);
+        }
+
+        public AdminUnit FindById(System.Guid id)
+        {
+            return null;
         }
     }
 }

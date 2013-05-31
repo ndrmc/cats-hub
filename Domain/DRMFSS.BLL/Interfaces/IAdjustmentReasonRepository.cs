@@ -5,8 +5,13 @@ using System.Text;
 
 namespace DRMFSS.BLL.Interfaces
 {
-    public interface IAdjustmentReasonRepository : IRepository<AdjustmentReason>
+
+    public interface IAdjustmentReasonRepository :
+          IGenericRepository<AdjustmentReason>,IRepository<AdjustmentReason>
     {
 
+
     }
+         
+      
 }

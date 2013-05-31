@@ -13,9 +13,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class ReceiveRepository : IReceiveRepository
+    public partial class ReceiveRepository : GenericRepository<CTSContext,Receive>,IReceiveRepository
     {
-
+        public ReceiveRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        } 
         /// <summary>
         /// Bies the hub id.
         /// </summary>
@@ -65,6 +69,31 @@ namespace DRMFSS.BLL.Repository
                                     });
 
             return query.ToList();
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.Receives.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Receive FindById(int id)
+        {
+            return null;
+        }
+
+        public Receive FindById(System.Guid id)
+        {
+            return db.Receives.FirstOrDefault(t => t.ReceiveID == id);
+
         }
     }
 }

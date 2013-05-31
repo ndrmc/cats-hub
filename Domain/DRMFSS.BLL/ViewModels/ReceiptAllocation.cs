@@ -10,10 +10,13 @@ namespace DRMFSS.BLL
 
     public partial class ReceiptAllocation
     {
+        [NotMapped]
         public bool UserNotAllowedHub { set; get; }
 
+        [NotMapped]
         public Decimal RemainingBalanceInUnit { get; set; }
 
+        [NotMapped]
         public Decimal ReceivedQuantityInUnit
         {
             set { ; }
@@ -26,16 +29,16 @@ namespace DRMFSS.BLL
                }
 
         }
-
+        [NotMapped]
         public Decimal RemainingBalanceInMt { set; get; }
-        
+        [NotMapped]
         public Decimal ReceivedQuantityInMT
         {
             set { ; }
             get { return this.QuantityInMT - RemainingBalanceInMt; }
             
         } // { return GetReceivedAlready(this); } 
-        
+        [NotMapped]
         public string CommodityName { set;  get; }
 
         public decimal GetReceivedAlready(ReceiptAllocation receiptAllocation )

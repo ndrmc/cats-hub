@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Objects.DataClasses;
 using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+
 
 namespace DRMFSS.BLL
 {
@@ -123,5 +123,4 @@ namespace DRMFSS.BLL
            IUserRoleRepository UserRole { get; set; }
         	   }
 }
-
 

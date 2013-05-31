@@ -9,9 +9,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class FDPRepository : IFDPRepository 
+    public partial class FDPRepository :GenericRepository<CTSContext,FDP>, IFDPRepository 
     {
-
+        public FDPRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the FDPs by region.
         /// </summary>
@@ -48,5 +52,28 @@ namespace DRMFSS.BLL.Repository
             throw new NotImplementedException();
         }
 
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if(original==null) return false;
+            db.FDPs.Remove(original);
+            return true;
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            return false;
+        }
+
+        public FDP FindById(int id)
+        {
+            return db.FDPs.FirstOrDefault(t => t.FDPID == id);
+        }
+
+        public FDP FindById(Guid id)
+        {
+            return null;
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace DRMFSS.BLL
 
         public static BLL.Unit GetUnitByName(string name)
         {
-            return new DRMFSSEntities1().Units.Where(u => u.Name == name).SingleOrDefault();
+            return new CTSContext().Units.Where(u => u.Name == name).SingleOrDefault();
         }
 
     }

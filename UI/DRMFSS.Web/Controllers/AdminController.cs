@@ -13,7 +13,7 @@ namespace DRMFSS.Web.Controllers
 {
     public partial class AdminController : BaseController
     {
-        DRMFSSEntities1 db = new DRMFSSEntities1();
+        CTSContext db = new CTSContext();
         IUnitOfWork repository = new BLL.UnitOfWork();
         public virtual ViewResult Index()
         {
@@ -85,7 +85,7 @@ namespace DRMFSS.Web.Controllers
             {
                 userprofile.Password = cachedProfile.Password;
                 db.UserProfiles.Attach(userprofile);
-                db.ObjectStateManager.ChangeObjectState(userprofile, EntityState.Modified);
+                db.Entry(userprofile).State = EntityState.Modified;
                 db.SaveChanges();
                 Session.Remove("SELECTEDUSER");
                 return Json(new { success = true }); ;
@@ -110,7 +110,7 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult DeleteConfirmed(int id)
         {            
             UserProfile userprofile = db.UserProfiles.Single(u => u.UserProfileID == id);
-            db.UserProfiles.DeleteObject(userprofile);
+            db.UserProfiles.Remove(userprofile);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -198,7 +198,7 @@ namespace DRMFSS.Web.Controllers
         private List<Models.UserRoleModel> GetUserRoles(string userName)
         {
             string[] roles = Roles.GetRolesForUser(userName);
-            BLL.DRMFSSEntities1 entities = new BLL.DRMFSSEntities1();
+            BLL.CTSContext entities = new BLL.CTSContext();
             var userRoles = from role in entities.Roles
                             select new Models.UserRoleModel() { RoleId = role.RoleID, RoleName = role.Name, Selected = roles.Contains(role.Name),SortOrder = role.SortOrder};
             return userRoles.ToList();

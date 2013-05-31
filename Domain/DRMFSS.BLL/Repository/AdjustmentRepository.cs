@@ -7,8 +7,13 @@ using DRMFSS.BLL.ViewModels;
 
 namespace DRMFSS.BLL.Repository
 {
-   partial class AdjustmentRepository : IAdjustmentRepository
+   partial class AdjustmentRepository :GenericRepository<CTSContext,Adjustment> ,IAdjustmentRepository
     {
+       public AdjustmentRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         public List<ViewModels.LossAndAdjustmentLogViewModel> GetAllLossAndAdjustmentLog(int hubId)
         {
             List<ViewModels.LossAndAdjustmentLogViewModel> lossAndAdjustmentsViewModel = new List<ViewModels.LossAndAdjustmentLogViewModel>();
@@ -35,6 +40,33 @@ namespace DRMFSS.BLL.Repository
         public void AddNewLossAndAdjustment(ViewModels.LossesAndAdjustmentsViewModel viewModel, UserProfile user)
         {
             repository.Transaction.SaveLossAdjustmentTransaction(viewModel, user);
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+
+            this.db.Adjustments.Remove(original);
+            this.db.SaveChanges();
+            return true;
+
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            return false;
+        }
+
+        public Adjustment FindById(Guid id)
+        { return db.Adjustments.SingleOrDefault(p => p.AdjustmentID == id);
+           
+        }
+
+        public Adjustment FindById(int id)
+        {
+            return null;
+
         }
     }
 }

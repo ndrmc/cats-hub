@@ -10,8 +10,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class DonorRepository : IDonorRepository
+    public partial class DonorRepository :GenericRepository<CTSContext,Donor>, IDonorRepository
     {
+        public DonorRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -51,6 +56,29 @@ namespace DRMFSS.BLL.Repository
             return !(from v in db.Donors
                     where v.DonorCode == DonorCode && v.DonorID != DonorID
                     select v).Any();
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if(original==null) return false;
+            db.Donors.Remove(original);
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Donor FindById(int id)
+        {
+            return db.Donors.SingleOrDefault(t => t.DonorID == id);
+        }
+
+        public Donor FindById(System.Guid id)
+        {
+            return null;
         }
     }
 }

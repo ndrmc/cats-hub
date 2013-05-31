@@ -8,7 +8,7 @@ namespace DRMFSS.BLL.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    public interface ITransactionRepository: IRepository<Transaction>
+    public interface ITransactionRepository: IGenericRepository<Transaction>,IRepository<Transaction>
     {
         /// <summary>
         /// Gets the active accounts for ledger.

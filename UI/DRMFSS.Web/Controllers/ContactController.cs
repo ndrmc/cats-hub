@@ -13,7 +13,7 @@ namespace DRMFSS.Web.Controllers
 {
     public class ContactController : BaseController
     {
-        private DRMFSSEntities1 db = new DRMFSSEntities1();
+        private CTSContext db = new CTSContext();
 
         private IUnitOfWork repository;
 

@@ -193,7 +193,7 @@ namespace DRMFSS.Web.Models
                 giftCertificateViewModel.CommodityTypeID = 1;//by default 'food' 
             giftCertificateViewModel.GiftCertificateDetails =
                GiftCertificateDetailsViewModel.GenerateListOfGiftCertificateDetailsViewModel(
-                   GiftCertificateModel.GiftCertificateDetails);
+                   GiftCertificateModel.GiftCertificateDetails.ToList());
 
 
             return giftCertificateViewModel;

@@ -12,8 +12,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class ProjectCodeRepository : IProjectCodeRepository
+    public partial class ProjectCodeRepository :GenericRepository<CTSContext,ProjectCode>, IProjectCodeRepository
     {
+        public ProjectCodeRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        } 
         /// <summary>
         /// Gets the project code id.
         /// </summary>
@@ -54,7 +59,7 @@ namespace DRMFSS.BLL.Repository
                 {
                     Value = projectNumber.ToUpperInvariant()
                 };
-                db.ProjectCodes.AddObject(newProjectCode);
+                db.ProjectCodes.Add(newProjectCode);
                 db.SaveChanges();
                 return newProjectCode;
             }
@@ -80,6 +85,31 @@ namespace DRMFSS.BLL.Repository
                                         {ProjectCodeId = v.ProjectCodeID, ProjectName = v.ProjectCode.Value}).Distinct()
                 .ToList();
             return projectCodes;
-        } 
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.ProjectCodes.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public ProjectCode FindById(int id)
+        {
+           return db.ProjectCodes.FirstOrDefault(t => t.ProjectCodeID == id);
+        }
+
+        public ProjectCode FindById(System.Guid id)
+        {
+            return null; 
+
+        }
     }
 }

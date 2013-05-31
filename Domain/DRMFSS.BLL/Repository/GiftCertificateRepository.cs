@@ -8,10 +8,14 @@ using System.Data.Objects;
 
 namespace DRMFSS.BLL.Repository
 {
-    public partial class GiftCertificateRepository : IGiftCertificateRepository
+    public partial class GiftCertificateRepository :GenericRepository<CTSContext,GiftCertificate>, IGiftCertificateRepository
     {
 
-
+        public GiftCertificateRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the monthly summary.
         /// </summary>
@@ -58,7 +62,7 @@ namespace DRMFSS.BLL.Repository
                     BLL.GiftCertificateDetail deletedGiftDetails = db.GiftCertificateDetails.SingleOrDefault(p => p.GiftCertificateDetailID == delete.GiftCertificateDetailID);
                     if (deletedGiftDetails != null)
                     {
-                        db.GiftCertificateDetails.DeleteObject(deletedGiftDetails);
+                        db.GiftCertificateDetails.Remove(deletedGiftDetails);
                     }
                 }
 
@@ -118,6 +122,32 @@ namespace DRMFSS.BLL.Repository
                         select new SIBalance() { SINumber = si.Key, AvailableBalance = si.Sum(p => p.WeightInMT) }).ToList();
 
             return list;
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.GiftCertificates.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public GiftCertificate FindById(int id)
+        {
+
+            return db.GiftCertificates.FirstOrDefault(t => t.GiftCertificateID == id);
+        }
+
+        public GiftCertificate FindById(System.Guid id)
+        {
+
+            return null;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace DRMFSS.BLL
     
     partial class Store
     {
+        [NotMapped]
         public List<int> Stacks
         {
             get

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
@@ -31,6 +32,7 @@ namespace DRMFSS.BLL
        /// <value>
        /// The name of the entity.
        /// </value>
+        [NotMapped]
        public string EntityName
        {
            get

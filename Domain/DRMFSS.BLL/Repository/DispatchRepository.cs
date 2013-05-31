@@ -12,8 +12,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class DispatchRepository : IDispatchRepository
+    public partial class DispatchRepository :GenericRepository<CTSContext,Dispatch>, IDispatchRepository
     {
+        public DispatchRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         public Dispatch GetDispatchByGIN(string ginNo)
         {
             return db.Dispatches.FirstOrDefault(p => p.GIN == ginNo);
@@ -161,6 +166,31 @@ namespace DRMFSS.BLL.Repository
                          });
 
             return query.ToList();
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.Dispatches.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Dispatch FindById(int id)
+        {
+           return null;
+        }
+
+        public Dispatch FindById(System.Guid id)
+        { return db.Dispatches.FirstOrDefault(t => t.DispatchID == id);
+            
+
         }
     }
 }

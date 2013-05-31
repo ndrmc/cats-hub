@@ -8,6 +8,7 @@ namespace DRMFSS.BLL.Repository
 {
     public static class ConstantsRepository
     {
+
         /// <summary>
         /// 
         /// </summary>

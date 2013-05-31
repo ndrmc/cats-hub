@@ -24,7 +24,7 @@ namespace DRMFSS.BLL
         /// <returns></returns>
         public static Receive GetReceiveByGRN(string grnNo)
         {
-            DRMFSSEntities1 entities = new DRMFSSEntities1();
+            CTSContext entities = new CTSContext();
             return entities.Receives.FirstOrDefault(p => p.GRN == grnNo);
         }
 
@@ -37,7 +37,7 @@ namespace DRMFSS.BLL
         public void Update(List<BLL.ReceiveDetail> inserted, List<BLL.ReceiveDetail> updated,
             List<BLL.ReceiveDetail> deleted)
         {
-            DRMFSSEntities1 db = new DRMFSSEntities1();
+            CTSContext db = new CTSContext();
             BLL.Receive orginal = db.Receives.SingleOrDefault(p => p.ReceiveID == this.ReceiveID);
             if (orginal != null)
             {

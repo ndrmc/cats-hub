@@ -4,7 +4,7 @@ namespace DRMFSS.BLL.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    public interface ITransactionGroupRepository :  IRepository<TransactionGroup>
+    public interface ITransactionGroupRepository :  IGenericRepository<TransactionGroup>,IRepository<TransactionGroup>
     {
         /// <summary>
         /// Gets the last trasaction group id.

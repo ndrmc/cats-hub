@@ -152,7 +152,7 @@ namespace DRMFSS.Web
         {
             if (ValidateUser(username, oldPassword))
             {
-                var context = new DRMFSSEntities1();
+                var context = new CTSContext();
                 UserProfile user = context.UserProfiles.Where(p => p.UserName == username).SingleOrDefault();
                 if (user != null)
                 {
@@ -240,7 +240,7 @@ namespace DRMFSS.Web
 
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
-            var entities = new DRMFSSEntities1();
+            var entities = new CTSContext();
             UserProfile user = (from u in entities.UserProfiles
                                 where u.UserName == username
                                 select u).SingleOrDefault();
@@ -257,7 +257,7 @@ namespace DRMFSS.Web
         //TODO: remove the context here.
         public override string GetUserNameByEmail(string email)
         {
-            var entities = new DRMFSSEntities1();
+            var entities = new CTSContext() ;
             UserProfile user = (from u in entities.UserProfiles
                                 where u.Email == email
                                 select u).SingleOrDefault();
@@ -282,7 +282,7 @@ namespace DRMFSS.Web
         // TODO: Remove the context here.
         public override bool ValidateUser(string username, string password)
         {
-            var entities = new DRMFSSEntities1();
+            var entities = new CTSContext();
             string pass = MD5Hashing.MD5Hash(password);
             UserProfile user = (from u in entities.UserProfiles
                                 where u.UserName == username && u.Password == pass &&

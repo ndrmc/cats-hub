@@ -30,7 +30,7 @@ namespace DRMFSS.BLL
         public void Update(List<BLL.DispatchDetail> inserted, List<BLL.DispatchDetail> updated, 
             List<BLL.DispatchDetail> deleted)
         {
-            DRMFSSEntities1 db = new DRMFSSEntities1();
+            CTSContext db = new CTSContext();
             BLL.Dispatch orginal = db.Dispatches.Where(p => p.DispatchID == this.DispatchID).SingleOrDefault();
                     if (orginal != null)
                     {
@@ -86,7 +86,7 @@ namespace DRMFSS.BLL
         public string GetSMSText()
         {
             StringBuilder builder = new StringBuilder();
-            DRMFSSEntities1 entities = new DRMFSSEntities1();
+            CTSContext entities = new CTSContext();
             BLL.Dispatch dispatch  = entities.Dispatches.Where(d => d.DispatchID == this.DispatchID).SingleOrDefault();
             if (dispatch != null)
             {

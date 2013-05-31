@@ -7,7 +7,7 @@ namespace DRMFSS.BLL
     
     partial class Setting
     {        
-        DRMFSSEntities1 context = new DRMFSSEntities1();
+        CTSContext context = new CTSContext();
 
         public Setting GetSetting(string key)
         {            
@@ -15,7 +15,7 @@ namespace DRMFSS.BLL
 
             //if (set != null)
             //{
-            //    // success
+            //    // successs
             //    s.ID = set.ID;
             //    s.Value = set.Value;
             //    s.Key = key;
@@ -42,7 +42,7 @@ namespace DRMFSS.BLL
             }
             else
             {
-                context.Settings.AddObject(s);
+                context.Settings.Add(s);
 
                 context.SaveChanges();
             }
@@ -63,7 +63,7 @@ namespace DRMFSS.BLL
 
         public void AddSetting(Setting s)
         {
-            context.Settings.AddObject(s);
+            context.Settings.Add(s);
             
             context.SaveChanges();
         }

@@ -10,8 +10,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class PeriodRepository : IPeriodRepository
+    public partial class PeriodRepository :GenericRepository<CTSContext,Period>, IPeriodRepository
     {
+        public PeriodRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        } 
         /// <summary>
         /// Gets the years.
         /// </summary>
@@ -41,6 +46,31 @@ namespace DRMFSS.BLL.Repository
         public BLL.Period GetPeriod(int year, int month)
         {
             return db.Periods.Where(p => p.Year == year && p.Month == month).SingleOrDefault();
+        }
+
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.Periods.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Period FindById(int id)
+        {
+            return db.Periods.FirstOrDefault(t => t.PeriodID == id);
+        }
+
+        public Period FindById(System.Guid id)
+        {
+            return null;
         }
     }
 }

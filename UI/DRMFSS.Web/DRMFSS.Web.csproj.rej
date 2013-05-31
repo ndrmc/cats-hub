@@ -1,0 +1,12 @@
+diff a/UI/DRMFSS.Web/DRMFSS.Web.csproj b/UI/DRMFSS.Web/DRMFSS.Web.csproj	(rejected hunks)
+@@ -124,10 +124,6 @@
+      <Reference Include="DevExpress.XtraReports.v11.2, Version=11.2.10.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+        <Private>True</Private>
+      </Reference>
+--    <Reference Include="Elmah">
+--      <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+-       <Private>True</Private>
+--    </Reference>
+ -    <Reference Include="EntityFramework, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+ -      <SpecificVersion>False</SpecificVersion>
+ -      <HintPath>..\..\packages\EntityFramework.4.3.0\lib\net40\EntityFramework.dll</HintPath>

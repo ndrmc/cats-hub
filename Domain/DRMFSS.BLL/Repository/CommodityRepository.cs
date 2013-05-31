@@ -12,9 +12,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class CommodityRepository : ICommodityRepository
+    public partial class CommodityRepository :GenericRepository<CTSContext,Commodity> ,ICommodityRepository
     {
-
+        public CommodityRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Gets the name of the commodity by.
         /// </summary>
@@ -65,7 +69,7 @@ namespace DRMFSS.BLL.Repository
         /// </returns>
         public bool IsNameValid(int? CommodityID, string Name)
         {
-           return  !(from v in db.Commodities
+            return !(from v in db.Commodities
                            where v.Name == Name && CommodityID != v.CommodityID
                            select v).Any();
         }
@@ -90,6 +94,27 @@ namespace DRMFSS.BLL.Repository
             var commodities = (from c in db.Commodities where c.ParentID == null select new ViewModels.Common.CommodityViewModel() { CommodityId = c.CommodityID, CommodityName = c.Name }).ToList();
             commodities.Insert(0, new ViewModels.Common.CommodityViewModel { CommodityName = "All Commodities" });
             return commodities;
+        }
+
+
+        public bool DeleteByID(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Commodity FindById(int id)
+        {
+            return db.Commodities.FirstOrDefault(t => t.CommodityID == id);
+        }
+
+        public Commodity FindById(Guid id)
+        {
+            return null;
         }
     }
 }

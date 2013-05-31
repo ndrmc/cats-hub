@@ -1,13 +1,16 @@
-using System;
-namespace DRMFSS.BLL.Interfaces
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DRMFSS.BLL.Repository;
 
+namespace DRMFSS.BLL.Interfaces
 {
-    /// <summary>
-    /// Account Repository
-    /// </summary>
-    public interface IAccountRepository : IRepository<Account>
+
+
+    public interface IAccountRepository :
+          IGenericRepository<Account>,IRepository<Account>
     {
-       
         /// <summary>
         /// Gets the account ID with create.
         /// </summary>
@@ -22,5 +25,10 @@ namespace DRMFSS.BLL.Interfaces
         /// <param name="EntityID">The entity ID.</param>
         /// <returns></returns>
         int GetAccountID(string EntityType, int EntityID);
+
     }
+         
+      
+         
+      
 }

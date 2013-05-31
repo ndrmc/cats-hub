@@ -1,0 +1,14 @@
+diff a/Tests/DRMFSS.Test/DRMFSS.Test.csproj b/Tests/DRMFSS.Test/DRMFSS.Test.csproj	(rejected hunks)
+@@ -69,7 +69,12 @@
+ +      <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+      </Reference>
+      <Reference Include="EntityFramework">
+++<<<<<<< HEAD
+ +      <HintPath>..\..\packages\EntityFramework.4.1.10331.0\lib\EntityFramework.dll</HintPath>
+++=======
++       <HintPath>..\..\packages\EntityFramework.4.3.0\lib\net40\EntityFramework.dll</HintPath>
++       <Private>True</Private>
+++>>>>>>> b0917822dcd13909e75355275ee11852d22f3d2e
+      </Reference>
+      <Reference Include="Microsoft.CSharp" />
+      <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />

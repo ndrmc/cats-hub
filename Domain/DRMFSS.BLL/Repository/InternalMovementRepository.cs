@@ -6,9 +6,13 @@ using DRMFSS.BLL.Interfaces;
 
 namespace DRMFSS.BLL.Repository
 {
-    partial class InternalMovementRepository : IInternalMovementRepository
+    partial class InternalMovementRepository :GenericRepository<CTSContext,InternalMovement>, IInternalMovementRepository
     {
-        
+        public InternalMovementRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        } 
         public void AddNewInternalMovement(ViewModels.InternalMovementViewModel viewModel, UserProfile user)
         {
             repository.Transaction.SaveInternalMovementTrasnsaction(viewModel, user);
@@ -59,6 +63,35 @@ namespace DRMFSS.BLL.Repository
             }
 
             return internalMovmentLogViewModel;
+        }
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+
+            this.db.InternalMovements.Remove(original);
+            this.db.SaveChanges();
+            return true;
+
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            return false;
+        }
+
+        public InternalMovement FindById(Guid id)
+        {
+            return db.InternalMovements.SingleOrDefault(p => p.InternalMovementID == id);
+
+        }
+
+        public InternalMovement FindById(int id)
+        {
+            return null;
+
+
         }
     }
 }

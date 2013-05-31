@@ -12,7 +12,7 @@ namespace DRMFSS.Web.Controllers
      [Authorize]
     public partial class UnitController : BaseController
     {
-        private DRMFSSEntities1 db = new DRMFSSEntities1();
+         private CTSContext db = new CTSContext();
 
         //
         // GET: /Unit/
@@ -52,7 +52,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Units.AddObject(unit);
+                db.Units.Add(unit);
                 db.SaveChanges();
                 return Json(new { success = true }); 
             }
@@ -79,7 +79,7 @@ namespace DRMFSS.Web.Controllers
             if (ModelState.IsValid)
             {
                 db.Units.Attach(unit);
-                db.ObjectStateManager.ChangeObjectState(unit, EntityState.Modified);
+                db.Entry(unit).State=EntityState.Modified;
                 db.SaveChanges();                       
                 //return RedirectToAction("Index");
                 return Json(new { success = true });
@@ -104,7 +104,7 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult DeleteConfirmed(int id)
         {            
             Unit unit = db.Units.Single(u => u.UnitID == id);
-            db.Units.DeleteObject(unit);
+            db.Units.Remove(unit);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

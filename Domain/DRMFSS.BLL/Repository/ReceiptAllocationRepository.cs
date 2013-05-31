@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Data.Objects;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class ReceiptAllocationRepository : IReceiptAllocationRepository
+    public partial class ReceiptAllocationRepository : GenericRepository<CTSContext, ReceiptAllocation>, IReceiptAllocationRepository
     {
+        public ReceiptAllocationRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         /// <summary>
         /// Finds the by SI number.
         /// </summary>
@@ -65,10 +71,10 @@ namespace DRMFSS.BLL.Repository
             decimal total = 0;
 
             var data = (from ra in db.ReceiptAllocations
-                        where ra.SINumber == SInumber && ra.QuantityInMT != null 
+                        where ra.SINumber == SInumber && ra.QuantityInMT != null
                         select ra.QuantityInMT);
 
-            if(data != null && data.Count() > 0)
+            if (data != null && data.Count() > 0)
             {
                 total = data.Sum();
             }
@@ -76,7 +82,7 @@ namespace DRMFSS.BLL.Repository
             return total;
         }
 
-        public List<Commodity> GetAvailableCommodities(string SINumber,int hubId)
+        public List<Commodity> GetAvailableCommodities(string SINumber, int hubId)
         {
             var query = (from q in db.ReceiptAllocations
                          where q.SINumber == SINumber && q.HubID == hubId
@@ -86,9 +92,9 @@ namespace DRMFSS.BLL.Repository
 
             foreach (var commodity in query)
             {
-                if(commodity.ParentID == null)//parent
+                if (commodity.ParentID == null)//parent
                 {
-                    if(!(optGroupList.Exists(p=>p.CommodityID == commodity.CommodityID)))
+                    if (!(optGroupList.Exists(p => p.CommodityID == commodity.CommodityID)))
                     {
                         optGroupList.Add(commodity);
                         foreach (var childComm in commodity.Commodity1)
@@ -106,7 +112,7 @@ namespace DRMFSS.BLL.Repository
                         {
                             optGroupList.Add(commodity.Commodity2);
                         }
-                        optGroupList.Insert(optGroupList.IndexOf(commodity.Commodity2)+1,commodity);
+                        optGroupList.Insert(optGroupList.IndexOf(commodity.Commodity2) + 1, commodity);
                     }
                 }
             }
@@ -141,7 +147,7 @@ namespace DRMFSS.BLL.Repository
             var query = (from q in db.ReceiptAllocations
                          where q.GiftCertificateDetail == null
                          select q.SINumber).Distinct();
-            return query.ToList();          
+            return query.ToList();
         }
 
         public decimal GetTotalAllocation(string siNumber, int commodityId, int hubId, int? commoditySourceId)
@@ -176,19 +182,28 @@ namespace DRMFSS.BLL.Repository
         /// <param name="user"></param>
         public void CommitReceiveAllocation(string[] checkedRecords, UserProfile user)
         {
-                foreach (string id in checkedRecords)
+            var db1 = ((IObjectContextAdapter)db).ObjectContext;
+            var st = db1.CreateObjectSet<ReceiptAllocation>();
+            foreach (string id in checkedRecords)
+            {
+                //Modified Banty:24/5/2013 to support dbcontext
+
+                //db.ReceiptAllocations.MergeOption  = MergeOption.PreserveChanges;
+                st.MergeOption = MergeOption.PreserveChanges;
+
+
+                //ReceiptAllocation original = db.ReceiptAllocations.FirstOrDefault(p => p.ReceiptAllocationID == Guid.Parse(id));
+                var original = st.FirstOrDefault(t => t.ReceiptAllocationID == Guid.Parse(id));
+
+                if (original != null)
                 {
-                        db.ReceiptAllocations.MergeOption = MergeOption.PreserveChanges;
-                        ReceiptAllocation original = db.ReceiptAllocations.FirstOrDefault(p => p.ReceiptAllocationID == Guid.Parse(id));
-                        if (original != null)
-                        {
-                            original.IsCommited = true;
-                            db.SaveChanges();
-                            db.ReceiptAllocations.MergeOption = MergeOption.NoTracking;
-                        }
-                        db.ReceiptAllocations.MergeOption = MergeOption.NoTracking;
+                    original.IsCommited = true;
+                    db1.SaveChanges();
+                    st.MergeOption = MergeOption.NoTracking;
                 }
-           
+                st.MergeOption = MergeOption.NoTracking;
+            }
+
         }
 
         public int[] GetListOfSource(int commoditySoureType)
@@ -208,7 +223,7 @@ namespace DRMFSS.BLL.Repository
             //{
             //    x = new int[] { BLL.CommoditySource.Constants.TRANSFER };
             //}
-            else if (BLL.CommoditySource.Constants.TRANSFER == commoditySoureType  ||
+            else if (BLL.CommoditySource.Constants.TRANSFER == commoditySoureType ||
                      BLL.CommoditySource.Constants.REPAYMENT == commoditySoureType ||
                      BLL.CommoditySource.Constants.LOAN == commoditySoureType ||
                      BLL.CommoditySource.Constants.SWAP == commoditySoureType)
@@ -224,7 +239,7 @@ namespace DRMFSS.BLL.Repository
             return x;
         }
 
-        public List<ReceiptAllocation> GetUnclosedAllocationsDetached(int hubId, int commoditySoureType, bool? closedToo, string weightMeasurmentCode, int? CommodityType )
+        public List<ReceiptAllocation> GetUnclosedAllocationsDetached(int hubId, int commoditySoureType, bool? closedToo, string weightMeasurmentCode, int? CommodityType)
         {
             List<ReceiptAllocation> GetDetachecedList = new List<ReceiptAllocation>();
 
@@ -232,13 +247,14 @@ namespace DRMFSS.BLL.Repository
 
             var unclosed = (from rAll in db.ReceiptAllocations
                             where hubId == rAll.HubID
-                                  && x.Any(p=>p == rAll.CommoditySourceID)
+                                  && x.Any(p => p == rAll.CommoditySourceID)
                             select rAll);
 
             if (closedToo == null || closedToo == false)
             {
                 unclosed = unclosed.Where(p => p.IsClosed == false);
-            }else
+            }
+            else
             {
                 unclosed = unclosed.Where(p => p.IsClosed == true);
             }
@@ -255,14 +271,14 @@ namespace DRMFSS.BLL.Repository
 
             foreach (ReceiptAllocation receiptAllocation in unclosed)
             {
-                
+
                 int si = repository.ShippingInstruction.GetShipingInstructionId(receiptAllocation.SINumber);
                 receiptAllocation.RemainingBalanceInMt = receiptAllocation.QuantityInMT -
                                                           GetReceivedAlready(
                                                          receiptAllocation);
                 receiptAllocation.CommodityName = receiptAllocation.Commodity.Name;
 
-         
+
                 if (receiptAllocation.QuantityInUnit != null)
                     receiptAllocation.RemainingBalanceInUnit = receiptAllocation.QuantityInUnit.Value -
                                                                GetReceivedAlreadyInUnit(receiptAllocation);
@@ -277,9 +293,9 @@ namespace DRMFSS.BLL.Repository
                     receiptAllocation.RemainingBalanceInMt *= 10;
                     receiptAllocation.ReceivedQuantityInMT *= 10;
                 }
-
-               db.Detach(receiptAllocation);
-               GetDetachecedList.Add(receiptAllocation);
+                //modified Banty:24_5_2013 from db.Detach to ((IObjectContextAdapter)db).ObjectContext.Detach
+                ((IObjectContextAdapter)db).ObjectContext.Detach(receiptAllocation);
+                GetDetachecedList.Add(receiptAllocation);
             }
 
             return GetDetachecedList.ToList();
@@ -357,10 +373,10 @@ namespace DRMFSS.BLL.Repository
             var x = GetListOfSource(commoditySoureType);
 
             var query = (from q in db.ReceiptAllocations
-                         where q.GiftCertificateDetail == null && x.Any(p1=>p1 == q.CommoditySourceID) 
+                         where q.GiftCertificateDetail == null && x.Any(p1 => p1 == q.CommoditySourceID)
                          select q.SINumber).Distinct();
-           
-            return query.ToList();     
+
+            return query.ToList();
         }
 
 
@@ -380,7 +396,7 @@ namespace DRMFSS.BLL.Repository
             //{
             //    x = new int[] { BLL.CommoditySource.Constants.TRANSFER };
             //}
-            else if (BLL.CommoditySource.Constants.REPAYMENT == commoditySoureType || 
+            else if (BLL.CommoditySource.Constants.REPAYMENT == commoditySoureType ||
                 commoditySoureType == BLL.CommoditySource.Constants.TRANSFER ||
                 BLL.CommoditySource.Constants.LOAN == commoditySoureType ||
                 BLL.CommoditySource.Constants.SWAP == commoditySoureType)
@@ -414,7 +430,7 @@ namespace DRMFSS.BLL.Repository
             var query = (from q in db.ReceiptAllocations
                          where q.SINumber == SINumber && q.IsClosed == false && q.HubID == hubId && q.CommoditySourceID == commoditySourceId
                          select q.Commodity).Distinct();
-            
+
             return query.ToList();
         }
 
@@ -436,29 +452,29 @@ namespace DRMFSS.BLL.Repository
             var list = (from RA in db.ReceiptAllocations
                         where
                             (RA.IsClosed == false && RA.HubID == hubId) &&
-                            (RA.Commodity.ParentID == CommodityId || RA.CommodityID == CommodityId) 
-                            group RA by new { RA.SINumber,RA.ProjectNumber, RA.Commodity,RA.Program} into si
-                            select new SIBalance
-                                   {
-                                       AvailableBalance = 0,
-                                       CommitedToFDP = 0,
-                                       CommitedToOthers = 0,
-                                       Commodity = si.Key.Commodity.Name,
-                                       Dispatchable = si.Sum(p => p.QuantityInMT),
-                                       SINumber = si.Key.SINumber,
-                                       Program = si.Key.Program.Name,
-                                       Project = si.Key.ProjectNumber,
-                                       ProjectCodeID = 0,
-                                       ReaminingExpectedReceipts = si.Sum(p => p.QuantityInMT),//RA.QuantityInMT,
-                                       TotalDispatchable = 0,//si.Sum(p => p.QuantityInMT),
-                                       
-                                   }).ToList();
+                            (RA.Commodity.ParentID == CommodityId || RA.CommodityID == CommodityId)
+                        group RA by new { RA.SINumber, RA.ProjectNumber, RA.Commodity, RA.Program } into si
+                        select new SIBalance
+                               {
+                                   AvailableBalance = 0,
+                                   CommitedToFDP = 0,
+                                   CommitedToOthers = 0,
+                                   Commodity = si.Key.Commodity.Name,
+                                   Dispatchable = si.Sum(p => p.QuantityInMT),
+                                   SINumber = si.Key.SINumber,
+                                   Program = si.Key.Program.Name,
+                                   Project = si.Key.ProjectNumber,
+                                   ProjectCodeID = 0,
+                                   ReaminingExpectedReceipts = si.Sum(p => p.QuantityInMT),//RA.QuantityInMT,
+                                   TotalDispatchable = 0,//si.Sum(p => p.QuantityInMT),
 
-             
+                               }).ToList();
+
+
             foreach (var siBalance in list)
             {
                 var sis = repository.ShippingInstruction.GetShipingInstructionId(siBalance.SINumber);
-               //siBalance.ReaminingExpectedReceipts     = totalSumForComm; 
+                //siBalance.ReaminingExpectedReceipts     = totalSumForComm; 
 
                 //decimal totalSumForComm = (from rAll in db.ReceiptAllocations
                 //                           where rAll.IsClosed == false && rAll.SINumber == siBalance.SINumber
@@ -475,9 +491,9 @@ namespace DRMFSS.BLL.Repository
 
                     //if()
                     //    repository.ReceiptAllocation.GetReceivedAlready()
-                        //list.Sum(p => p.ReaminingExpectedReceipts);
-                    
-                    
+                    //list.Sum(p => p.ReaminingExpectedReceipts);
+
+
                     //siBalance.SINumberID);
                     //siBalance.Dispatchable = correctedBalance.Dispatchable;
                     //siBalance.TotalDispatchable = correctedBalance.TotalDispatchable;
@@ -496,7 +512,7 @@ namespace DRMFSS.BLL.Repository
                             siBalance.CommitedToFDP -= utilGetDispatchedAllocationFromSiResult.QuantityInUnit.Value;
                     }
 
-               
+
                     siBalance.CommitedToOthers = (from v in si.OtherDispatchAllocations
                                                   where v.IsClosed == false && v.CommodityID == commodityId
                                                   select v.QuantityInMT).DefaultIfEmpty().Sum();
@@ -533,21 +549,21 @@ namespace DRMFSS.BLL.Repository
                             CommitedToOthers = 0,
                             Commodity = si.Key.Commodity.Name,
                             Dispatchable = si.Sum(p => p.QuantityInUnit ?? 0),
-                                    //                  {
-                                    //                      if (p.QuantityInUnit == null)
-                                    //return 0;
-                                    //                      return p.QuantityInUnit.Value;
-                                    //                  }),
+                            //                  {
+                            //                      if (p.QuantityInUnit == null)
+                            //return 0;
+                            //                      return p.QuantityInUnit.Value;
+                            //                  }),
                             SINumber = si.Key.SINumber,
                             Program = si.Key.Program.Name,
                             Project = si.Key.ProjectNumber,
                             ProjectCodeID = 0,
                             ReaminingExpectedReceipts = si.Sum(p => p.QuantityInUnit ?? 0),
-                                    //                               {
-                                    //                                   if (p.QuantityInUnit == null)
-                                    //return 0;
-                                    //                                   return p.QuantityInUnit.Value;
-                                    //                               }),
+                            //                               {
+                            //                                   if (p.QuantityInUnit == null)
+                            //return 0;
+                            //                                   return p.QuantityInUnit.Value;
+                            //                               }),
                             TotalDispatchable = 0,//si.Sum(p => p.QuantityInMT),
 
                         }).ToList();
@@ -614,5 +630,28 @@ namespace DRMFSS.BLL.Repository
         }
 
 
+
+        public bool DeleteByID(int id)
+        {
+            return false;
+        }
+
+        public bool DeleteByID(Guid id)
+        {
+            var origin = FindById(id);
+            if (origin == null) return false;
+            db.ReceiptAllocations.Remove(origin);
+            return true;
+        }
+
+        public ReceiptAllocation FindById(int id)
+        {
+            return null;
+        }
+
+        public ReceiptAllocation FindById(Guid id)
+        {
+            return db.ReceiptAllocations.FirstOrDefault(t => t.ReceiptAllocationID == id);
+        }
     }
 }

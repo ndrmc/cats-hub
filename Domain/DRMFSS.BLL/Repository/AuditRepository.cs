@@ -10,9 +10,13 @@ namespace DRMFSS.BLL.Repository
     /// <summary>
     /// 
     /// </summary>
-    public partial class AuditRepository : IAuditRepository
+    public partial class AuditRepository : GenericRepository<CTSContext,Audit>,IAuditRepository
     {
-
+        public AuditRepository(CTSContext _db, IUnitOfWork uow)
+        {
+            db = _db;
+            repository = uow;
+        }
         public List<FieldChange> GetChanges(string table, string property, string foreignTable, string foreignFeildName, string foreignFeildKey, string key)
         {
             var changes = (from audit in db.Audits
@@ -34,6 +38,30 @@ namespace DRMFSS.BLL.Repository
             }
             return filedsList;
         }
-            
+
+
+        public bool DeleteByID(int id)
+        {
+            var original = FindById(id);
+            if (original == null) return false;
+            db.Audits.Remove(original);
+
+            return true;
+        }
+
+        public bool DeleteByID(System.Guid id)
+        {
+            return false;
+        }
+
+        public Audit FindById(int id)
+        {
+            return null;
+        }
+
+        public Audit  FindById(System.Guid id)
+        { return db.Audits.FirstOrDefault(t => t.AuditID == id);
+           
+        }
     }
 }
