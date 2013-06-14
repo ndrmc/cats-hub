@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{F6BB5F7B-0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EndToEndTest", "EndToEndTest", "{F7CCB91F-B488-4C89-B905-8107898A67D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRMFSS.EndToEndTest", "C:\Users\danny\Documents\Visual Studio 2012\Projects\CatsUnitTest\CatsUnitTest\DRMFSS.EndToEndTest.csproj", "{03A43224-DBAA-4B00-8652-3F5D53E0F246}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRMFSS.EndToEndTest", "CatsUnitTest\CatsUnitTest\DRMFSS.EndToEndTest.csproj", "{03A43224-DBAA-4B00-8652-3F5D53E0F246}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
