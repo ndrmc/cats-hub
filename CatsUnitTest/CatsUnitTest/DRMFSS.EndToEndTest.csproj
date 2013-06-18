@@ -90,6 +90,8 @@
     <Compile Include="Tests\Reports.cs" />
     <Compile Include="Tests\StackEvents.cs" />
     <Compile Include="Tests\StartingBalance.cs" />
+    <Compile Include="Tests\Transactions.cs" />
+    <Compile Include="Tests\Translations.cs" />
     <Compile Include="Tests\TransportaitonReport.cs" />
     <Compile Include="Tests\transporter.cs" />
     <Compile Include="Tests\UnitTest.cs" />

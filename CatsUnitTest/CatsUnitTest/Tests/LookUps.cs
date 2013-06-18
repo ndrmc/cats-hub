@@ -23,7 +23,7 @@ namespace SeleniumTests
         {
             driver = new FirefoxDriver();
             driver.Manage().Window.Maximize();
-            baseURL = "http://localhost:37068";
+            baseURL = WebDriverExtension.BASE_URL;
             verificationErrors = new StringBuilder();
         }
         
@@ -139,9 +139,7 @@ namespace SeleniumTests
             driver.WaitForHttpResponse(By.XPath("(//a[contains(text(),'Delete')])[12]"));
             driver.FindElement(By.XPath("(//a[contains(text(),'Delete')])[12]")).Click();
             // Warning: assertTextPresent may require manual changes
-            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Delete[\\s\\S]*$"));
-            // Warning: assertTextPresent may require manual changes
-            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Are you sure you want to delete this[\\s\\S][\\s\\S]*$"));
+            //Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Are you sure you want to delete this[\\s\\S][\\s\\S]*$"));
             Assert.IsTrue(IsElementPresent(By.XPath("//div[@id='body']/fieldset/div[5]")));
             for (int second = 0;; second++) {
                 if (second >= 60) Assert.Fail("timeout");

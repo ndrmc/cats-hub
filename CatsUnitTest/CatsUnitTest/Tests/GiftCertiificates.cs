@@ -23,7 +23,7 @@ namespace SeleniumTests
         {
             driver = new FirefoxDriver();
             driver.Manage().Window.Maximize();
-            baseURL = "http://localhost:37068";
+            baseURL = WebDriverExtension.BASE_URL;
             verificationErrors = new StringBuilder();
         }
 
@@ -181,14 +181,7 @@ namespace SeleniumTests
             driver.WaitForHttpResponse(By.XPath("//div[8]/div/ul/li[2]"));
             driver.FindElement(By.XPath("//div[8]/div/ul/li[2]")).Click();
             Thread.Sleep(3000);
-            //driver.FindElement(By.CssSelector("td.t-state-focused")).Click();
-            //driver.FindElement(By.CssSelector("td.t-state-focused")).Click();
-            //driver.FindElement(By.CssSelector("td.t-state-focused")).Click();
-            //driver.FindElement(By.CssSelector("td.t-state-focused")).Click();
-            //driver.FindElement(By.CssSelector("td.t-state-focused")).Click();
-            //driver.FindElement(By.CssSelector("td.t-state-focused")).Click();
-            //driver.FindElement(By.XPath("(//a[contains(text(),'12')])[3]")).Click();
-            //driver.FindElement(By.Id("body")).Click();
+           
             driver.FindElement(By.CssSelector("input.t-button")).Click();
             Thread.Sleep(1000);
             //driver.FindElement(By.LinkText("Edit")).Click();

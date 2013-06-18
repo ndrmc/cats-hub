@@ -7,11 +7,10 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using CatsUnitTest;
-
 namespace SeleniumTests
 {
     [TestFixture]
-    public class TransportaitonReport
+    public class Transactions
     {
         private IWebDriver driver;
         private StringBuilder verificationErrors;
@@ -39,45 +38,30 @@ namespace SeleniumTests
             }
             Assert.AreEqual("", verificationErrors.ToString());
         }
-
-        public static void WaitForHttpRequest()
-        {
-            Thread.Sleep(3000);
-        }
+        
         [Test]
-        public void TheTransportaitonReportTest()
+        public void TheTransactionsTest()
         {
             driver.Navigate().GoToUrl(baseURL + "/");
-            driver.AutomateLogin("admin","pass2pass");
-            driver.Navigate().GoToUrl(baseURL +"/TransportationReport");
-            // Warning: assertTextPresent may require manual changes
-            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Transportation Reports[\\s\\S]*$"));
-            Assert.IsTrue(IsElementPresent(By.XPath("//div[@id='body']/div/table/tbody/tr[2]/td[2]/div")));
-            Assert.AreEqual("", driver.FindElement(By.Name("Go")).Text);
-            Assert.IsTrue(IsElementPresent(By.Id("FromDateAm")));
-            driver.FindElement(By.XPath("//div[@id='body']/div/table/tbody/tr[3]/td[2]")).Click();
-            Assert.IsTrue(IsElementPresent(By.Id("ToDateAm")));
-            driver.FindElement(By.Id("body")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            Thread.Sleep(1000);
-            driver.FindElement(By.XPath("(//input[@name='operation'])[2]")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Month")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            Thread.Sleep(1000);
-            driver.FindElement(By.Id("Daily")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Name("operation")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Month")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Quarter")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Year")).Click();
-            driver.FindElement(By.Name("Go")).Click();
+            driver.AutomateLogin("admin", "pass2pass");
+            driver.Navigate().GoToUrl(baseURL + "/Admin/Home");
+            driver.FindElement(By.LinkText("Journal")).Click();
+            Thread.Sleep(2000);
+            driver.FindElement(By.LinkText("Admin")).Click();
+            driver.FindElement(By.LinkText("Ledger")).Click();
+            Assert.AreEqual("Ledger", driver.FindElement(By.CssSelector("h2")).Text);
+            Assert.IsTrue(IsElementPresent(By.Id("LedgerID-input")));
+            Assert.IsTrue(IsElementPresent(By.Id("CommodityID-input")));
+            Assert.IsTrue(IsElementPresent(By.Id("goButton")));
+            driver.FindElement(By.CssSelector("span.t-select.t-header > span.t-icon.t-arrow-down")).Click();
+            driver.FindElement(By.XPath("//li[12]")).Click();
+            driver.FindElement(By.XPath("//div[@id='body']/table/tbody/tr/td[4]/div/div/span/span")).Click();
+            driver.FindElement(By.XPath("//div[4]/div/ul/li")).Click();
+            driver.FindElement(By.XPath("//div[@id='body']/table/tbody/tr/td[6]/div/div/span/span")).Click();
+            driver.FindElement(By.XPath("//div[5]/div/ul/li")).Click();
+            driver.FindElement(By.Id("goButton")).Click();
+            driver.FindElement(By.LinkText("Admin")).Click();
         }
-
-        
         private bool IsElementPresent(By by)
         {
             try

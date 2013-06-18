@@ -23,7 +23,7 @@ namespace SeleniumTests
         {
             driver = new FirefoxDriver();
             driver.Manage().Window.Maximize();
-            baseURL = "http://localhost:37068";
+            baseURL = WebDriverExtension.BASE_URL;
             verificationErrors = new StringBuilder();
         }
         
@@ -57,16 +57,6 @@ namespace SeleniumTests
             Thread.Sleep(3000);
             driver.FindElement(By.LinkText("Create New")).Click();
             driver.WaitForHttpResponse(By.Id("Name"));
-            //for (int second = 0;; second++) {
-            //    if (second >= 60) Assert.Fail("timeout");
-            //    try
-            //    {
-            //        if (IsElementPresent(By.Id("Name"))) break;
-            //    }
-            //    catch (Exception)
-            //    {}
-            //    Thread.Sleep(1000);
-            //}
             driver.FindElement(By.Id("Name")).Clear();
             driver.FindElement(By.Id("Name")).SendKeys("SampleHub");
             driver.WaitForHttpResponse(By.XPath("//button[@type='button']"));
@@ -106,8 +96,7 @@ namespace SeleniumTests
             //driver.FindElement(By.CssSelector("input[type=\"submit\"]")).Click();
             driver.FindElement(By.LinkText("Admin")).Click();
             driver.FindElement(By.LinkText("Store")).Click();
-            // Warning: assertTextPresent may require manual changes
-            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "List of Stores"));
+            Thread.Sleep(2000);
             driver.FindElement(By.LinkText("Create New")).Click();
             for (int second = 0;; second++) {
                 if (second >= 60) Assert.Fail("timeout");

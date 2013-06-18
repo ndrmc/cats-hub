@@ -11,7 +11,7 @@ using CatsUnitTest;
 namespace SeleniumTests
 {
     [TestFixture]
-    public class TransportaitonReport
+    public class Translations
     {
         private IWebDriver driver;
         private StringBuilder verificationErrors;
@@ -39,45 +39,35 @@ namespace SeleniumTests
             }
             Assert.AreEqual("", verificationErrors.ToString());
         }
-
-        public static void WaitForHttpRequest()
-        {
-            Thread.Sleep(3000);
-        }
+        
         [Test]
-        public void TheTransportaitonReportTest()
+        public void TheTranslationsTest()
         {
             driver.Navigate().GoToUrl(baseURL + "/");
             driver.AutomateLogin("admin","pass2pass");
-            driver.Navigate().GoToUrl(baseURL +"/TransportationReport");
+            driver.Navigate().GoToUrl(baseURL + "/Admin/Home");
+            driver.FindElement(By.LinkText("Translations")).Click();
+            Assert.AreEqual("Commodity Tracking System : Translation Booth", driver.Title);
             // Warning: assertTextPresent may require manual changes
-            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Transportation Reports[\\s\\S]*$"));
-            Assert.IsTrue(IsElementPresent(By.XPath("//div[@id='body']/div/table/tbody/tr[2]/td[2]/div")));
-            Assert.AreEqual("", driver.FindElement(By.Name("Go")).Text);
-            Assert.IsTrue(IsElementPresent(By.Id("FromDateAm")));
-            driver.FindElement(By.XPath("//div[@id='body']/div/table/tbody/tr[3]/td[2]")).Click();
-            Assert.IsTrue(IsElementPresent(By.Id("ToDateAm")));
-            driver.FindElement(By.Id("body")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            Thread.Sleep(1000);
-            driver.FindElement(By.XPath("(//input[@name='operation'])[2]")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Month")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            Thread.Sleep(1000);
-            driver.FindElement(By.Id("Daily")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Name("operation")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Month")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Quarter")).Click();
-            driver.FindElement(By.Name("Go")).Click();
-            driver.FindElement(By.Id("Year")).Click();
-            driver.FindElement(By.Name("Go")).Click();
+            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Translation Booth[\\s\\S]*$"));
+            driver.FindElement(By.LinkText("Translate")).Click();
+            // Warning: assertTextPresent may require manual changes
+            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Phrase[\\s\\S]*$"));
+            // Warning: assertTextPresent may require manual changes
+            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Language[\\s\\S]*$"));
+            // Warning: assertTextPresent may require manual changes
+            Assert.IsTrue(Regex.IsMatch(driver.FindElement(By.CssSelector("BODY")).Text, "^[\\s\\S]*Translated Text[\\s\\S]*$"));
+            
+            Assert.IsTrue(IsElementPresent(By.CssSelector("input.t-button")));
+            driver.FindElement(By.CssSelector("input.t-button")).Click();
+            driver.FindElement(By.LinkText("Admin")).Click();
+            //error log page
+            driver.Navigate().GoToUrl(baseURL + "/Admin/Home");
+            driver.FindElement(By.LinkText("Error Log")).Click();
+           // Assert.AreEqual("Commodity Tracking System : View Errors", driver.Title);
+            
+           
         }
-
-        
         private bool IsElementPresent(By by)
         {
             try

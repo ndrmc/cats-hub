@@ -23,7 +23,7 @@ namespace SeleniumTests
         {
             driver = new FirefoxDriver();
             driver.Manage().Window.Maximize();
-            baseURL = "http://localhost:37068";
+            baseURL = WebDriverExtension.BASE_URL;
             verificationErrors = new StringBuilder();
         }
         
@@ -53,8 +53,7 @@ namespace SeleniumTests
             driver.FindElement(By.LinkText("Admin")).Click();
             WaitForHttpRequest();
             driver.FindElement(By.LinkText("Transporters")).Click();
-            WaitForHttpRequest();
-            Assert.IsTrue(IsElementPresent(By.LinkText("Create New")));
+            driver.WaitForHttpResponse(By.LinkText("Create New"));
             driver.FindElement(By.LinkText("Create New")).Click();
             for (int second = 0;; second++) {
                 if (second >= 60) Assert.Fail("timeout");

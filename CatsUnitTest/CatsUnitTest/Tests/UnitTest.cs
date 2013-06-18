@@ -13,14 +13,133 @@ namespace CatsUnitTest
     [TestClass]
     public class UnitTest
     {
+        
         [TestMethod]
-        public void TestMethod()
+        public void AuthenticationTest()
         {
-            
-            StartingBalance gift = new StartingBalance();
-            gift.SetupTest();
-            gift.TheStartingBalanceTest();
-            gift.TeardownTest();
+            Authentication authentication = new Authentication();
+            authentication.SetupTest();
+            authentication.TheAuthenticationTest();
+            authentication.TeardownTest();
+        }
+
+        [TestMethod]
+        public void GiftCertiificatesTest()
+        {
+            GiftCertiificates giftCertiificates = new GiftCertiificates();
+            giftCertiificates.SetupTest();
+            giftCertiificates.TheGiftCertiificatesTest();
+            giftCertiificates.TeardownTest();
+        }
+
+        [TestMethod]
+        public void HubManagementTest()
+        {
+            HubManagement hubManagement = new HubManagement();
+            hubManagement.SetupTest();
+            hubManagement.TheHubManagementTest();
+            hubManagement.TeardownTest();
+        }
+
+        [TestMethod]
+        public void InternalMovementTest()
+        {
+            InternalMovement internalMovement = new InternalMovement();
+            internalMovement.SetupTest();
+            internalMovement.TheInternalMovementTest();
+            internalMovement.TeardownTest();
+        }
+
+        [TestMethod]
+        public void LookUpsTest()
+        {
+            LookUps lookUps = new LookUps();
+            lookUps.SetupTest();
+            lookUps.TheLookUpsTest();
+            lookUps.TeardownTest();
+        }
+
+        [TestMethod]
+        public void LossAndAdjustmentsTest()
+        {
+            LossAndAdjustments lossAndAdjustments = new LossAndAdjustments();
+            lossAndAdjustments.SetupTest();
+            lossAndAdjustments.TheLossAndAdjustmentsTest();
+            lossAndAdjustments.TeardownTest();
+        }
+
+        [TestMethod]
+        public void ReceiptsTest()
+        {
+            Receipts receipts = new Receipts();
+            receipts.SetupTest();
+            receipts.TheReceiptsTest();
+            receipts.TeardownTest();
+        }
+
+
+        [TestMethod]
+        public void StackEventsTest()
+        {
+            StackEvents stackEvents = new StackEvents();
+            stackEvents.SetupTest();
+            stackEvents.TheStackEventsTest();
+            stackEvents.TeardownTest();
+        }
+
+        [TestMethod]
+        public void StartingBalanceTest()
+        {
+            StartingBalance startingBalance = new StartingBalance();
+            startingBalance.SetupTest();
+            startingBalance.TheStartingBalanceTest();
+            startingBalance.TeardownTest();
+        }
+
+        [TestMethod]
+        public void TransactionsTest()
+        {
+            Transactions transactions = new Transactions();
+            transactions.SetupTest();
+            transactions.TheTransactionsTest();
+            transactions.TeardownTest();
+        }
+
+        [TestMethod]
+        public void TranslationsTest()
+        {
+            Translations translations = new Translations();
+            translations.SetupTest();
+            translations.TheTranslationsTest();
+            translations.TeardownTest();
+        }
+
+        [TestMethod]
+        public void TransportaitonReportTest()
+        {
+            TransportaitonReport transportaitonReport = new TransportaitonReport();
+            transportaitonReport.SetupTest();
+            transportaitonReport.TheTransportaitonReportTest();
+            transportaitonReport.TeardownTest();
+        }
+
+        [TestMethod]
+        public void TransporterTest()
+        {
+            Transporter transporter = new Transporter();
+            transporter.SetupTest();
+            transporter.TheTransporterTest();
+            transporter.TeardownTest();
+        }
+
+        [TestMethod]
+        public void UserManagementTest()
+        {
+
+            UserManagement UserManagement = new UserManagement();
+            UserManagement.SetupTest();
+            UserManagement.TheUserManagementTest();
+            UserManagement.TeardownTest();
             //var testClasses = GetTestTypes();
 
             //foreach (var type in testClasses)
@@ -37,8 +156,8 @@ namespace CatsUnitTest
             //        mainTestmethodInfo.Invoke(testInstance, new object[] { });
             //    if (closeBrowserMethodInfo != null)
             //        closeBrowserMethodInfo.Invoke(testInstance, new object[] { });
-            //     Invoke SetupTest
-            //     Invoke GetMainTestMethod
+            //    //Invoke SetupTest
+            //    //Invoke GetMainTestMethod
             //}
             
 

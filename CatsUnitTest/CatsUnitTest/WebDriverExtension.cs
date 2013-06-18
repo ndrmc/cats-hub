@@ -15,7 +15,7 @@ namespace CatsUnitTest
     public static class WebDriverExtension
     {
         public const int TIMEOUT_IN_SECONDS = 60;
-
+        public const string BASE_URL ="http://localhost:37068";
         /// <summary>
         /// An extension method for an IWebDriver instance that searches for an element (given a regular expression string)
         /// </summary>

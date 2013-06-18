@@ -8,6 +8,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using Selenium;
+using CatsUnitTest;
 
 namespace SeleniumTests
 {
@@ -28,7 +29,7 @@ namespace SeleniumTests
             profile.SetPreference("Browser.link.open_newwindow", 3);
             driver = new FirefoxDriver(profile);
             //driver.Manage().Window.Maximize();
-            baseURL = "http://localhost:37068";
+            baseURL = WebDriverExtension.BASE_URL;
             verificationErrors = new StringBuilder();
         }
         

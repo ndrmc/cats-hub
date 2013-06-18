@@ -23,7 +23,7 @@ namespace SeleniumTests
         {
             driver = new FirefoxDriver();
             driver.Manage().Window.Maximize();
-            baseURL = "http://localhost:37068";
+            baseURL = WebDriverExtension.BASE_URL;
             verificationErrors = new StringBuilder();
         }
         

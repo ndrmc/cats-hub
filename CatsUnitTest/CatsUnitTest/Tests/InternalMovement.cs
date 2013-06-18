@@ -23,7 +23,7 @@ namespace SeleniumTests
         {
             driver = new FirefoxDriver();
             driver.Manage().Window.Maximize();
-            baseURL = "http://localhost:37068";
+            baseURL = WebDriverExtension.BASE_URL;
             verificationErrors = new StringBuilder();
         }
         
@@ -87,9 +87,12 @@ namespace SeleniumTests
             driver.WaitForHttpResponse(By.XPath("//div[5]/div/ul/li[2]"));
             driver.FindElement(By.XPath("//div[5]/div/ul/li[2]")).Click();
             driver.FindElement(By.XPath("//div[@id='body']/form/table/tbody/tr[3]/td[2]/div/div/span/span")).Click();
+            driver.WaitForHttpResponse(By.XPath("//div[6]/div/ul/li"));
             driver.FindElement(By.XPath("//div[6]/div/ul/li")).Click();
             driver.FindElement(By.XPath("//div[@id='body']/form/table/tbody/tr[4]/td[2]/div/div/span/span")).Click();
+            //driver.WaitForHttpResponse(By.XPath("//div[7]/div/ul/li[2]"));
             driver.FindElement(By.XPath("//div[7]/div/ul/li[2]")).Click();
+            driver.WaitForHttpResponse(By.Id("FromStackId-input"));
             driver.FindElement(By.Id("FromStackId-input")).Clear();
             driver.FindElement(By.Id("FromStackId-input")).SendKeys("2");
             driver.FindElement(By.XPath("//div[@id='body']/form/table/tbody/tr[6]/td[2]/div/div/span/span")).Click();
