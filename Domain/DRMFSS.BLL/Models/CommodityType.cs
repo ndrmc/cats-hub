@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -10,7 +11,7 @@ namespace DRMFSS.BLL
             this.Commodities = new List<Commodity>();
             this.Receives = new List<Receive>();
         }
-
+        [Key]
         public int CommodityTypeID { get; set; }
         public string Name { get; set; }
         public virtual ICollection<Commodity> Commodities { get; set; }

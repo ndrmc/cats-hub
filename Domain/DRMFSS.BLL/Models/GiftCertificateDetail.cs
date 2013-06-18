@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -9,7 +10,7 @@ namespace DRMFSS.BLL
         {
             this.ReceiptAllocations = new List<ReceiptAllocation>();
         }
-
+        [Key]
         public int GiftCertificateDetailID { get; set; }
         public int PartitionID { get; set; }
         public int TransactionGroupID { get; set; }

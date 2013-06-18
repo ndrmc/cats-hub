@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -9,7 +10,7 @@ namespace DRMFSS.BLL
         {
             this.Transactions = new List<Transaction>();
         }
-
+        [Key]
         public int AccountID { get; set; }
         public string EntityType { get; set; }
         public int EntityID { get; set; }

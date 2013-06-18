@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class Partition
     {
+        [Key]
         public int PartitionID { get; set; }
         public int HubID { get; set; }
         public string ServerUserName { get; set; }

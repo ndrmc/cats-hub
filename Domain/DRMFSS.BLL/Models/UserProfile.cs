@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -14,7 +15,7 @@ namespace DRMFSS.BLL
             this.UserHubs = new List<UserHub>();
             this.UserRoles = new List<UserRole>();
         }
-
+       [Key]
         public int UserProfileID { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }

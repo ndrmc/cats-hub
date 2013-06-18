@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -9,7 +10,7 @@ namespace DRMFSS.BLL
         {
             this.Receives = new List<Receive>();
         }
-
+        [Key]
         public System.Guid ReceiptAllocationID { get; set; }
         public int PartitionID { get; set; }
         public bool IsCommited { get; set; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -12,7 +13,7 @@ namespace DRMFSS.BLL
             this.OtherDispatchAllocations = new List<OtherDispatchAllocation>();
             this.Receives = new List<Receive>();
         }
-
+        [Key]
         public int TransporterID { get; set; }
         public string Name { get; set; }
         public string NameAM { get; set; }

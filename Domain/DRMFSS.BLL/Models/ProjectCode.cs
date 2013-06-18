@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -11,7 +12,7 @@ namespace DRMFSS.BLL
             this.OtherDispatchAllocations = new List<OtherDispatchAllocation>();
             this.Transactions = new List<Transaction>();
         }
-
+        [Key]
         public int ProjectCodeID { get; set; }
         public string Value { get; set; }
         public virtual ICollection<DispatchAllocation> DispatchAllocations { get; set; }

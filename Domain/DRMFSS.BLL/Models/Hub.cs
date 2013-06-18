@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -19,7 +20,7 @@ namespace DRMFSS.BLL
             this.UserHubs = new List<UserHub>();
             this.HubSettingValues = new List<HubSettingValue>();
         }
-
+        [Key]
         public int HubID { get; set; }
         public string Name { get; set; }
         public int HubOwnerID { get; set; }

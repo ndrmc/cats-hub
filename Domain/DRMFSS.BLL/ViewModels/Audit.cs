@@ -169,7 +169,7 @@ namespace DRMFSS.BLL
         /// <param name="proprtyName">Name of the proprty.</param>
         public FieldChange(BLL.Audit audit, string proprtyName)
         {
-            this.ChangeDate = audit.DateTime;
+          //  this.ChangeDate = audit.DateTime;
             BLL.UserProfile user = BLL.UserProfile.GetUserById(audit.LoginID);
             this.ChangedBy = (user != null) ? user.UserName : "Anonymous";
             this.FieldName = proprtyName;
@@ -191,7 +191,7 @@ namespace DRMFSS.BLL
             //FieldChange x = new FieldChange(a, property);
             CTSContext db = new CTSContext();
             
-            this.ChangeDate = a.DateTime;
+         //   this.ChangeDate = a.DateTime;
             BLL.UserProfile user = BLL.UserProfile.GetUserById(a.LoginID);
             this.ChangedBy = (user != null) ? user.UserName : "Anonymous";
             this.FieldName = property;

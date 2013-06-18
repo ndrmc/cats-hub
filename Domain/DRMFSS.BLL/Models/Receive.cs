@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -9,7 +10,7 @@ namespace DRMFSS.BLL
         {
             this.ReceiveDetails = new List<ReceiveDetail>();
         }
-
+        [Key]
         public System.Guid ReceiveID { get; set; }
         public int PartitionID { get; set; }
         public int HubID { get; set; }

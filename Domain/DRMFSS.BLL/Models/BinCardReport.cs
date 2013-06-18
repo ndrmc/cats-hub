@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
 namespace DRMFSS.BLL
 {
    public  class BinCardReport
-    {
+   {
+       [Key]
        public string SINumber { get; set; }
        public string DriverName { get; set; }
        public string Transporter { get; set; }

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class ErrorLog
     {
+        [Key]
         public System.Guid ErrorLogID { get; set; }
         public int PartitionID { get; set; }
         public string Application { get; set; }

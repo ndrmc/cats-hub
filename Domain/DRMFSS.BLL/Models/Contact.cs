@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class Contact
     {
+        [Key]
         public int ContactID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

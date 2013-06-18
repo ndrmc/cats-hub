@@ -248,18 +248,25 @@ namespace DRMFSS.BLL
 
         public int SaveChanges(BLL.UserProfile userId)
         {
-            // Get all Added/Deleted/Modified entities (not Unmodified or Detached)
-            foreach (var ent in this.ChangeTracker.Entries().Where(p => p.State == System.Data.EntityState.Added || p.State == System.Data.EntityState.Deleted || p.State == System.Data.EntityState.Modified))
-            {
-                // For each changed record, get the audit record entries and add them
-                foreach (Audit x in GetAuditRecordsForChange(ent, userId))
+           
+                // Get all Added/Deleted/Modified entities (not Unmodified or Detached)
+                foreach (
+                    var ent in
+                        this.ChangeTracker.Entries().Where(
+                            p =>
+                            p.State == System.Data.EntityState.Added || p.State == System.Data.EntityState.Deleted ||
+                            p.State == System.Data.EntityState.Modified))
                 {
-                    this.Audits.Add(x);
+                    // For each changed record, get the audit record entries and add them
+                    foreach (Audit x in GetAuditRecordsForChange(ent, userId))
+                    {
+                        this.Audits.Add(x);
+                    }
                 }
-            }
 
-            // Call the original SaveChanges(), which will save both the changes made and the audit records
-            return base.SaveChanges();
+                // Call the original SaveChanges(), which will save both the changes made and the audit records
+               return  base.SaveChanges();
+           
         }
         /// <summary>
         /// GetAuditRecordsForChange
@@ -277,11 +284,13 @@ namespace DRMFSS.BLL
             TableAttribute tableAttr = dbEntry.Entity.GetType().GetCustomAttributes(typeof(TableAttribute), false).SingleOrDefault() as TableAttribute;
 
             // Get table name (if it has a Table attribute, use that, otherwise get the pluralized name)
-            string tableName = tableAttr != null ? tableAttr.Name : dbEntry.Entity.GetType().Name;
+            string tableName = dbEntry.Entity.GetType().Name.Split('_')[0];//tableAttr != null ? tableAttr.Name : dbEntry.Entity.GetType().Name;
 
             // Get primary key value (If you have more than one key column, this will need to be adjusted)
-            string keyName = dbEntry.Entity.GetType().GetProperties().Single(p => p.GetCustomAttributes(typeof(KeyAttribute), false).Count() > 0).Name;
-
+            // string keyName =dbEntry.Entity.GetType().GetProperties().Single(p => p.GetCustomAttributes(typeof(KeyAttribute), false).Count() > 0).Name;
+           
+            string keyName =
+                dbEntry.Entity.GetType().GetProperties().Single(p => p.GetCustomAttributes(typeof(KeyAttribute), true).Any()).Name;
             if (dbEntry.State == System.Data.EntityState.Added)
             {
                 // For Inserts, just add the whole record
@@ -290,7 +299,7 @@ namespace DRMFSS.BLL
                 {
                     AuditID = Guid.NewGuid(),
                     LoginID = userId.UserProfileID,
-                    DateTime = changeTime,
+                   DateTime = DateTime.Now,
                     Action = "A", // Added
                     TableName = tableName,
                     PrimaryKey = dbEntry.CurrentValues.GetValue<object>(keyName).ToString(),  // Again, adjust this if you have a multi-column key
@@ -310,7 +319,7 @@ namespace DRMFSS.BLL
                 {
                     AuditID = Guid.NewGuid(),
                     LoginID = userId.UserProfileID,
-                    DateTime = changeTime,
+                     DateTime = DateTime.Now,
                     Action = "D", // Deleted
                     TableName = tableName,
                     PrimaryKey = dbEntry.OriginalValues.GetValue<object>(keyName).ToString(),
@@ -333,7 +342,7 @@ namespace DRMFSS.BLL
                         {
                             AuditID = Guid.NewGuid(),
                             LoginID = userId.UserProfileID,
-                            DateTime = changeTime,
+                       DateTime = DateTime.Now,
                             Action = "M",    // Modified
                             TableName = tableName,
                             PrimaryKey = dbEntry.OriginalValues.GetValue<object>(keyName).ToString(),

@@ -1281,6 +1281,7 @@
     <Content Include="App_GlobalResources\GridLocalization.bg-BG.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>GridLocalization.bg-BG.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="App_GlobalResources\EditorLocalization.zh-CN.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>

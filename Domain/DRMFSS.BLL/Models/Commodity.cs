@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -17,7 +18,7 @@ namespace DRMFSS.BLL
             this.Transactions = new List<Transaction>();
             this.Transactions1 = new List<Transaction>();
         }
-
+        [Key]
         public int CommodityID { get; set; }
         public string Name { get; set; }
         public string LongName { get; set; }

@@ -9,7 +9,7 @@ namespace DRMFSS.BLL
         public Nullable<int> HubID { get; set; }
         public int PartitionID { get; set; }
         public int LoginID { get; set; }
-        public System.DateTime DateTime { get; set; }
+        public DateTime DateTime { get; set; }
         public string Action { get; set; }
         public string TableName { get; set; }
         public string PrimaryKey { get; set; }

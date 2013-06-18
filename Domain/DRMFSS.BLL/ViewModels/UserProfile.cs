@@ -8,6 +8,7 @@ namespace DRMFSS.BLL
     
     partial class UserProfile
     {
+        
         public void ChangeLanguage(string lang)
         {
             BLL.CTSContext context = new BLL.CTSContext();         

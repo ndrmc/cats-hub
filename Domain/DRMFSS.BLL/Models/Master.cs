@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -9,7 +10,7 @@ namespace DRMFSS.BLL
         {
             this.Details = new List<Detail>();
         }
-
+        [Key]
         public int MasterID { get; set; }
         public string Name { get; set; }
         public int SortOrder { get; set; }

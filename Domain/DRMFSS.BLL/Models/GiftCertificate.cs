@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -9,7 +10,7 @@ namespace DRMFSS.BLL
         {
             this.GiftCertificateDetails = new List<GiftCertificateDetail>();
         }
-
+        [Key]
         public int GiftCertificateID { get; set; }
         public System.DateTime GiftDate { get; set; }
         public int DonorID { get; set; }

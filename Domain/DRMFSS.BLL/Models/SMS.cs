@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class SMS
     {
+        [Key]
         public int SMSID { get; set; }
         public string InOutInd { get; set; }
         public string MobileNumber { get; set; }

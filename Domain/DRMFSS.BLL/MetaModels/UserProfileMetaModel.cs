@@ -8,8 +8,8 @@ namespace DRMFSS.BLL.MetaModels
 
 		public sealed class UserProfileMetaModel
 		{
-		
-			[Required(ErrorMessage="User Profile is required")]
+		    [Required(ErrorMessage="User Profile is required")]
+			[Key]
     		public Int32 UserProfileID { get; set; }
 
 			[Required(ErrorMessage="User Name is required")]

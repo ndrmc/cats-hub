@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class ForgetPasswordRequest
     {
+        [Key]
         public int ForgetPasswordRequestID { get; set; }
         public int UserProfileID { get; set; }
         public System.DateTime GeneratedDate { get; set; }

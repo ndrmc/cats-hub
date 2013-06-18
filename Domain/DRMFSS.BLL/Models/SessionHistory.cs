@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class SessionHistory
     {
+        [Key]
         public System.Guid SessionHistoryID { get; set; }
         public int PartitionID { get; set; }
         public Nullable<int> UserProfileID { get; set; }

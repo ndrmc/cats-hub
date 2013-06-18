@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -11,7 +12,7 @@ namespace DRMFSS.BLL
             this.Dispatches = new List<Dispatch>();
             this.DispatchAllocations = new List<DispatchAllocation>();
         }
-
+        [Key]
         public int FDPID { get; set; }
         public string Name { get; set; }
         public string NameAM { get; set; }

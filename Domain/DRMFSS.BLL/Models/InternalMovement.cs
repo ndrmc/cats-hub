@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class InternalMovement
     {
+        [Key]
         public System.Guid InternalMovementID { get; set; }
         public int PartitionID { get; set; }
         public int HubID { get; set; }

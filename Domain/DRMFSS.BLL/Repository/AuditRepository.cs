@@ -21,7 +21,7 @@ namespace DRMFSS.BLL.Repository
         {
             var changes = (from audit in db.Audits
                            where audit.TableName == table && audit.PrimaryKey == key && audit.NewValue.Contains(property)
-                           orderby audit.DateTime descending
+                          orderby audit.DateTime descending
                            select audit);
 
             List<FieldChange> filedsList = new List<FieldChange>();

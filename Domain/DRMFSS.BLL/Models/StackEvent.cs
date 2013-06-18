@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class StackEvent
     {
+        [Key]
         public System.Guid StackEventID { get; set; }
         public System.DateTime EventDate { get; set; }
         public int HubID { get; set; }

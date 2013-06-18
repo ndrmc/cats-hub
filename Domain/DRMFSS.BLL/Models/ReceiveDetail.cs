@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class ReceiveDetail
     {
+        [Key]
         public System.Guid ReceiveDetailID { get; set; }
         public int PartitionID { get; set; }
         public Nullable<System.Guid> ReceiveID { get; set; }

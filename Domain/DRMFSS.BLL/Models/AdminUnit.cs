@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -10,7 +11,7 @@ namespace DRMFSS.BLL
             this.AdminUnit1 = new List<AdminUnit>();
             this.FDPs = new List<FDP>();
         }
-
+        [Key]
         public int AdminUnitID { get; set; }
         public string Name { get; set; }
         public string NameAM { get; set; }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
 namespace DRMFSS.BLL
 {
    public class StatusReportBySI_Result
-    {
+   {
+       [Key]
        public string SINumber { get; set; }
        public string Vessel { get; set; }
        public decimal? AllocatedToHub { get; set; }

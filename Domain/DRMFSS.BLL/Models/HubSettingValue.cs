@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class HubSettingValue
     {
+        [Key]
         public int HubSettingValueID { get; set; }
         public int HubSettingID { get; set; }
         public int HubID { get; set; }

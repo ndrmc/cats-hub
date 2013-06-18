@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -11,7 +12,7 @@ namespace DRMFSS.BLL
             this.SessionHistories = new List<SessionHistory>();
             this.UserRoles = new List<UserRole>();
         }
-
+        [Key]
         public int RoleID { get; set; }
         public int SortOrder { get; set; }
         public string Name { get; set; }

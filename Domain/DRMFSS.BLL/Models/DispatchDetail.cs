@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
     public partial class DispatchDetail
     {
+        [Key]
         public System.Guid DispatchDetailID { get; set; }
         public int PartitionID { get; set; }
         public Nullable<System.Guid> TransactionGroupID { get; set; }

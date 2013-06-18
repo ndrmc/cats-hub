@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -13,7 +14,7 @@ namespace DRMFSS.BLL
             this.ReceiveDetails = new List<ReceiveDetail>();
             this.Transactions = new List<Transaction>();
         }
-
+        [Key]
         public System.Guid TransactionGroupID { get; set; }
         public int PartitionID { get; set; }
         public virtual ICollection<Adjustment> Adjustments { get; set; }

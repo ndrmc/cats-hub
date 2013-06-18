@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.BLL
 {
@@ -13,7 +14,7 @@ namespace DRMFSS.BLL
             this.GiftCertificateDetails2 = new List<GiftCertificateDetail>();
             this.InternalMovements = new List<InternalMovement>();
         }
-
+        [Key]
         public int DetailID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
