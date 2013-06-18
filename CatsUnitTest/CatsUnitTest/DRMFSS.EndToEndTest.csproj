@@ -16,6 +16,8 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,35 +38,38 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NMock2">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\NMock2.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\NMock2.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\nunit.core.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\nunit.core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\nunit.core.interfaces.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\nunit.core.interfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.mocks">
+      <HintPath>..\..\packages\NUnit.Mocks.2.6.2\lib\nunit.mocks.dll</HintPath>
     </Reference>
     <Reference Include="Selenium.WebDriverBackedSelenium">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\Selenium.WebDriverBackedSelenium.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\Selenium.WebDriverBackedSelenium.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="ThoughtWorks.Selenium.Core">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\ThoughtWorks.Selenium.Core.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\ThoughtWorks.Selenium.Core.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\WebDriver.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\WebDriver.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver.Common.Tests">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\WebDriver.Common.Tests.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\WebDriver.Common.Tests.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver.Remote.Tests">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\WebDriver.Remote.Tests.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\WebDriver.Remote.Tests.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver.Support">
-      <HintPath>..\..\..\..\..\Desktop\Selenium File\net40\WebDriver.Support.dll</HintPath>
+      <HintPath>..\..\packages\Selenium DLL\WebDriver.Support.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -99,6 +104,9 @@
     <Compile Include="Tests\UserManagement.cs" />
     <Compile Include="WebDriverExtension.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
@@ -119,6 +127,7 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

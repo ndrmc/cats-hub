@@ -10,6 +10,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRMFSS.Shared", "Infrastructure\DRMFSS.Shared\DRMFSS.Shared.csproj", "{85DD7228-1691-4BF3-86DC-2CCF813A7940}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A014B585-6B3C-4A24-8593-FA7072DCD0B8}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DRMFSS.Reports", "UI\DRMFSS.Reports\DRMFSS.Reports.csproj", "{422055F5-BA46-46D1-97D7-13B8AE4DA563}"
 EndProject
