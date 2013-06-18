@@ -35,8 +35,10 @@ namespace DRMFSS.BLL.Repository
         /// <returns>List<AdminUnit></returns>
         public List<AdminUnit> GetRegions()
         {
+
             return new CTSContext().AdminUnits
                 .Where(u => u.AdminUnitTypeID == 2).ToList();
+
         }
 
         /// <summary>
