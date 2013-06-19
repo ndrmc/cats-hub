@@ -177,7 +177,8 @@
     <Compile Include="Interfaces\IUserHubRepository.cs" />
     <Compile Include="Interfaces\IUserProfileRepository.cs" />
     <Compile Include="Interfaces\IUserRoleRepository.cs" />
-    <Compile Include="IUnitOfWork.cs" />
+    <Compile Include="Repository\AccountRepository.cs" />
+    <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="MetaModels\AccountMetaModel.cs">
     </Compile>
     <Compile Include="MetaModels\AdjustmentMetaModel.cs">
@@ -513,7 +514,6 @@
     <Compile Include="Repository\ConstantsRepository.cs" />
     <Compile Include="Repository\GenericRepository.cs" />
     <Compile Include="Interfaces\IGenericRepository.cs" />
-    <Compile Include="Repository\AccountRepository.cs" />
     <Compile Include="Repository\AdjustmentReasonRepository.cs">
       <SubType>
       </SubType>
@@ -725,7 +725,7 @@
       </SubType>
     </Compile>
     <Compile Include="Repository\viewModel.cs" />
-    <Compile Include="UnitOfWork.cs" />
+    <Compile Include="UnitOfWork\UnitOfWork.cs" />
     <Compile Include="ViewModels\Common\BidRefViewModel.cs" />
     <Compile Include="ViewModels\Report\Data\DeliveryReport.cs" />
     <Compile Include="ViewModels\Report\Data\DistributionReport.cs" />
