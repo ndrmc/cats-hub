@@ -181,6 +181,12 @@
     <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\IAccountService.cs" />
     <Compile Include="Services\IAdjustmentReasonService.cs" />
+    <Compile Include="Services\IUserHubService.cs" />
+    <Compile Include="Services\IUserProfileService.cs" />
+    <Compile Include="Services\IUserRoleService.cs" />
+    <Compile Include="Services\UserHubService.cs" />
+    <Compile Include="Services\UserProfileService.cs" />
+    <Compile Include="Services\UserRoleService.cs" />
     <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="MetaModels\AccountMetaModel.cs">
     </Compile>
@@ -517,10 +523,6 @@
     <Compile Include="Repository\ConstantsRepository.cs" />
     <Compile Include="Repository\GenericRepository.cs" />
     <Compile Include="Interfaces\IGenericRepository.cs" />
-    <Compile Include="Repository\AdjustmentReasonRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
     <Compile Include="Repository\AdjustmentRepository.cs">
       <SubType>
       </SubType>
