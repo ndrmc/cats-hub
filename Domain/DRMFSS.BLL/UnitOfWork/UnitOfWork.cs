@@ -6,7 +6,7 @@ using DRMFSS.BLL.Interfaces;
 using DRMFSS.BLL.Repository;
 
 
-namespace DRMFSS.BLL.UnitOfWork
+namespace DRMFSS.BLL
 {
 
     public class UnitOfWork : IUnitOfWork, IDisposable

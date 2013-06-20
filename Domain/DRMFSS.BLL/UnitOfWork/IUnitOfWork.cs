@@ -5,7 +5,7 @@ using System.Data.Objects.DataClasses;
 using DRMFSS.BLL.Interfaces;
 
 
-namespace DRMFSS.BLL.UnitOfWork
+namespace DRMFSS.BLL
 {
 
 		public interface IUnitOfWork:IDisposable
