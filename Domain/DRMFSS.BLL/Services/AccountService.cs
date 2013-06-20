@@ -15,9 +15,9 @@ namespace DRMFSS.BLL.Services
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public AccountService()
+        public AccountService(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = new UnitOfWork();
+            this._unitOfWork = unitOfWork;
         }
         #region Default Service Implementation
         public bool AddAccount(Account entity)
@@ -69,8 +69,6 @@ namespace DRMFSS.BLL.Services
 
         }
 
-
-
         public int GetAccountId(string entityType, int entityId)
         {
              var account = _unitOfWork.AccountRepository.FindBy(t => t.EntityType == entityType && t.EntityID == entityId).FirstOrDefault();
@@ -94,6 +92,7 @@ namespace DRMFSS.BLL.Services
                 newAccount.EntityID = entityId;
                 newAccount.EntityType = entityType;
                 _unitOfWork.AccountRepository.Add(newAccount);
+                _unitOfWork.Save();
                 return newAccount.AccountID;
             }
           

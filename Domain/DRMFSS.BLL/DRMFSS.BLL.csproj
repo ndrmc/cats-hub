@@ -177,9 +177,10 @@
     <Compile Include="Interfaces\IUserHubRepository.cs" />
     <Compile Include="Interfaces\IUserProfileRepository.cs" />
     <Compile Include="Interfaces\IUserRoleRepository.cs" />
-    <Compile Include="Repository\AccountRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="Services\IAdjustmentReasonService.cs" />
     <Compile Include="UnitOfWork\IUnitOfWork.cs" />
     <Compile Include="MetaModels\AccountMetaModel.cs">
     </Compile>
