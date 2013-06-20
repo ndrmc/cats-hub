@@ -177,9 +177,10 @@
     <Compile Include="Interfaces\IUserHubRepository.cs" />
     <Compile Include="Interfaces\IUserProfileRepository.cs" />
     <Compile Include="Interfaces\IUserRoleRepository.cs" />
-    <Compile Include="Repository\AccountRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+
     <Compile Include="Services\ITranslationService.cs" />
     <Compile Include="Services\ITransporterService.cs" />
     <Compile Include="Services\IUnitService.cs" />
@@ -189,6 +190,9 @@
     <Compile Include="Services\TranslationService.cs" />
     <Compile Include="Services\TransporterService.cs" />
     <Compile Include="Services\UnitService.cs" />
+
+    <Compile Include="Services\IAdjustmentReasonService.cs" />
+   
     <Compile Include="Services\UserHubService.cs" />
     <Compile Include="Services\UserProfileService.cs" />
     <Compile Include="Services\UserRoleService.cs" />
@@ -528,10 +532,6 @@
     <Compile Include="Repository\ConstantsRepository.cs" />
     <Compile Include="Repository\GenericRepository.cs" />
     <Compile Include="Interfaces\IGenericRepository.cs" />
-    <Compile Include="Repository\AdjustmentReasonRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
     <Compile Include="Repository\AdjustmentRepository.cs">
       <SubType>
       </SubType>
