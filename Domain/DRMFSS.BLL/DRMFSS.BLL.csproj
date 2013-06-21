@@ -180,6 +180,9 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="Services\IStackEventService.cs" />
+    <Compile Include="Services\IStackEventTypeService.cs" />
+    <Compile Include="Services\IStoreService.cs" />
     <Compile Include="Services\ITransactionGroupService.cs" />
     <Compile Include="Services\ITranslationService.cs" />
     <Compile Include="Services\ITransporterService.cs" />
@@ -187,6 +190,9 @@
     <Compile Include="Services\IUserHubService.cs" />
     <Compile Include="Services\IUserRoleService.cs" />
     <Compile Include="Services\IUserProfileService.cs" />
+    <Compile Include="Services\StackEventService.cs" />
+    <Compile Include="Services\StackEventTypeService.cs" />
+    <Compile Include="Services\StoreService.cs" />
     <Compile Include="Services\TransactionGroupService.cs" />
     <Compile Include="Services\TranslationService.cs" />
     <Compile Include="Services\TransporterService.cs" />
