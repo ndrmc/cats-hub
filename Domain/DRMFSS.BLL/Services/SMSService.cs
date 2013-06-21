@@ -1,31 +1,74 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
+
+
 
 namespace DRMFSS.BLL.Services
 {
-    public class SMSService:ISMSService
+
+    public class SMSService : ISMSService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public SMSService(IUnitOfWork unitOfWork)
+
+        public SMSService()
         {
-            _unitOfWork = unitOfWork;
+            this._unitOfWork = new UnitOfWork();
         }
-        public bool DeleteByID(int id)
+        #region Default Service Implementation
+        public bool AddSMS(SMS entity)
         {
-            var sms = _unitOfWork.SMSRepository.FindBy(s=>s.SMSID ==id).SingleOrDefault();
-            if (sms == null) return false;
-            _unitOfWork.SMSRepository.Delete(sms);
+            _unitOfWork.SMSRepository.Add(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool EditSMS(SMS entity)
+        {
+            _unitOfWork.SMSRepository.Edit(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool DeleteSMS(SMS entity)
+        {
+            if (entity == null) return false;
+            _unitOfWork.SMSRepository.Delete(entity);
             _unitOfWork.Save();
             return true;
         }
-
+        public bool DeleteById(int id)
+        {
+            var entity = _unitOfWork.SMSRepository.FindById(id);
+            if (entity == null) return false;
+            _unitOfWork.SMSRepository.Delete(entity);
+            _unitOfWork.Save();
+            return true;
+        }
+        public List<SMS> GetAllSMS()
+        {
+            return _unitOfWork.SMSRepository.GetAll();
+        }
         public SMS FindById(int id)
         {
-          return  _unitOfWork.SMSRepository.FindBy(s=>s.SMSID ==id).SingleOrDefault();
-           
+            return _unitOfWork.SMSRepository.FindById(id);
         }
+        public List<SMS> FindBy(Expression<Func<SMS, bool>> predicate)
+        {
+            return _unitOfWork.SMSRepository.FindBy(predicate);
+        }
+        #endregion
+
+        public void Dispose()
+        {
+            _unitOfWork.Dispose();
+
+        }
+
     }
 }
+
+

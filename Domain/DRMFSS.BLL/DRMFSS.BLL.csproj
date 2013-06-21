@@ -182,7 +182,6 @@
     <Compile Include="Services\AdjustmentService.cs" />
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\IAccountService.cs" />
-    <Compile Include="Services\IShippingInstruction.cs" />
     <Compile Include="Services\ISMSService.cs" />
     <Compile Include="Services\IStackEventService.cs" />
     <Compile Include="Services\IStackEventTypeService.cs" />

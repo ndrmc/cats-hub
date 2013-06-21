@@ -1,31 +1,74 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
+
+
 
 namespace DRMFSS.BLL.Services
 {
-    public class UserHubService:IUserHubService
+
+    public class UserHubService : IUserHubService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public UserHubService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
 
-        public bool DeleteByID(int HubId)
+        public UserHubService()
         {
-            var Hub = _unitOfWork.UserHubRepository.FindBy(h => h.HubID == HubId).SingleOrDefault();
-            if (Hub == null) return false;
-            _unitOfWork.UserHubRepository.Delete(Hub);
+            this._unitOfWork = new UnitOfWork();
+        }
+        #region Default Service Implementation
+        public bool AddUserHub(UserHub entity)
+        {
+            _unitOfWork.UserHubRepository.Add(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool EditUserHub(UserHub entity)
+        {
+            _unitOfWork.UserHubRepository.Edit(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool DeleteUserHub(UserHub entity)
+        {
+            if (entity == null) return false;
+            _unitOfWork.UserHubRepository.Delete(entity);
             _unitOfWork.Save();
             return true;
         }
-
-        public UserHub FindById(int HubId)
+        public bool DeleteById(int id)
         {
-            return _unitOfWork.UserHubRepository.FindBy(h => h.HubID == HubId).SingleOrDefault();
+            var entity = _unitOfWork.UserHubRepository.FindById(id);
+            if (entity == null) return false;
+            _unitOfWork.UserHubRepository.Delete(entity);
+            _unitOfWork.Save();
+            return true;
         }
+        public List<UserHub> GetAllUserHub()
+        {
+            return _unitOfWork.UserHubRepository.GetAll();
+        }
+        public UserHub FindById(int id)
+        {
+            return _unitOfWork.UserHubRepository.FindById(id);
+        }
+        public List<UserHub> FindBy(Expression<Func<UserHub, bool>> predicate)
+        {
+            return _unitOfWork.UserHubRepository.FindBy(predicate);
+        }
+        #endregion
+
+        public void Dispose()
+        {
+            _unitOfWork.Dispose();
+
+        }
+
     }
 }
+
+
