@@ -182,6 +182,7 @@
     <Compile Include="Services\AdjustmentService.cs" />
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="Services\ISessionHistoryService.cs" />
     <Compile Include="Services\ISMSService.cs" />
     <Compile Include="Services\IStackEventService.cs" />
     <Compile Include="Services\IStackEventTypeService.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="Services\IUnitService.cs" />
     <Compile Include="Services\IUserHubService.cs" />
     <Compile Include="Services\IUserRoleService.cs" />
+    <Compile Include="Services\SessionHistoryService.cs" />
     <Compile Include="Services\ShippingInstructionService.cs" />
     <Compile Include="Services\SMSService.cs" />
     <Compile Include="Services\TransactionService.cs" />
