@@ -180,35 +180,30 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\AdjustmentService.cs" />
+    <Compile Include="Services\CommodityGradeService.cs" />
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\IAccountService.cs" />
-
     <Compile Include="Services\IAdjustmentReasonService.cs" />
     <Compile Include="Services\IAdjustmentService.cs" />
+    <Compile Include="Services\ICommodityGradeService.cs" />
     <Compile Include="Services\ICommodityService.cs" />
+    <Compile Include="Services\ISettingService.cs" />
     <Compile Include="Services\IShippingInstructionService.cs" />
     <Compile Include="Services\ITransactionService.cs" />
-
     <Compile Include="Services\ITransactionGroupService.cs" />
     <Compile Include="Services\ITranslationService.cs" />
     <Compile Include="Services\ITransporterService.cs" />
     <Compile Include="Services\IUnitService.cs" />
-
     <Compile Include="Services\IUserHubService.cs" />
     <Compile Include="Services\IUserRoleService.cs" />
-
+    <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\ShippingInstructionService.cs" />
     <Compile Include="Services\TransactionService.cs" />
-
     <Compile Include="Services\IUserProfileService.cs" />
     <Compile Include="Services\TransactionGroupService.cs" />
     <Compile Include="Services\TranslationService.cs" />
     <Compile Include="Services\TransporterService.cs" />
     <Compile Include="Services\UnitService.cs" />
-    
-
-
-
     <Compile Include="Services\UserHubService.cs" />
     <Compile Include="Services\UserProfileService.cs" />
     <Compile Include="Services\UserRoleService.cs" />
