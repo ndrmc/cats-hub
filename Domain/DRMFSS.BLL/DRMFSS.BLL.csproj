@@ -184,6 +184,8 @@
     <Compile Include="Services\CommodityGradeService.cs" />
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\CommoditySourceService.cs" />
+    <Compile Include="Services\CommodityTypeService.cs" />
+    <Compile Include="Services\ContactService.cs" />
     <Compile Include="Services\IAccountService.cs" />
     <Compile Include="Services\IAdjustmentReasonService.cs" />
     <Compile Include="Services\IAdjustmentService.cs" />
@@ -191,6 +193,8 @@
     <Compile Include="Services\ICommodityGradeService.cs" />
     <Compile Include="Services\ICommodityService.cs" />
     <Compile Include="Services\ICommoditySourceService.cs" />
+    <Compile Include="Services\ICommodityTypeService.cs" />
+    <Compile Include="Services\IContactService.cs" />
     <Compile Include="Services\ISettingService.cs" />
     <Compile Include="Services\IShippingInstructionService.cs" />
     <Compile Include="Services\ITransactionService.cs" />
