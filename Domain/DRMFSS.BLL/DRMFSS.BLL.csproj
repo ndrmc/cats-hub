@@ -189,6 +189,7 @@
     <Compile Include="Services\DetailService.cs" />
     <Compile Include="Services\DispatchAllocationService.cs" />
     <Compile Include="Services\DispatchDetailService.cs" />
+    <Compile Include="Services\DispatchService.cs" />
     <Compile Include="Services\IAccountService.cs" />
     <Compile Include="Services\IAdjustmentReasonService.cs" />
     <Compile Include="Services\IAdjustmentService.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Services\IDetailService.cs" />
     <Compile Include="Services\IDispatchAllocationService.cs" />
     <Compile Include="Services\IDispatchDetailService.cs" />
+    <Compile Include="Services\IDispatchService.cs" />
     <Compile Include="Services\ISettingService.cs" />
     <Compile Include="Services\IShippingInstructionService.cs" />
     <Compile Include="Services\ITransactionService.cs" />
