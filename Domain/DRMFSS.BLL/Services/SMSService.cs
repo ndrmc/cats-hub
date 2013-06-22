@@ -9,56 +9,56 @@ using System.Linq.Expressions;
 namespace DRMFSS.BLL.Services
 {
 
-    public class UnitService : IUnitService
+    public class SMSService : ISMSService
     {
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public UnitService()
+        public SMSService()
         {
             this._unitOfWork = new UnitOfWork();
         }
         #region Default Service Implementation
-        public bool AddUnit(Unit unit)
+        public bool AddSMS(SMS entity)
         {
-            _unitOfWork.UnitRepository.Add(unit);
+            _unitOfWork.SMSRepository.Add(entity);
             _unitOfWork.Save();
             return true;
 
         }
-        public bool EditUnit(Unit unit)
+        public bool EditSMS(SMS entity)
         {
-            _unitOfWork.UnitRepository.Edit(unit);
+            _unitOfWork.SMSRepository.Edit(entity);
             _unitOfWork.Save();
             return true;
 
         }
-        public bool DeleteUnit(Unit unit)
+        public bool DeleteSMS(SMS entity)
         {
-            if (unit == null) return false;
-            _unitOfWork.UnitRepository.Delete(unit);
+            if (entity == null) return false;
+            _unitOfWork.SMSRepository.Delete(entity);
             _unitOfWork.Save();
             return true;
         }
         public bool DeleteById(int id)
         {
-            var entity = _unitOfWork.UnitRepository.FindById(id);
+            var entity = _unitOfWork.SMSRepository.FindById(id);
             if (entity == null) return false;
-            _unitOfWork.UnitRepository.Delete(entity);
+            _unitOfWork.SMSRepository.Delete(entity);
             _unitOfWork.Save();
             return true;
         }
-        public List<Unit> GetAllUnit()
+        public List<SMS> GetAllSMS()
         {
-            return _unitOfWork.UnitRepository.GetAll();
+            return _unitOfWork.SMSRepository.GetAll();
         }
-        public Unit FindById(int id)
+        public SMS FindById(int id)
         {
-            return _unitOfWork.UnitRepository.FindById(id);
+            return _unitOfWork.SMSRepository.FindById(id);
         }
-        public List<Unit> FindBy(Expression<Func<Unit, bool>> predicate)
+        public List<SMS> FindBy(Expression<Func<SMS, bool>> predicate)
         {
-            return _unitOfWork.UnitRepository.FindBy(predicate);
+            return _unitOfWork.SMSRepository.FindBy(predicate);
         }
         #endregion
 

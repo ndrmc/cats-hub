@@ -191,6 +191,12 @@
     <Compile Include="Services\DispatchDetailService.cs" />
     <Compile Include="Services\DispatchService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="Services\ISessionAttempt.cs" />
+    <Compile Include="Services\ISessionHistoryService.cs" />
+    <Compile Include="Services\ISMSService.cs" />
+    <Compile Include="Services\IStackEventService.cs" />
+    <Compile Include="Services\IStackEventTypeService.cs" />
+    <Compile Include="Services\IStoreService.cs" />
     <Compile Include="Services\IAdjustmentReasonService.cs" />
     <Compile Include="Services\IAdjustmentService.cs" />
     <Compile Include="Services\IAdminUnitService.cs" />
@@ -212,10 +218,21 @@
     <Compile Include="Services\IUnitService.cs" />
     <Compile Include="Services\IUserHubService.cs" />
     <Compile Include="Services\IUserRoleService.cs" />
+
     <Compile Include="Services\SettingService.cs" />
+
+    <Compile Include="Services\IRoleService.cs" />
+    <Compile Include="Services\RoleService.cs" />
+   
+    <Compile Include="Services\SessionHistoryService.cs" />
+
     <Compile Include="Services\ShippingInstructionService.cs" />
+    <Compile Include="Services\SMSService.cs" />
     <Compile Include="Services\TransactionService.cs" />
     <Compile Include="Services\IUserProfileService.cs" />
+    <Compile Include="Services\StackEventService.cs" />
+    <Compile Include="Services\StackEventTypeService.cs" />
+    <Compile Include="Services\StoreService.cs" />
     <Compile Include="Services\TransactionGroupService.cs" />
     <Compile Include="Services\TranslationService.cs" />
     <Compile Include="Services\TransporterService.cs" />

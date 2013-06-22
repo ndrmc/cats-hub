@@ -9,56 +9,56 @@ using System.Linq.Expressions;
 namespace DRMFSS.BLL.Services
 {
 
-    public class UserRoleService : IUserRoleService
+    public class RoleService : IRoleService
     {
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public UserRoleService()
+        public RoleService()
         {
             this._unitOfWork = new UnitOfWork();
         }
         #region Default Service Implementation
-        public bool AddUserRole(UserRole entity)
+        public bool AddRole(Role entity)
         {
-            _unitOfWork.UserRoleRepository.Add(entity);
+            _unitOfWork.RoleRepository.Add(entity);
             _unitOfWork.Save();
             return true;
 
         }
-        public bool EditUserRole(UserRole entity)
+        public bool EditRole(Role entity)
         {
-            _unitOfWork.UserRoleRepository.Edit(entity);
+            _unitOfWork.RoleRepository.Edit(entity);
             _unitOfWork.Save();
             return true;
 
         }
-        public bool DeleteUserRole(UserRole entity)
+        public bool DeleteRole(Role entity)
         {
             if (entity == null) return false;
-            _unitOfWork.UserRoleRepository.Delete(entity);
+            _unitOfWork.RoleRepository.Delete(entity);
             _unitOfWork.Save();
             return true;
         }
         public bool DeleteById(int id)
         {
-            var entity = _unitOfWork.UserRoleRepository.FindById(id);
+            var entity = _unitOfWork.RoleRepository.FindById(id);
             if (entity == null) return false;
-            _unitOfWork.UserRoleRepository.Delete(entity);
+            _unitOfWork.RoleRepository.Delete(entity);
             _unitOfWork.Save();
             return true;
         }
-        public List<UserRole> GetAllUserRole()
+        public List<Role> GetAllRole()
         {
-            return _unitOfWork.UserRoleRepository.GetAll();
+            return _unitOfWork.RoleRepository.GetAll();
         }
-        public UserRole FindById(int id)
+        public Role FindById(int id)
         {
-            return _unitOfWork.UserRoleRepository.FindById(id);
+            return _unitOfWork.RoleRepository.FindById(id);
         }
-        public List<UserRole> FindBy(Expression<Func<UserRole, bool>> predicate)
+        public List<Role> FindBy(Expression<Func<Role, bool>> predicate)
         {
-            return _unitOfWork.UserRoleRepository.FindBy(predicate);
+            return _unitOfWork.RoleRepository.FindBy(predicate);
         }
         #endregion
 
@@ -71,4 +71,5 @@ namespace DRMFSS.BLL.Services
     }
 }
 
-
+ 
+      

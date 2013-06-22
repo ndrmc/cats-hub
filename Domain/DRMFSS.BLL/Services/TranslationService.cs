@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace DRMFSS.BLL.Services
@@ -53,18 +54,60 @@ namespace DRMFSS.BLL.Services
             return _unitOfWork.TranslationRepository.FindBy(t => t.LanguageCode == languageCode).OrderBy(o => o.Phrase).ToList();
         }
 
-        public bool DeleteByID(int id)
+        #region Default Service Implementation
+        public bool AddTranslation(Translation entity)
         {
-            var trans = _unitOfWork.TranslationRepository.FindBy(t => t.TranslationID == id).FirstOrDefault();
-            if (trans == null) return false;
-            _unitOfWork.TranslationRepository.Delete(trans);
+            _unitOfWork.TranslationRepository.Add(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool EditTranslation(Translation entity)
+        {
+            _unitOfWork.TranslationRepository.Edit(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool DeleteTranslation(Translation entity)
+        {
+            if (entity == null) return false;
+            _unitOfWork.TranslationRepository.Delete(entity);
             _unitOfWork.Save();
             return true;
         }
-
+        public bool DeleteById(int id)
+        {
+            var entity = _unitOfWork.TranslationRepository.FindById(id);
+            if (entity == null) return false;
+            _unitOfWork.TranslationRepository.Delete(entity);
+            _unitOfWork.Save();
+            return true;
+        }
+        public List<Translation> GetAllTranslation()
+        {
+            return _unitOfWork.TranslationRepository.GetAll();
+        }
         public Translation FindById(int id)
         {
-             return   _unitOfWork.TranslationRepository.FindBy(t => t.TranslationID == id).FirstOrDefault();
+            return _unitOfWork.TranslationRepository.FindById(id);
+        }
+        public List<Translation> FindBy(Expression<Func<Translation, bool>> predicate)
+        {
+            return _unitOfWork.TranslationRepository.FindBy(predicate);
+        }
+        #endregion
+
+        public void Dispose()
+        {
+            _unitOfWork.Dispose();
+
         }
     }
 }
+
+
+
+
+ 
+      

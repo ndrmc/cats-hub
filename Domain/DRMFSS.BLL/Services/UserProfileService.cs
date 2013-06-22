@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace DRMFSS.BLL.Services
@@ -38,18 +39,61 @@ namespace DRMFSS.BLL.Services
             return true;
         }
 
-        public bool DeleteByID(int id)
-        {
-             var userPrfl = _unitOfWork.UserProfileRepository.FindById(id);
-            if (userPrfl==null) return false;
-            _unitOfWork.UserProfileRepository.Delete(userPrfl);
-            _unitOfWork.Save();
-            return true;
-        }
+        
 
         public UserProfile FindById(int profileId)
         {
             return _unitOfWork.UserProfileRepository.FindBy(u => u.UserProfileID == profileId).SingleOrDefault();
         }
+
+        public bool AddUserProfile(UserProfile entity)
+        {
+            _unitOfWork.UserProfileRepository.Add(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool EditUserProfile(UserProfile entity)
+        {
+            _unitOfWork.UserProfileRepository.Edit(entity);
+            _unitOfWork.Save();
+            return true;
+
+        }
+        public bool DeleteUserProfile(UserProfile entity)
+        {
+            if (entity == null) return false;
+            _unitOfWork.UserProfileRepository.Delete(entity);
+            _unitOfWork.Save();
+            return true;
+        }
+        public bool DeleteById(int id)
+        {
+            var entity = _unitOfWork.UserProfileRepository.FindById(id);
+            if (entity == null) return false;
+            _unitOfWork.UserProfileRepository.Delete(entity);
+            _unitOfWork.Save();
+            return true;
+        }
+        public List<UserProfile> GetAllUserProfile()
+        {
+            return _unitOfWork.UserProfileRepository.GetAll();
+        }
+        public UserProfile FindById(int id)
+        {
+            return _unitOfWork.UserProfileRepository.FindById(id);
+        }
+        public List<UserProfile> FindBy(Expression<Func<UserProfile, bool>> predicate)
+        {
+            return _unitOfWork.UserProfileRepository.FindBy(predicate);
+        }
     }
 }
+
+
+
+
+       
+   
+ 
+      
