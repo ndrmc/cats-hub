@@ -189,6 +189,7 @@
     <Compile Include="Services\ILedgerTypeService.cs" />
     <Compile Include="Services\InternalMovementService.cs" />
     <Compile Include="Services\IPartitionService.cs" />
+    <Compile Include="Services\IPeriodService.cs" />
     <Compile Include="Services\IReceiveService.cs" />
     <Compile Include="Services\IReleaseNoteService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Services\LedgerService.cs" />
     <Compile Include="Services\LedgerTypeService.cs" />
     <Compile Include="Services\PartitionService.cs" />
+    <Compile Include="Services\PeriodService.cs" />
     <Compile Include="Services\ReceiveService.cs" />
     <Compile Include="Services\ReleaseNoteService.cs" />
     <Compile Include="Services\RoleService.cs" />
