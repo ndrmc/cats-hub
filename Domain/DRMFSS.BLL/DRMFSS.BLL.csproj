@@ -184,6 +184,9 @@
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\IAccountService.cs" />
     <Compile Include="Services\IAdminUnitService.cs" />
+    <Compile Include="Services\IInternalMovementService.cs" />
+    <Compile Include="Services\ILedgerService.cs" />
+    <Compile Include="Services\InternalMovementService.cs" />
     <Compile Include="Services\IReceiveService.cs" />
     <Compile Include="Services\IReleaseNoteService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
@@ -204,6 +207,7 @@
     <Compile Include="Services\IUserHubService.cs" />
     <Compile Include="Services\IUserRoleService.cs" />
     <Compile Include="Services\IRoleService.cs" />
+    <Compile Include="Services\LedgerService.cs" />
     <Compile Include="Services\ReceiveService.cs" />
     <Compile Include="Services\ReleaseNoteService.cs" />
     <Compile Include="Services\RoleService.cs" />
