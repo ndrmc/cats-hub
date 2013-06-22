@@ -180,8 +180,10 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\AdjustmentService.cs" />
+    <Compile Include="Services\AdminUnitService.cs" />
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+    <Compile Include="Services\IAdminUnitService.cs" />
     <Compile Include="Services\IReceiveService.cs" />
     <Compile Include="Services\IReleaseNoteService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
