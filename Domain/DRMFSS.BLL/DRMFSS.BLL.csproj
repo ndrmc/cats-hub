@@ -79,6 +79,7 @@
     <Compile Include="Helpers\BaseEntities.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interfaces\IReportRepository.cs" />
     <Compile Include="Interfaces\IRepository.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -177,6 +178,7 @@
     <Compile Include="Interfaces\IUserHubRepository.cs" />
     <Compile Include="Interfaces\IUserProfileRepository.cs" />
     <Compile Include="Interfaces\IUserRoleRepository.cs" />
+    <Compile Include="Repository\ReportRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\AdjustmentService.cs" />
@@ -193,10 +195,12 @@
     <Compile Include="Services\DonorService.cs" />
     <Compile Include="Services\FDPService.cs" />
     <Compile Include="Services\ForgetPasswordRequestService.cs" />
+    <Compile Include="Services\GiftCertificateService.cs" />
     <Compile Include="Services\IAccountService.cs" />
     <Compile Include="Services\IDonorService.cs" />
     <Compile Include="Services\IFDPService.cs" />
     <Compile Include="Services\IForgetPasswordRequestService.cs" />
+    <Compile Include="Services\IGiftCertificateService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
     <Compile Include="Services\ISessionHistoryService.cs" />
     <Compile Include="Services\ISMSService.cs" />

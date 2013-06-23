@@ -234,6 +234,7 @@ namespace DRMFSS.BLL
             IGenericRepository< UserProfile >UserProfileRepository{ get; }
 
             IGenericRepository<UserRole> UserRoleRepository { get; }
+		    IReportRepository ReportRepository { get; }
         }
 }
 

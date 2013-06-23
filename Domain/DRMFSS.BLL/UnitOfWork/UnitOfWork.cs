@@ -75,6 +75,7 @@ namespace DRMFSS.BLL
         private IGenericRepository<UserHub> _UserHubRepository = null;
         private IGenericRepository<UserProfile> _UserProfileRepository = null;
         private IGenericRepository<UserRole> _UserRoleRepository = null;
+        private IReportRepository _reportRepository = null;
 
         #endregion
 
@@ -651,6 +652,12 @@ namespace DRMFSS.BLL
            GC.SuppressFinalize(this);
        }
        #endregion
+
+
+       public IReportRepository ReportRepository
+       {
+           get { return this._reportRepository ?? (this._reportRepository = new ReportRepository(_context)); }
+       }
     }
 }
 
