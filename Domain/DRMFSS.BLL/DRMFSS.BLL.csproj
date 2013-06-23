@@ -192,9 +192,11 @@
     <Compile Include="Services\DispatchService.cs" />
     <Compile Include="Services\DonorService.cs" />
     <Compile Include="Services\FDPService.cs" />
+    <Compile Include="Services\ForgetPasswordRequestService.cs" />
     <Compile Include="Services\IAccountService.cs" />
     <Compile Include="Services\IDonorService.cs" />
     <Compile Include="Services\IFDPService.cs" />
+    <Compile Include="Services\IForgetPasswordRequestService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
     <Compile Include="Services\ISessionHistoryService.cs" />
     <Compile Include="Services\ISMSService.cs" />
