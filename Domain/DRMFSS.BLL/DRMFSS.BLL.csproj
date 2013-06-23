@@ -79,6 +79,7 @@
     <Compile Include="Helpers\BaseEntities.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interfaces\GiftCertificateDetailService.cs" />
     <Compile Include="Interfaces\IReportRepository.cs" />
     <Compile Include="Interfaces\IRepository.cs">
       <SubType>Code</SubType>
@@ -200,6 +201,7 @@
     <Compile Include="Services\IDonorService.cs" />
     <Compile Include="Services\IFDPService.cs" />
     <Compile Include="Services\IForgetPasswordRequestService.cs" />
+    <Compile Include="Services\IGiftCertificateDetailService.cs" />
     <Compile Include="Services\IGiftCertificateService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
     <Compile Include="Services\ISessionHistoryService.cs" />
