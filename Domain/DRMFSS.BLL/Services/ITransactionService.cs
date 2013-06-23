@@ -146,7 +146,7 @@ namespace DRMFSS.BLL.Services
         List<ViewModels.Report.Data.ReceiveReport> GetReceiveReport(int hubID, ReceiptsViewModel receiptsViewModel);
 
         List<ViewModels.Report.Data.DistributionRows> GetDistributionReport(int hubID, DistributionViewModel distributionViewModel);
-        bool DeleteById(int id);
+        bool DeleteById(System.Guid id);
         Transaction FindById(System.Guid id);
    }
 }

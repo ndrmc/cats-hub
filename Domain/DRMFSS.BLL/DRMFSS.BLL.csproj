@@ -79,106 +79,8 @@
     <Compile Include="Helpers\BaseEntities.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\GiftCertificateDetailService.cs" />
+    <Compile Include="Services\GiftCertificateDetailService.cs" />
     <Compile Include="Interfaces\IReportRepository.cs" />
-    <Compile Include="Interfaces\IRepository.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IStackEventTypeRepository.cs" />
-    <Compile Include="Interfaces\IAccountRepository.cs" />
-    <Compile Include="Interfaces\IAdjustmentReasonRepository.cs" />
-    <Compile Include="Interfaces\IAdjustmentRepository.cs" />
-    <Compile Include="Interfaces\IAdminUnitRepository.cs" />
-    <Compile Include="Interfaces\IAdminUnitTypeRepository.cs" />
-    <Compile Include="Interfaces\IAuditRepository.cs" />
-    <Compile Include="Interfaces\ICommodityRepository.cs" />
-    <Compile Include="Interfaces\ICommodityGradeRepository.cs" />
-    <Compile Include="Interfaces\ICommoditySourceRepository.cs" />
-    <Compile Include="Interfaces\ICommodityTypeRepository.cs" />
-    <Compile Include="Interfaces\IContactRepository.cs" />
-    <Compile Include="Interfaces\IDetailRepository.cs" />
-    <Compile Include="Interfaces\IDispatchRepository.cs" />
-    <Compile Include="Interfaces\IDispatchAllocationRepository.cs" />
-    <Compile Include="Interfaces\IDispatchDetailRepository.cs" />
-    <Compile Include="Interfaces\IDonorRepository.cs" />
-    <Compile Include="Interfaces\IErrorLog.cs" />
-    <Compile Include="Interfaces\IFDPRepository.cs" />
-    <Compile Include="Interfaces\IForgetPasswordRequestRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\IGiftCertificateRepository.cs" />
-    <Compile Include="Interfaces\IGiftCertificateDetailRepository.cs" />
-    <Compile Include="Interfaces\IHubRepository.cs" />
-    <Compile Include="Interfaces\IHubOwnerRepository.cs" />
-    <Compile Include="Interfaces\IHubSettingRepository.cs" />
-    <Compile Include="Interfaces\IHubSettingValueRepository.cs" />
-    <Compile Include="Interfaces\IInternalMovementRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\ILedgerRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\ILedgerTypeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\ILetterTemplateRepository.cs" />
-    <Compile Include="Interfaces\IMasterRepository.cs" />
-    <Compile Include="Interfaces\IOtherDispatchAllocationRepository.cs" />
-    <Compile Include="Interfaces\IPartitionRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\IPeriodRepository.cs" />
-    <Compile Include="Interfaces\IProgramRepository.cs" />
-    <Compile Include="Interfaces\IProjectCodeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\IReceiptAllocationRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\IReceiveRepository.cs" />
-    <Compile Include="Interfaces\IReceiveDetailRepository.cs" />
-    <Compile Include="Interfaces\IReleaseNoteRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\IRoleRepository.cs" />
-    <Compile Include="Interfaces\ISessionAttemptRepository.cs" />
-    <Compile Include="Interfaces\ISessionHistoryRepository.cs" />
-    <Compile Include="Interfaces\ISettingRepository.cs" />
-    <Compile Include="Interfaces\IShippingInstructionRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\ISMSRepository.cs" />
-    <Compile Include="Interfaces\IStackEventRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\IStoreRepository.cs" />
-    <Compile Include="Interfaces\ITransactionGroupRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITransactionRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITranslationRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Interfaces\ITransporterRepository.cs" />
-    <Compile Include="Interfaces\IUnitRepository.cs" />
-    <Compile Include="Interfaces\IUserHubRepository.cs" />
-    <Compile Include="Interfaces\IUserProfileRepository.cs" />
-    <Compile Include="Interfaces\IUserRoleRepository.cs" />
     <Compile Include="Repository\ReportRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AdjustmentReasonService.cs" />
@@ -197,12 +99,18 @@
     <Compile Include="Services\FDPService.cs" />
     <Compile Include="Services\ForgetPasswordRequestService.cs" />
     <Compile Include="Services\GiftCertificateService.cs" />
+    <Compile Include="Services\HubOwnerService.cs" />
+    <Compile Include="Services\HubSettingService.cs" />
+    <Compile Include="Services\HubSettingValueService.cs" />
     <Compile Include="Services\IAccountService.cs" />
     <Compile Include="Services\IDonorService.cs" />
     <Compile Include="Services\IFDPService.cs" />
     <Compile Include="Services\IForgetPasswordRequestService.cs" />
     <Compile Include="Services\IGiftCertificateDetailService.cs" />
     <Compile Include="Services\IGiftCertificateService.cs" />
+    <Compile Include="Services\IHubOwnerService.cs" />
+    <Compile Include="Services\IHubSettingService.cs" />
+    <Compile Include="Services\IHubSettingValueService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
     <Compile Include="Services\ISessionHistoryService.cs" />
     <Compile Include="Services\ISMSService.cs" />
@@ -578,215 +486,8 @@
     </Compile>
     <Compile Include="Partials\UserRole.cs">
     </Compile>
-    <Compile Include="Repository\ConstantsRepository.cs" />
     <Compile Include="Repository\GenericRepository.cs" />
     <Compile Include="Interfaces\IGenericRepository.cs" />
-    <Compile Include="Repository\AdjustmentRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\AdminUnitRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\AdminUnitTypeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\AuditRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\CommodityGradeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\CommodityRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\CommoditySourceRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\CommodityTypeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ContactRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\DetailRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\DispatchAllocationRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\DispatchDetailRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\DispatchRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\DonorRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\FDPRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ForgetPasswordRequestRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\GiftCertificateDetailRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\GiftCertificateRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\HubOwnerRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\HubRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\HubSettingRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\HubSettingValueRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\InternalMovementRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\LedgerRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\LedgerTypeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\LetterTemplateRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\MasterRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\OtherDispatchAllocationRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\PartitionRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\PeriodRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ProgramRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ProjectCodeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ReceiptAllocationRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ReceiveDetailRepository.cs" />
-    <Compile Include="Repository\ReceiveRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ReleaseNoteRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\RoleRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\SessionAttemptRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\SessionHistoryRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\SettingRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\ShippingInstructionRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\SMSRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\StackEventRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\StackEventTypeRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\StoreRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\TransactionGroupRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\TransactionRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\TranslationRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\TransporterRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\UnitRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\UserHubRepository.cs" />
-    <Compile Include="Repository\UserProfileRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Repository\UserRoleRepository.cs">
-      <SubType>
-      </SubType>
-    </Compile>
     <Compile Include="Repository\viewModel.cs" />
     <Compile Include="UnitOfWork\UnitOfWork.cs" />
     <Compile Include="ViewModels\Common\BidRefViewModel.cs" />

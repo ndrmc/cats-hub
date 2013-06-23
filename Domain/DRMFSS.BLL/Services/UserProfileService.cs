@@ -79,10 +79,10 @@ namespace DRMFSS.BLL.Services
         {
             return _unitOfWork.UserProfileRepository.GetAll();
         }
-        public UserProfile FindById(int id)
-        {
-            return _unitOfWork.UserProfileRepository.FindById(id);
-        }
+        //public UserProfile FindById(int id)
+        //{
+        //    return _unitOfWork.UserProfileRepository.FindById(id);
+        //}
         public List<UserProfile> FindBy(Expression<Func<UserProfile, bool>> predicate)
         {
             return _unitOfWork.UserProfileRepository.FindBy(predicate);

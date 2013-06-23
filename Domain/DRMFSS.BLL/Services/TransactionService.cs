@@ -17,13 +17,13 @@ namespace DRMFSS.BLL.Services
         private readonly IAccountService _accountService;
         private readonly IShippingInstructionService _shippingInstructionService;
 
-        public TransactionService(IUnitOfWork unitOfWork,IAccountService accountService)
+        public TransactionService(IUnitOfWork unitOfWork, IAccountService accountService)
         {
             this._unitOfWork = unitOfWork;
             this._accountService = accountService;
         }
 
-       
+
 
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace DRMFSS.BLL.Services
                                                                    Ledger.Constants.GOODS_ON_HAND_UNCOMMITED
 
                 ).Select(t => t.QuantityInMT).ToList();
-          
+
             if (balance.Any())
             {
                 return balance.Sum();
@@ -238,7 +238,8 @@ namespace DRMFSS.BLL.Services
                 transaction.HubOwnerID = user.DefaultHub.HubOwnerID;
 
                 transaction.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, receive.HubID);
-                transaction.ShippingInstructionID =_shippingInstructionService.GetSINumberIdWithCreate(receiveModels.SINumber).ShippingInstructionID;
+                transaction.ShippingInstructionID = _shippingInstructionService.GetSINumberIdWithCreate(receiveModels.SINumber).ShippingInstructionID;
+
                 //TODO:After Implementing ProjectCodeService Please Return Here
                 //transaction.ProjectCodeID = repository.ProjectCode.GetProjectCodeIdWIthCreate(receiveModels.ProjectNumber).ProjectCodeID;
                 transaction.HubID = user.DefaultHub.HubID;
@@ -304,17 +305,19 @@ namespace DRMFSS.BLL.Services
                 tgroup.Transactions.Add(transaction2);
 
             }
+
             // Try to save this transaction
-            db.Database.Connection.Open();
-            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
+            //   db.Database.Connection.Open();
+            //  DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
-                repository.Receive.Add(receive);
-                dbTransaction.Commit();
+                //repository.Receive.Add(receive);
+                _unitOfWork.ReceiveRepository.Add(receive);
+                _unitOfWork.Save();
             }
             catch (Exception exp)
             {
-                dbTransaction.Rollback();
+                //  dbTransaction.Rollback();
                 //TODO: Save the exception somewhere
                 throw new Exception("The Receipt Transaction Cannot be saved. <br />Detail Message :" + exp.StackTrace);
 
@@ -333,13 +336,13 @@ namespace DRMFSS.BLL.Services
         public List<TransporationReport> GetTransportationReports(OperationMode mode, DateTime? fromDate, DateTime? toDate)
         {
             int ledgerId = (mode == OperationMode.Dispatch) ? Ledger.Constants.GOODS_DISPATCHED : Ledger.Constants.GOODS_ON_HAND_UNCOMMITED;
-            var list = from item in db.Transactions
-                       where (item.LedgerID == ledgerId && (item.QuantityInMT > 0 || item.QuantityInUnit > 0))
+            var list = _unitOfWork.TransactionRepository.Get(item =>
+                        (item.LedgerID == ledgerId && (item.QuantityInMT > 0 || item.QuantityInUnit > 0))
                               &&
                               (item.TransactionGroup.DispatchDetails.Any() || item.TransactionGroup.ReceiveDetails.Any())
                               &&
                               (!item.TransactionGroup.InternalMovements.Any() || !item.TransactionGroup.Adjustments.Any())
-                       select item;
+                       );
 
             if (fromDate.HasValue)
             {
@@ -390,15 +393,26 @@ namespace DRMFSS.BLL.Services
         /// <returns></returns>
         public List<ReceiptAllocation> GetAvailableAllocations(int hubId)
         {
-
-            var avaliableRAll = (from rAll in db.ReceiptAllocations
-                                 where rAll.QuantityInMT >= (from v in db.Transactions
-                                                             where v.ShippingInstruction.Value == rAll.SINumber
-                                                                   && v.HubID == hubId
-                                                                   && v.LedgerID == Ledger.Constants.GOODS_ON_HAND_UNCOMMITED
-                                                                   && v.QuantityInMT > 0
-                                                             select v.QuantityInMT).Sum()
-                                 select rAll);
+            var avaliableRAll =
+                _unitOfWork.ReceiptAllocationRepository.FindBy(
+                    t => t.QuantityInMT >= (_unitOfWork.TransactionRepository.FindBy(v =>
+                                                                                      v.ShippingInstruction.Value ==
+                                                                                      t.SINumber
+                                                                                      && v.HubID == hubId
+                                                                                      &&
+                                                                                      v.LedgerID ==
+                                                                                      Ledger.Constants.
+                                                                                          GOODS_ON_HAND_UNCOMMITED
+                                                                                      && v.QuantityInMT > 0).Select(
+                                                                                          v => v.QuantityInMT).Sum()));
+            //var avaliableRAll = (from rAll in db.ReceiptAllocations
+            //                     where rAll.QuantityInMT >= (from v in db.Transactions
+            //                                                 where v.ShippingInstruction.Value == rAll.SINumber
+            //                                                       && v.HubID == hubId
+            //                                                       && v.LedgerID == Ledger.Constants.GOODS_ON_HAND_UNCOMMITED
+            //                                                       && v.QuantityInMT > 0
+            //                                                 select v.QuantityInMT).Sum()
+            //                     select rAll);
 
             return avaliableRAll.ToList();
         }
@@ -417,7 +431,7 @@ namespace DRMFSS.BLL.Services
             dispatch.UserProfileID = user.UserProfileID;
             dispatch.DispatchAllocationID = dispatchModel.DispatchAllocationID;
             dispatch.OtherDispatchAllocationID = dispatchModel.OtherDispatchAllocationID;
-            CommodityType commType = repository.CommodityType.FindById(dispatchModel.CommodityTypeID);
+            CommodityType commType = _unitOfWork.CommodityTypeRepository.FindById(dispatchModel.CommodityTypeID);
 
             foreach (DispatchDetailModel detail in dispatchModel.DispatchDetails)
             {
@@ -455,16 +469,18 @@ namespace DRMFSS.BLL.Services
 
             }
             // Try to save this transaction
-            db.Database.Connection.Open();
-            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
+        //    db.Database.Connection.Open();
+          //  DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
-                repository.Dispatch.Add(dispatch);
-                dbTransaction.Commit();
+                _unitOfWork.DispatchRepository.Add(dispatch);
+                _unitOfWork.Save();
+                //repository.Dispatch.Add(dispatch);
+                //dbTransaction.Commit();
             }
             catch (Exception exp)
             {
-                dbTransaction.Rollback();
+               // dbTransaction.Rollback();
                 //TODO: Save the detail of this exception somewhere
                 throw new Exception("The Dispatch Transaction Cannot be saved. <br />Detail Message :" + exp.Message);
             }
@@ -488,17 +504,18 @@ namespace DRMFSS.BLL.Services
         private Transaction GetPositiveFDPTransaction(DispatchModel dispatchModel, Dispatch dispatch, DispatchDetailModel detail)
         {
             Transaction transaction2 = new Transaction();
-            transaction2.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.FDP, dispatchModel.FDPID.Value);
+            transaction2.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.FDP, dispatchModel.FDPID.Value);
             transaction2.ProgramID = dispatchModel.ProgramID;
             transaction2.ParentCommodityID = detail.CommodityID;
             transaction2.CommodityID = detail.CommodityID;
             transaction2.HubID = dispatch.HubID;
-            transaction2.HubOwnerID = repository.Hub.FindById(dispatch.HubID).HubOwnerID;
+            transaction2.HubOwnerID = _unitOfWork.HubRepository.FindById(dispatch.HubID).HubOwnerID;
             transaction2.LedgerID = Ledger.Constants.GOODS_DISPATCHED;
             transaction2.QuantityInMT = +detail.DispatchedQuantityMT.Value;
             transaction2.QuantityInUnit = +detail.DispatchedQuantity.Value;
-            transaction2.ShippingInstructionID = repository.ShippingInstruction.GetShipingInstructionId(dispatchModel.SINumber);
-            transaction2.ProjectCodeID = repository.ProjectCode.GetProjectCodeId(dispatchModel.ProjectNumber);
+            transaction2.ShippingInstructionID = _shippingInstructionService.GetShipingInstructionId(dispatchModel.SINumber);
+            //TODO:After Implmenting ProjectCodeService return here
+            //transaction2.ProjectCodeID = _projectCodeService.GetProjectCodeId(dispatchModel.ProjectNumber);
             transaction2.Stack = dispatchModel.StackNumber;
             transaction2.StoreID = dispatchModel.StoreID;
             transaction2.TransactionDate = DateTime.Now;
@@ -516,17 +533,18 @@ namespace DRMFSS.BLL.Services
         private Transaction GetNegativeFDPTransaction(DispatchModel dispatchModel, Dispatch dispatch, DispatchDetailModel detail)
         {
             Transaction transaction = new Transaction();
-            transaction.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.FDP, dispatch.FDPID.Value);
+            transaction.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.FDP, dispatch.FDPID.Value);
             transaction.ProgramID = dispatchModel.ProgramID;
             transaction.ParentCommodityID = detail.CommodityID;
             transaction.CommodityID = detail.CommodityID;
             transaction.HubID = dispatch.HubID;
-            transaction.HubOwnerID = repository.Hub.FindById(dispatch.HubID).HubOwnerID;
+            transaction.HubOwnerID = _unitOfWork.HubRepository.FindById(dispatch.HubID).HubOwnerID;
             transaction.LedgerID = Ledger.Constants.GOODS_ON_HAND_UNCOMMITED;
             transaction.QuantityInMT = -detail.DispatchedQuantityMT.Value;
             transaction.QuantityInUnit = -detail.DispatchedQuantity.Value;
-            transaction.ShippingInstructionID = repository.ShippingInstruction.GetShipingInstructionId(dispatchModel.SINumber);
-            transaction.ProjectCodeID = repository.ProjectCode.GetProjectCodeId(dispatchModel.ProjectNumber);
+            transaction.ShippingInstructionID = _shippingInstructionService.GetShipingInstructionId(dispatchModel.SINumber);
+            //TODO:After Implementing ProjectCodeService Return Here
+            //transaction.ProjectCodeID = _projectCodeService.GetProjectCodeId(dispatchModel.ProjectNumber);
             transaction.Stack = dispatchModel.StackNumber;
             transaction.StoreID = dispatchModel.StoreID;
             transaction.TransactionDate = DateTime.Now;
@@ -544,17 +562,18 @@ namespace DRMFSS.BLL.Services
         private Transaction GetPositiveHUBTransaction(DispatchModel dispatchModel, Dispatch dispatch, DispatchDetailModel detail)
         {
             Transaction transaction2 = new Transaction();
-            transaction2.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, dispatchModel.ToHubID.Value);
+            transaction2.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, dispatchModel.ToHubID.Value);
             transaction2.ProgramID = dispatchModel.ProgramID;
             transaction2.ParentCommodityID = detail.CommodityID;
             transaction2.CommodityID = detail.CommodityID;
             transaction2.HubID = dispatch.HubID;
-            transaction2.HubOwnerID = repository.Hub.FindById(dispatch.HubID).HubOwnerID;
+            transaction2.HubOwnerID = _unitOfWork.HubRepository.FindById(dispatch.HubID).HubOwnerID;
             transaction2.LedgerID = Ledger.Constants.GOODS_DISPATCHED;
             transaction2.QuantityInMT = +detail.DispatchedQuantityMT.Value;
             transaction2.QuantityInUnit = +detail.DispatchedQuantity.Value;
-            transaction2.ShippingInstructionID = repository.ShippingInstruction.GetShipingInstructionId(dispatchModel.SINumber);
-            transaction2.ProjectCodeID = repository.ProjectCode.GetProjectCodeId(dispatchModel.ProjectNumber);
+            transaction2.ShippingInstructionID = _shippingInstructionService.GetShipingInstructionId(dispatchModel.SINumber);
+            //TODO:After Implmenting ProjectCodeService Return here
+            //transaction2.ProjectCodeID = _projectCodeService.GetProjectCodeId(dispatchModel.ProjectNumber);
             transaction2.Stack = dispatchModel.StackNumber;
             transaction2.StoreID = dispatchModel.StoreID;
             transaction2.TransactionDate = DateTime.Now;
@@ -572,17 +591,17 @@ namespace DRMFSS.BLL.Services
         private Transaction GetNegativeHUBTransaction(DispatchModel dispatchModel, Dispatch dispatch, DispatchDetailModel detail)
         {
             Transaction transaction = new Transaction();
-            transaction.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, dispatch.HubID);
+            transaction.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, dispatch.HubID);
             transaction.ProgramID = dispatchModel.ProgramID;
             transaction.ParentCommodityID = detail.CommodityID;
             transaction.CommodityID = detail.CommodityID;
             transaction.HubID = dispatch.HubID;
-            transaction.HubOwnerID = repository.Hub.FindById(dispatch.HubID).HubOwnerID;
+            transaction.HubOwnerID = _unitOfWork.HubRepository.FindById(dispatch.HubID).HubOwnerID;
             transaction.LedgerID = Ledger.Constants.GOODS_ON_HAND_UNCOMMITED;
             transaction.QuantityInMT = -detail.DispatchedQuantityMT.Value;
             transaction.QuantityInUnit = -detail.DispatchedQuantity.Value;
-            transaction.ShippingInstructionID = repository.ShippingInstruction.GetShipingInstructionId(dispatchModel.SINumber);
-            transaction.ProjectCodeID = repository.ProjectCode.GetProjectCodeId(dispatchModel.ProjectNumber);
+            transaction.ShippingInstructionID = _shippingInstructionService.GetShipingInstructionId(dispatchModel.SINumber);
+            //transaction.ProjectCodeID = _projectCodeService.GetProjectCodeId(dispatchModel.ProjectNumber);
             transaction.Stack = dispatchModel.StackNumber;
             transaction.StoreID = dispatchModel.StoreID;
             transaction.TransactionDate = DateTime.Now;
@@ -634,9 +653,7 @@ namespace DRMFSS.BLL.Services
         /// <returns></returns>
         public Transaction FindByTransactionGroupID(Guid transactionGroupID)
         {
-            return (from tr in db.Transactions
-                    where tr.TransactionGroupID == transactionGroupID
-                    select tr).FirstOrDefault();
+            return _unitOfWork.TransactionRepository.Get(tr=> tr.TransactionGroupID == transactionGroupID).FirstOrDefault();
         }
 
 
@@ -652,14 +669,14 @@ namespace DRMFSS.BLL.Services
             TransactionGroup transactionGroup = new TransactionGroup();
             Transaction transactionFromStore = new Transaction();
 
-            Commodity commodity = repository.Commodity.FindById(viewModel.CommodityId);
+            Commodity commodity = _unitOfWork.CommodityRepository.FindById(viewModel.CommodityId);
 
 
             //transaction.TransactionGroupID = transactionGroupId;
             transactionFromStore.LedgerID = 2;
             transactionFromStore.HubOwnerID = user.DefaultHub.HubOwner.HubOwnerID;
             //trasaction.AccountID
-            transactionFromStore.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
+            transactionFromStore.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
             transactionFromStore.HubID = user.DefaultHub.HubID;
             transactionFromStore.StoreID = viewModel.FromStoreId;  //
             transactionFromStore.Stack = viewModel.FromStackId; //
@@ -684,7 +701,7 @@ namespace DRMFSS.BLL.Services
             transactionToStore.LedgerID = 2;
             transactionToStore.HubOwnerID = user.DefaultHub.HubOwner.HubOwnerID;
             //transactionToStore.AccountID
-            transactionToStore.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
+            transactionToStore.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
             transactionToStore.HubID = user.DefaultHub.HubID;
             transactionToStore.StoreID = viewModel.ToStoreId;  //
             transactionToStore.Stack = viewModel.ToStackId; //
@@ -717,16 +734,18 @@ namespace DRMFSS.BLL.Services
 
 
             // Try to save this transaction
-            db.Database.Connection.Open();
-            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
+            //db.Database.Connection.Open();
+            //DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
-                repository.InternalMovement.Add(internalMovement);
-                dbTransaction.Commit();
+                _unitOfWork.InternalMovementRepository.Add(internalMovement);
+                _unitOfWork.Save();
+             //   repository.InternalMovement.Add(internalMovement);
+               // dbTransaction.Commit();
             }
             catch (Exception exp)
             {
-                dbTransaction.Rollback();
+                //dbTransaction.Rollback();
                 //TODO: Save the detail of this exception somewhere
                 throw new Exception("The Internal Movement Transaction Cannot be saved. <br />Detail Message :" + exp.Message);
             }
@@ -740,7 +759,7 @@ namespace DRMFSS.BLL.Services
         /// <exception cref="System.Exception"></exception>
         public void SaveLossTrasnsaction(LossesAndAdjustmentsViewModel viewModel, UserProfile user)
         {
-            Commodity commodity = repository.Commodity.FindById(viewModel.CommodityId);
+            Commodity commodity = _unitOfWork.CommodityRepository.FindById(viewModel.CommodityId);
 
 
 
@@ -752,7 +771,7 @@ namespace DRMFSS.BLL.Services
             //transaction.TransactionGroupID = transactionGroupId;
             transactionOne.LedgerID = 2;
             transactionOne.HubOwnerID = user.DefaultHub.HubOwner.HubOwnerID;
-            transactionOne.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
+            transactionOne.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
             transactionOne.HubID = user.DefaultHub.HubID;
             transactionOne.StoreID = viewModel.StoreId;  //
             transactionOne.ProjectCodeID = viewModel.ProjectCodeId;
@@ -776,7 +795,7 @@ namespace DRMFSS.BLL.Services
             //transactionToStore.TransactionGroupID = transactionGroupId;
             transactionTwo.LedgerID = 14;
             transactionTwo.HubOwnerID = user.DefaultHub.HubOwnerID;
-            transactionTwo.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
+            transactionTwo.AccountID =_accountService.GetAccountIdWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
             transactionTwo.HubID = user.DefaultHub.HubID;
             transactionTwo.StoreID = viewModel.StoreId;  //
             transactionTwo.ProjectCodeID = viewModel.ProjectCodeId;
@@ -811,16 +830,18 @@ namespace DRMFSS.BLL.Services
 
 
             // Try to save this transaction
-            db.Database.Connection.Open();
-            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
+            //db.Database.Connection.Open();
+            //DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
-                repository.Adjustment.Add(lossAndAdjustment);
-                dbTransaction.Commit();
+                _unitOfWork.AdjustmentRepository.Add(lossAndAdjustment);
+                _unitOfWork.Save();
+                //repository.Adjustment.Add(lossAndAdjustment);
+                //dbTransaction.Commit();
             }
             catch (Exception exp)
             {
-                dbTransaction.Rollback();
+               // dbTransaction.Rollback();
                 //TODO: Save the detail of this exception somewhere
                 throw new Exception("The Internal Movement Transaction Cannot be saved. <br />Detail Message :" + exp.Message);
             }
@@ -838,11 +859,11 @@ namespace DRMFSS.BLL.Services
             TransactionGroup transactionGroup = new TransactionGroup();
             Transaction transactionOne = new Transaction();
 
-            Commodity commodity = repository.Commodity.FindById(viewModel.CommodityId);
+            Commodity commodity = _unitOfWork.CommodityRepository.FindById(viewModel.CommodityId);
 
             transactionOne.LedgerID = 14;
             transactionOne.HubOwnerID = user.DefaultHub.HubOwner.HubOwnerID;
-            transactionOne.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
+            transactionOne.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
             transactionOne.HubID = user.DefaultHub.HubID;
             transactionOne.StoreID = viewModel.StoreId;  //
             transactionOne.ProjectCodeID = viewModel.ProjectCodeId;
@@ -864,7 +885,7 @@ namespace DRMFSS.BLL.Services
 
             transactionTwo.LedgerID = 2;
             transactionTwo.HubOwnerID = user.DefaultHub.HubOwnerID;
-            transactionTwo.AccountID = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
+            transactionTwo.AccountID = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); // 
             transactionTwo.HubID = user.DefaultHub.HubID;
             transactionTwo.StoreID = viewModel.StoreId;  //
             transactionTwo.ProjectCodeID = viewModel.ProjectCodeId;
@@ -897,16 +918,18 @@ namespace DRMFSS.BLL.Services
             lossAndAdjustment.StoreManName = viewModel.StoreMan;
 
             // Try to save this transaction
-            db.Database.Connection.Open();
-            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
+            //db.Database.Connection.Open();
+            //DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
-                repository.Adjustment.Add(lossAndAdjustment);
-                dbTransaction.Commit();
+                _unitOfWork.AdjustmentRepository.Add(lossAndAdjustment);
+                _unitOfWork.Save();
+                //repository.Adjustment.Add(lossAndAdjustment);
+                //dbTransaction.Commit();
             }
             catch (Exception exp)
             {
-                dbTransaction.Rollback();
+                //dbTransaction.Rollback();
                 //TODO: Save the detail of this exception somewhere
                 throw new Exception("The Loss / Adjustment Transaction Cannot be saved. <br />Detail Message :" + exp.Message);
             }
@@ -940,7 +963,7 @@ namespace DRMFSS.BLL.Services
         public decimal GetTotalReceivedFromReceiptAllocation(string siNumber, int commodityId, int hubId)
         {
             return GetTotalReceivedFromReceiptAllocation(
-                repository.ShippingInstruction.GetShipingInstructionId(siNumber), commodityId, hubId);
+                _shippingInstructionService.GetShipingInstructionId(siNumber), commodityId, hubId);
         }
 
 
@@ -954,11 +977,13 @@ namespace DRMFSS.BLL.Services
         /// <returns></returns>
         public decimal GetCommodityBalanceForHub(int HubId, int parentCommodityId, int si, int project)
         {
-            var balance = (from v in db.Transactions
-                           where
-                               v.HubID == HubId && v.ParentCommodityID == parentCommodityId &&
-                               v.ShippingInstructionID == si && v.ProjectCodeID == project && v.LedgerID == Ledger.Constants.GOODS_ON_HAND_UNCOMMITED
-                           select v.QuantityInMT);
+            var balance = _unitOfWork.TransactionRepository.Get(v =>
+                                                                v.HubID == HubId &&
+                                                                v.ParentCommodityID == parentCommodityId &&
+                                                                v.ShippingInstructionID == si &&
+                                                                v.ProjectCodeID == project &&
+                                                                v.LedgerID == Ledger.Constants.GOODS_ON_HAND_UNCOMMITED)
+                .Select(v => v.QuantityInMT).ToList();
             if (balance.Any())
             {
                 return balance.Sum();
@@ -975,10 +1000,11 @@ namespace DRMFSS.BLL.Services
         /// <exception cref="System.Exception"></exception>
         public void SaveStartingBalanceTransaction(StartingBalanceViewModel startingBalance, UserProfile user)
         {
-            int repositoryAccountGetAccountIDWithCreateNegative = repository.Account.GetAccountIDWithCreate(Account.Constants.DONOR, startingBalance.DonorID); ;
-            int repositoryProjectCodeGetProjectCodeIdWIthCreateProjectCodeID = repository.ProjectCode.GetProjectCodeIdWIthCreate(startingBalance.ProjectNumber).ProjectCodeID; ;
-            int repositoryShippingInstructionGetSINumberIdWithCreateShippingInstructionID = repository.ShippingInstruction.GetSINumberIdWithCreate(startingBalance.SINumber).ShippingInstructionID; ;
-            int repositoryAccountGetAccountIDWithCreatePosetive = repository.Account.GetAccountIDWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); ;
+            int repositoryAccountGetAccountIDWithCreateNegative = _accountService.GetAccountIdWithCreate(Account.Constants.DONOR, startingBalance.DonorID); ;
+            //TODO:After Implementing ProjectCodeService please return here
+            int repositoryProjectCodeGetProjectCodeIdWIthCreateProjectCodeID = 0;//_projectCodeService.GetProjectCodeIdWIthCreate(startingBalance.ProjectNumber).ProjectCodeID; ;
+            int repositoryShippingInstructionGetSINumberIdWithCreateShippingInstructionID =_shippingInstructionService.GetSINumberIdWithCreate(startingBalance.SINumber).ShippingInstructionID; ;
+            int repositoryAccountGetAccountIDWithCreatePosetive = _accountService.GetAccountIdWithCreate(Account.Constants.HUB, user.DefaultHub.HubID); ;
 
             TransactionGroup transactionGroup = new TransactionGroup();
 
@@ -994,7 +1020,7 @@ namespace DRMFSS.BLL.Services
             transactionOne.ProjectCodeID = repositoryProjectCodeGetProjectCodeIdWIthCreateProjectCodeID;
             transactionOne.ShippingInstructionID = repositoryShippingInstructionGetSINumberIdWithCreateShippingInstructionID;
             transactionOne.ProgramID = startingBalance.ProgramID;
-            var comm = repository.Commodity.FindById(startingBalance.CommodityID);
+            var comm = _unitOfWork.CommodityRepository.FindById(startingBalance.CommodityID);
             transactionOne.ParentCommodityID = (comm.ParentID != null)
                                                        ? comm.ParentID.Value
                                                        : comm.CommodityID;
@@ -1032,18 +1058,20 @@ namespace DRMFSS.BLL.Services
             //transactionGroup.Transactions.Add(transactionTwo);
             //db.SaveChanges();
             // Try to save this transaction
-            db.Database.Connection.Open();
-            DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
+            //db.Database.Connection.Open();
+            //DbTransaction dbTransaction = db.Database.Connection.BeginTransaction();
             try
             {
                 transactionGroup.Transactions.Add(transactionOne);
                 transactionGroup.Transactions.Add(transactionTwo);
-                repository.TransactionGroup.Add(transactionGroup);
-                dbTransaction.Commit();
+                _unitOfWork.TransactionGroupRepository.Add(transactionGroup);
+                _unitOfWork.Save();
+                //repository.TransactionGroup.Add(transactionGroup);
+                //dbTransaction.Commit();
             }
             catch (Exception exp)
             {
-                dbTransaction.Rollback();
+                //dbTransaction.Rollback();
                 //TODO: Save the detail of this exception somewhere
                 throw new Exception("The Starting Balance Transaction Cannot be saved. <br />Detail Message :" + exp.Message);
             }
@@ -1058,7 +1086,7 @@ namespace DRMFSS.BLL.Services
         /// <returns></returns>
         public List<StartingBalanceViewModelDto> GetListOfStartingBalances(int hubID)
         {
-            return (from t in db.Transactions
+            return (from t in _unitOfWork.TransactionRepository.Get()
                     where
                     !t.TransactionGroup.ReceiveDetails.Any()
                     &&
@@ -1069,7 +1097,7 @@ namespace DRMFSS.BLL.Services
                     !t.TransactionGroup.Adjustments.Any()
                     &&
                     t.HubID == hubID
-                    join d in db.Donors on t.Account.EntityID equals d.DonorID
+                    join d in _unitOfWork.DonorRepository.Get() on t.Account.EntityID equals d.DonorID
                     where t.Account.EntityType == "Donor"
                     select new StartingBalanceViewModelDto()
                     {
@@ -1125,7 +1153,7 @@ namespace DRMFSS.BLL.Services
             string StartTime = sTime.ToShortDateString();
             string EndTime = eTime.ToShortDateString();
             // string HUbName = repository.Hub.FindById(hubID).HubNameWithOwner;
-            var dbGetOffloadingReport = db.RPT_Offloading(hubID, sTime, eTime).ToList();
+            var dbGetOffloadingReport = _unitOfWork.ReportRepository.RPT_Offloading(hubID, sTime, eTime).ToList();
 
             if (dispatchesViewModel.ProgramId.HasValue && dispatchesViewModel.ProgramId != 0)
             {
@@ -1251,7 +1279,7 @@ namespace DRMFSS.BLL.Services
             string StartTime = sTime.ToShortDateString();
             string EndTime = eTime.ToShortDateString();
             // string HUbName = repository.Hub.FindById(hubID).HubNameWithOwner;
-            var dbGetReceiptReport = db.RPT_ReceiptReport(hubID, sTime, eTime).ToList();
+            var dbGetReceiptReport = _unitOfWork.ReportRepository.RPT_ReceiptReport(hubID, sTime, eTime).ToList();
 
             if (receiptsViewModel.ProgramId.HasValue && receiptsViewModel.ProgramId != 0)
             {
@@ -1291,7 +1319,7 @@ namespace DRMFSS.BLL.Services
         public List<DistributionRows> GetDistributionReport(int hubID, DistributionViewModel distributionViewModel)
         {
 
-            var dbDistributionReport = db.RPT_Distribution(hubID).ToList();
+            var dbDistributionReport = _unitOfWork.ReportRepository.RPT_Distribution(hubID).ToList();
 
             if (distributionViewModel.PeriodId.HasValue && distributionViewModel.PeriodId != 0)
             {
@@ -1320,12 +1348,12 @@ namespace DRMFSS.BLL.Services
                     }).ToList();
         }
 
-        public bool DeleteById(int id)
+        public bool DeleteById(System.Guid id)
         {
             var original = FindById(id);
             if (original == null) return false;
-            db.Transactions.Remove(original);
-
+            _unitOfWork.TransactionRepository.Delete(original);
+            _unitOfWork.Save();
             return true;
         }
 
@@ -1335,7 +1363,7 @@ namespace DRMFSS.BLL.Services
 
         public Transaction FindById(System.Guid id)
         {
-            return db.Transactions.FirstOrDefault(t => t.TransactionID == id);
+            return _unitOfWork.TransactionRepository.Get(t => t.TransactionID == id).FirstOrDefault();
 
         }
 
@@ -1347,5 +1375,8 @@ namespace DRMFSS.BLL.Services
 
 
 
+
+
+        
     }
 }
