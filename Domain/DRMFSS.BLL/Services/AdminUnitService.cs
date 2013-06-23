@@ -2,9 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Linq.Expressions;
 using DRMFSS.BLL.Repository;
+
+
+
+
 
 
 namespace DRMFSS.BLL.Services
@@ -20,24 +25,30 @@ namespace DRMFSS.BLL.Services
             this._unitOfWork = new UnitOfWork();
         }
         #region Default Service Implementation
+
         public bool AddAdminUnit(AdminUnit adminUnit)
         {
             _unitOfWork.AdminUnitRepository.Add(adminUnit);
+
             _unitOfWork.Save();
             return true;
 
         }
+
         public bool EditAdminUnit(AdminUnit adminUnit)
         {
             _unitOfWork.AdminUnitRepository.Edit(adminUnit);
+
             _unitOfWork.Save();
             return true;
 
         }
+
         public bool DeleteAdminUnit(AdminUnit adminUnit)
         {
             if (adminUnit == null) return false;
             _unitOfWork.AdminUnitRepository.Delete(adminUnit);
+
             _unitOfWork.Save();
             return true;
         }
@@ -62,6 +73,7 @@ namespace DRMFSS.BLL.Services
             return _unitOfWork.AdminUnitRepository.FindBy(predicate);
         }
         #endregion
+
 
 
         public const int WOREDATYPE = 4;
@@ -263,6 +275,7 @@ namespace DRMFSS.BLL.Services
 
 
         }
+
         public void Dispose()
         {
             _unitOfWork.Dispose();

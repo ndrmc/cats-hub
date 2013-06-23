@@ -86,7 +86,10 @@
     <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\AdjustmentService.cs" />
     <Compile Include="Services\AdminUnitService.cs" />
+<<<<<<< HEAD
     <Compile Include="Services\CommodityGradeService.cs" />
+=======
+>>>>>>> 9aeb9f034d1610cd53efc95775fa64b3375876b0
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\CommoditySourceService.cs" />
     <Compile Include="Services\CommodityTypeService.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="Services\HubSettingService.cs" />
     <Compile Include="Services\HubSettingValueService.cs" />
     <Compile Include="Services\IAccountService.cs" />
+<<<<<<< HEAD
     <Compile Include="Services\IDonorService.cs" />
     <Compile Include="Services\IFDPService.cs" />
     <Compile Include="Services\IForgetPasswordRequestService.cs" />
@@ -111,6 +115,17 @@
     <Compile Include="Services\IHubOwnerService.cs" />
     <Compile Include="Services\IHubSettingService.cs" />
     <Compile Include="Services\IHubSettingValueService.cs" />
+=======
+    <Compile Include="Services\IAdminUnitService.cs" />
+    <Compile Include="Services\IInternalMovementService.cs" />
+    <Compile Include="Services\ILedgerService.cs" />
+    <Compile Include="Services\ILedgerTypeService.cs" />
+    <Compile Include="Services\InternalMovementService.cs" />
+    <Compile Include="Services\IPartitionService.cs" />
+    <Compile Include="Services\IPeriodService.cs" />
+    <Compile Include="Services\IReceiveService.cs" />
+    <Compile Include="Services\IReleaseNoteService.cs" />
+>>>>>>> 9aeb9f034d1610cd53efc95775fa64b3375876b0
     <Compile Include="Services\ISessionAttemptService.cs" />
     <Compile Include="Services\ISessionHistoryService.cs" />
     <Compile Include="Services\ISMSService.cs" />
@@ -139,7 +154,17 @@
     <Compile Include="Services\SessionAttemptService.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\IRoleService.cs" />
+    <Compile Include="Services\LedgerService.cs" />
+    <Compile Include="Services\LedgerTypeService.cs" />
+    <Compile Include="Services\PartitionService.cs" />
+    <Compile Include="Services\PeriodService.cs" />
+    <Compile Include="Services\ReceiveService.cs" />
+    <Compile Include="Services\ReleaseNoteService.cs" />
     <Compile Include="Services\RoleService.cs" />
+<<<<<<< HEAD
+=======
+    <Compile Include="Services\SessionAttemptService.cs" />
+>>>>>>> 9aeb9f034d1610cd53efc95775fa64b3375876b0
     <Compile Include="Services\SessionHistoryService.cs" />
     <Compile Include="Services\ShippingInstructionService.cs" />
     <Compile Include="Services\SMSService.cs" />
