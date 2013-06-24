@@ -120,6 +120,7 @@
     <Compile Include="Services\InternalMovementService.cs" />
     <Compile Include="Services\IPartitionService.cs" />
     <Compile Include="Services\IPeriodService.cs" />
+    <Compile Include="Services\IProgramService.cs" />
     <Compile Include="Services\IReceiveService.cs" />
     <Compile Include="Services\IReleaseNoteService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
@@ -129,7 +130,6 @@
     <Compile Include="Services\IStackEventTypeService.cs" />
     <Compile Include="Services\IAdjustmentReasonService.cs" />
     <Compile Include="Services\IAdjustmentService.cs" />
-    <Compile Include="Services\IAdminUnitService.cs" />
     <Compile Include="Services\ICommodityGradeService.cs" />
     <Compile Include="Services\ICommodityService.cs" />
     <Compile Include="Services\ICommoditySourceService.cs" />
@@ -151,6 +151,7 @@
     <Compile Include="Services\IUserRoleService.cs" />
     <Compile Include="Services\LetterTemplateService.cs" />
     <Compile Include="Services\MasterService.cs" />
+    <Compile Include="Services\ProgramService.cs" />
     <Compile Include="Services\SessionAttemptService.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\IRoleService.cs" />
@@ -161,7 +162,6 @@
     <Compile Include="Services\ReceiveService.cs" />
     <Compile Include="Services\ReleaseNoteService.cs" />
     <Compile Include="Services\RoleService.cs" />
-    <Compile Include="Services\SessionAttemptService.cs" />
     <Compile Include="Services\SessionHistoryService.cs" />
     <Compile Include="Services\ShippingInstructionService.cs" />
     <Compile Include="Services\SMSService.cs" />
@@ -514,16 +514,8 @@
     <Compile Include="Interfaces\IGenericRepository.cs" />
     <Compile Include="Repository\viewModel.cs" />
     <Compile Include="UnitOfWork\UnitOfWork.cs" />
-    <Compile Include="ViewModels\Common\BidRefViewModel.cs" />
-    <Compile Include="ViewModels\Report\Data\DeliveryReport.cs" />
-    <Compile Include="ViewModels\Report\Data\DistributionReport.cs" />
-    <Compile Include="ViewModels\Report\Data\ReceiveReport.cs" />
-    <Compile Include="ViewModels\Report\Filters\DistributionViewModel.cs" />
-    <Compile Include="ViewModels\Report\Filters\FreeStockFilter.cs" />
-    <Compile Include="ViewModels\TreeViewModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Partials\DispatchDetail.cs" />
     <Compile Include="ViewModels\Account.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -544,9 +536,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\CommoditySource.cs" />
+    <Compile Include="ViewModels\Common\BidRefViewModel.cs" />
+    <Compile Include="ViewModels\Common\CommodityTypeViewModel.cs" />
     <Compile Include="ViewModels\Common\CommodityViewModel.cs" />
+    <Compile Include="ViewModels\Common\ProgramViewModel.cs" />
+    <Compile Include="ViewModels\Common\ProjectCodeViewModel.cs" />
     <Compile Include="ViewModels\Common\ReasonViewModel.cs" />
+    <Compile Include="ViewModels\Common\ShippingInstructionViewModel.cs" />
     <Compile Include="ViewModels\Common\StoreBalanceViewModel.cs" />
+    <Compile Include="ViewModels\Common\StoreViewModel.cs" />
     <Compile Include="ViewModels\DateStartAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -555,12 +553,11 @@
     </Compile>
     <Compile Include="ViewModels\Dispatch\DispatchAllocation.cs" />
     <Compile Include="ViewModels\Dispatch\DispatchAllocationViewModel.cs" />
-    <Compile Include="Partials\DispatchDetail.cs" />
     <Compile Include="ViewModels\Dispatch\DispatchDetailViewModel.cs" />
     <Compile Include="ViewModels\Dispatch\DispatchHomeViewModel.cs" />
+    <Compile Include="ViewModels\Dispatch\DispatchViewModel.cs" />
     <Compile Include="ViewModels\Dispatch\OtherDispatchAllocation.cs" />
     <Compile Include="ViewModels\Dispatch\OtherDispatchAllocationViewModel.cs" />
-    <Compile Include="ViewModels\Dispatch\DispatchViewModel.cs" />
     <Compile Include="ViewModels\Dispatch\RequisitionSummary.cs" />
     <Compile Include="ViewModels\ErrorModels.cs">
       <SubType>Code</SubType>
@@ -607,28 +604,31 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\ReplicationViewModel.cs" />
+    <Compile Include="ViewModels\Report\AreaPartialViewModel.cs" />
     <Compile Include="ViewModels\Report\Data\BaseReport.cs" />
     <Compile Include="ViewModels\Report\Data\BinCardViewModel.cs" />
+    <Compile Include="ViewModels\Report\Data\DeliveryReport.cs" />
+    <Compile Include="ViewModels\Report\Data\DistributionReport.cs" />
     <Compile Include="ViewModels\Report\Data\FreeStockReport.cs" />
     <Compile Include="ViewModels\Report\Data\OffloadingReport.cs" />
+    <Compile Include="ViewModels\Report\Data\ReceiveReport.cs" />
     <Compile Include="ViewModels\Report\Filters\AreaViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\ArrivalsVsReceiptsViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\BinCardReportViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\CodesViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\CommittedVsDispatchedViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\CommoditySourceViewModel.cs" />
-    <Compile Include="ViewModels\Common\CommodityTypeViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\DeliveryAgainstDispatchViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\DispatchesViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\DistributionByOwnerViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\DistributionDeliveryDispatchViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\DistributionViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\DonorViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\FreeStockFilter.cs" />
     <Compile Include="ViewModels\Report\Filters\InTransitViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\PeriodViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\PortViewModel.cs" />
-    <Compile Include="ViewModels\Common\ProgramViewModel.cs" />
-    <Compile Include="ViewModels\Common\ProjectCodeViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\ReceiptsViewModel.cs" />
-    <Compile Include="ViewModels\Common\ShippingInstructionViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\StockBalanceViewModel.cs" />
     <Compile Include="ViewModels\Report\Filters\TypeViewModel.cs" />
     <Compile Include="ViewModels\Role.cs">
@@ -664,7 +664,9 @@
     <Compile Include="ViewModels\Store.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ViewModels\Common\StoreViewModel.cs" />
+    <Compile Include="ViewModels\TreeViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ViewModels\Unit.cs">
       <SubType>Code</SubType>
     </Compile>
