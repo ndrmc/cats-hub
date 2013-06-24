@@ -183,9 +183,9 @@ namespace DRMFSS.BLL.Services
             List<BinCardReport> results = new List<BinCardReport>();
             
             if (commodity != null && commodity.CommodityTypeID == 1)
-                results = db.RPT_BinCard(hubID, StoreID, CommodityID, ProjectID).ToList();
+                results = _unitOfWork.ReportRepository.RPT_BinCard(hubID, StoreID, CommodityID, ProjectID).ToList();
             else
-                results = db.RPT_BinCardNonFood(hubID, StoreID, CommodityID, ProjectID).ToList();
+                results = _unitOfWork.ReportRepository.RPT_BinCardNonFood(hubID, StoreID, CommodityID, ProjectID).ToList();
 
             //var results = db.RPT_BinCard(hubID,StoreID,CommodityID,ProjectID);
             var returnValue = new List<BinCardViewModel>();

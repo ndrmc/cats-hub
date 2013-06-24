@@ -17,8 +17,8 @@ namespace DRMFSS.BLL.Services
         Period FindById(int id);
         List<Period> GetAllPeriod();
         List<Period> FindBy(Expression<Func<Period, bool>> predicate);
-        public List<int?> GetYears();
-        public List<int?> GetMonths(int year);
+         List<int?> GetYears();
+         List<int?> GetMonths(int year);
         BLL.Period GetPeriod(int year, int month);
 
     }

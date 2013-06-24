@@ -20,7 +20,7 @@ namespace DRMFSS.BLL.Services
         List<Receive> GetAllReceive();
         List<Receive> FindBy(Expression<Func<Receive, bool>> predicate);
         List<Receive> ByHubId(int hubId);
-        public List<PortViewModel> GetALlPorts();
+         List<PortViewModel> GetALlPorts();
 
 
     }
