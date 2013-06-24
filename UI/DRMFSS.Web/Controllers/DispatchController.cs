@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 using DRMFSS.BLL.ViewModels;
 using Newtonsoft.Json;
 using Telerik.Web.Mvc;
@@ -15,15 +16,13 @@ namespace DRMFSS.Web.Controllers
     [Authorize]
     public class DispatchController : BaseController
     {
-        IUnitOfWork repository = new BLL.UnitOfWork();
+        private IDispatchAllocationService _dispatchAllocationService;
 
-        public DispatchController()
-        {
-        }
+       
 
-        public DispatchController(IUnitOfWork repository)
+        public DispatchController(IDispatchAllocationService dispatchAllocationService)
         {
-            this.repository = repository;
+            this._dispatchAllocationService = dispatchAllocationService;
         }
 
 

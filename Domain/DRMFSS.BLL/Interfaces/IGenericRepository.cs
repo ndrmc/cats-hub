@@ -15,7 +15,11 @@ namespace DRMFSS.BLL.Interfaces
         bool Delete(T entity);
         bool Edit(T entity);
         T FindById(int id);
-      
-      
+
+        IEnumerable<T> Get(
+          Expression<Func<T, bool>> filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+          string includeProperties = "");
+
     }
 }

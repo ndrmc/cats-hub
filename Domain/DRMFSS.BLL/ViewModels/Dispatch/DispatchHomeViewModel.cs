@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.BLL.ViewModels.Dispatch
 {
    public class DispatchHomeViewModel
     {
-       public DispatchHomeViewModel(IUnitOfWork repository, UserProfile user)
+       public DispatchHomeViewModel(IDispatchAllocationService dispatchAllocationService, UserProfile user)
        {
-           ToFDPs = repository.DispatchAllocation.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment.ToUpperInvariant(),null,null,null);
+           
+           ToFDPs = dispatchAllocationService.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment.ToUpperInvariant(),null,null,null);
 
            Loans = repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(user);
 

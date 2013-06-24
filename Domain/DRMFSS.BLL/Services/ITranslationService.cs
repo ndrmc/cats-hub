@@ -18,7 +18,7 @@ namespace DRMFSS.BLL.Services
 
         string GetForText(string text, string langauge);
         List<Translation> GetAll(string languageCode);
-        Translation FindById(int id);
+        
 
     }
 }

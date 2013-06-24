@@ -10,13 +10,13 @@ namespace DRMFSS.BLL.Services
     public interface IRoleService
     {
 
-        bool AddRole(RoleService entity);
-        bool DeleteRole(RoleService entity);
+        bool AddRole(Role role);
+        bool DeleteRole(Role role);
         bool DeleteById(int id);
-        bool EditRole(RoleService entity);
-        RoleService FindById(int id);
-        List<RoleService> GetAllRole();
-        List<RoleService> FindBy(Expression<Func<RoleService, bool>> predicate);
+        bool EditRole(Role role);
+        Role FindById(int id);
+        List<Role> GetAllRole();
+        List<Role> FindBy(Expression<Func<Role, bool>> predicate);
 
 
     }

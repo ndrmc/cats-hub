@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using DRMFSS.BLL.Interfaces;
 
 namespace DRMFSS.BLL.Repository
@@ -66,6 +68,35 @@ namespace DRMFSS.BLL.Repository
         public virtual T FindById(int id)
         {
             return _entities.Set<T>().Find(id);
+        }
+
+        /// <summary>
+        /// THis method canb used to get objects with their object graph included
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="includeProperties"> properties separeted by comma</param>
+        /// <returns></returns>
+        public virtual IEnumerable<T> Get(
+           Expression<Func<T, bool>> filter = null,
+           Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+           string includeProperties = "")
+        {
+            IQueryable<T> query = _entities.Set<T>();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+           
+                return query.ToList();
+           
         }
     }
 }

@@ -245,11 +245,11 @@ namespace DRMFSS.BLL.Services
                                        where v.IsClosed == false && v.CommodityID == commodityId
                                        select v.Amount / 10).DefaultIfEmpty().Sum();
 
-            //TODO:Adress db.util_GetDispatchedAllocationFromSI and return to this method implementation.
-            //var utilGetDispatchedAllocationFromSiResult = db.util_GetDispatchedAllocationFromSI(hubID, shippingInstructionID).FirstOrDefault();
-            //if (utilGetDispatchedAllocationFromSiResult != null)
-            //    if (utilGetDispatchedAllocationFromSiResult.Quantity != null)
-            //        siBalance.CommitedToFDP -= utilGetDispatchedAllocationFromSiResult.Quantity.Value;
+           
+            var utilGetDispatchedAllocationFromSiResult =_unitOfWork.ReportRepository.util_GetDispatchedAllocationFromSI(hubID, shippingInstructionID).FirstOrDefault();
+            if (utilGetDispatchedAllocationFromSiResult != null)
+                if (utilGetDispatchedAllocationFromSiResult.Quantity != null)
+                    siBalance.CommitedToFDP -= utilGetDispatchedAllocationFromSiResult.Quantity.Value;
 
             siBalance.CommitedToOthers = (from v in si.OtherDispatchAllocations
                                           where v.IsClosed == false && v.CommodityID == commodityId
@@ -326,11 +326,11 @@ namespace DRMFSS.BLL.Services
                                        where v.IsClosed == false && v.CommodityID == commodityId
                                        select v.AmountInUnit).DefaultIfEmpty().Sum();
             //select v.Amount / 10).DefaultIfEmpty().Sum();
-            //TODO:After Implementing util_GetDispatchedAllocationFromSI return to this module
-            //var utilGetDispatchedAllocationFromSiResult = db.util_GetDispatchedAllocationFromSI(hubID, shippingInstructionID).FirstOrDefault();
-            //if (utilGetDispatchedAllocationFromSiResult != null)
-            //    if (utilGetDispatchedAllocationFromSiResult.QuantityInUnit != null)
-            //        siBalance.CommitedToFDP -= utilGetDispatchedAllocationFromSiResult.QuantityInUnit.Value;
+           
+            var utilGetDispatchedAllocationFromSiResult =_unitOfWork.ReportRepository.util_GetDispatchedAllocationFromSI(hubID, shippingInstructionID).FirstOrDefault();
+            if (utilGetDispatchedAllocationFromSiResult != null)
+                if (utilGetDispatchedAllocationFromSiResult.QuantityInUnit != null)
+                    siBalance.CommitedToFDP -= utilGetDispatchedAllocationFromSiResult.QuantityInUnit.Value;
 
             siBalance.CommitedToOthers = (from v in si.OtherDispatchAllocations
                                           where v.IsClosed == false && v.CommodityID == commodityId
