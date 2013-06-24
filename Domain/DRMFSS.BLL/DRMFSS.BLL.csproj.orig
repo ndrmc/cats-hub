@@ -112,10 +112,8 @@
     <Compile Include="Services\IHubSettingService.cs" />
     <Compile Include="Services\IHubSettingValueService.cs" />
     <Compile Include="Services\IAdminUnitService.cs" />
-    <Compile Include="Services\IInternalMovementService.cs" />
     <Compile Include="Services\ILedgerService.cs" />
     <Compile Include="Services\ILedgerTypeService.cs" />
-    <Compile Include="Services\InternalMovementService.cs" />
     <Compile Include="Services\IPartitionService.cs" />
     <Compile Include="Services\IPeriodService.cs" />
     <Compile Include="Services\IReceiveService.cs" />
@@ -127,7 +125,6 @@
     <Compile Include="Services\IStackEventTypeService.cs" />
     <Compile Include="Services\IAdjustmentReasonService.cs" />
     <Compile Include="Services\IAdjustmentService.cs" />
-    <Compile Include="Services\IAdminUnitService.cs" />
     <Compile Include="Services\ICommodityGradeService.cs" />
     <Compile Include="Services\ICommodityService.cs" />
     <Compile Include="Services\ICommoditySourceService.cs" />
@@ -157,7 +154,10 @@
     <Compile Include="Services\ReceiveService.cs" />
     <Compile Include="Services\ReleaseNoteService.cs" />
     <Compile Include="Services\RoleService.cs" />
+<<<<<<< HEAD
     <Compile Include="Services\SessionAttemptService.cs" />
+=======
+>>>>>>> 321209df1bc0eb8e1630aca614b74c5233a15422
     <Compile Include="Services\SessionHistoryService.cs" />
     <Compile Include="Services\ShippingInstructionService.cs" />
     <Compile Include="Services\SMSService.cs" />

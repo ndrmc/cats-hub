@@ -17,7 +17,7 @@ namespace DRMFSS.BLL.Services
         Partition FindById(int id);
         List<Partition> GetAllPartition();
         List<Partition> FindBy(Expression<Func<Partition, bool>> predicate);
-        public List<ViewModels.ReplicationViewModel> GetHubsSyncrtonizationDetails(int publication);
+         List<ViewModels.ReplicationViewModel> GetHubsSyncrtonizationDetails(int publication);
 
     }
 }

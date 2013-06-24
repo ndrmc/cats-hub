@@ -15,12 +15,11 @@ namespace DRMFSS.BLL.Services
         bool DeleteById(int id);
         bool EditInternalMovement(InternalMovement entity);
         InternalMovement FindById(int id);
-        public List<ViewModels.InternalMovementLogViewModel> GetAllInternalMovmentLog();
+         List<ViewModels.InternalMovementLogViewModel> GetAllInternalMovmentLog();
         List<InternalMovement> FindBy(Expression<Func<InternalMovement, bool>> predicate);
 
        void AddNewInternalMovement(ViewModels.InternalMovementViewModel viewModel, UserProfile user);
-       List<ViewModels.InternalMovementLogViewModel> GetAllInternalMovmentLog();
-
+      
 
     }
 }

@@ -63,13 +63,15 @@ namespace DRMFSS.BLL.Services
            _unitOfWork.Dispose();
 
        }
-       
+
+
+      
         public List<ViewModels.StackEventLogViewModel> GetAllStackEvents(UserProfile user)
         {
              
             
 
-            var StackEvents = _unitOfWork.StackEventRepository.GetAll();
+            var StackEvents = _unitOfWork.StackEventRepository.Get();
             var events = (from c in StackEvents select new ViewModels.StackEventLogViewModel { EventDate = c.EventDate, StackEventType = c.StackEventType.Name, Description = c.Description, Recommendation = c.Recommendation, FollowUpDate = c.FollowUpDate.Value }).ToList();
                 
             return events;
@@ -77,9 +79,9 @@ namespace DRMFSS.BLL.Services
 
         public List<ViewModels.StackEventLogViewModel> GetAllStackEventsByStoreIdStackId(UserProfile user, int StackId, int StoreId)
         {
-            var StackEvents = _unitOfWork.StackEventRepository.FindBy(c => c.StackNumber == StackId && c.StoreID == StoreId).ToList();
+            var stackEvents = _unitOfWork.StackEventRepository.Get(c => c.StackNumber == StackId && c.StoreID == StoreId);
 
-            var events = (from c in StackEvents where (c.StackNumber == StackId && c.StoreID == StoreId) select new ViewModels.StackEventLogViewModel { EventDate = c.EventDate, StackEventType = c.StackEventType.Name, Description = c.Description, Recommendation = c.Recommendation, FollowUpDate = c.FollowUpDate.Value }).ToList();
+            var events = (from c in stackEvents select new ViewModels.StackEventLogViewModel { EventDate = c.EventDate, StackEventType = c.StackEventType.Name, Description = c.Description, Recommendation = c.Recommendation, FollowUpDate = c.FollowUpDate.Value }).ToList();
             return events;
         }
 
