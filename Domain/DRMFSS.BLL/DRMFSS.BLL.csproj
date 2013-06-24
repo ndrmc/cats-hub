@@ -121,6 +121,7 @@
     <Compile Include="Services\IPartitionService.cs" />
     <Compile Include="Services\IPeriodService.cs" />
     <Compile Include="Services\IProgramService.cs" />
+    <Compile Include="Services\IProjectCodeService.cs" />
     <Compile Include="Services\IReceiveService.cs" />
     <Compile Include="Services\IReleaseNoteService.cs" />
     <Compile Include="Services\ISessionAttemptService.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Services\LetterTemplateService.cs" />
     <Compile Include="Services\MasterService.cs" />
     <Compile Include="Services\ProgramService.cs" />
+    <Compile Include="Services\ProjectCodeService.cs" />
     <Compile Include="Services\SessionAttemptService.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\IRoleService.cs" />
