@@ -118,6 +118,7 @@
     <Compile Include="Services\ILetterTemplate.cs" />
     <Compile Include="Services\IMasterService.cs" />
     <Compile Include="Services\InternalMovementService.cs" />
+    <Compile Include="Services\IOtherDispatchAllocationService.cs" />
     <Compile Include="Services\IPartitionService.cs" />
     <Compile Include="Services\IPeriodService.cs" />
     <Compile Include="Services\IProgramService.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Services\IUserRoleService.cs" />
     <Compile Include="Services\LetterTemplateService.cs" />
     <Compile Include="Services\MasterService.cs" />
+    <Compile Include="Services\OtherDispatchAllocationService.cs" />
     <Compile Include="Services\ProgramService.cs" />
     <Compile Include="Services\ProjectCodeService.cs" />
     <Compile Include="Services\ReceiptAllocationService.cs" />
