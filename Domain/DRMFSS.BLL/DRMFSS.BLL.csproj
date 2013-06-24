@@ -86,9 +86,7 @@
     <Compile Include="Services\AdjustmentReasonService.cs" />
     <Compile Include="Services\AdjustmentService.cs" />
     <Compile Include="Services\AdminUnitService.cs" />
-
     <Compile Include="Services\CommodityGradeService.cs" />
-
     <Compile Include="Services\CommodityService.cs" />
     <Compile Include="Services\CommoditySourceService.cs" />
     <Compile Include="Services\CommodityTypeService.cs" />
@@ -105,7 +103,6 @@
     <Compile Include="Services\HubSettingService.cs" />
     <Compile Include="Services\HubSettingValueService.cs" />
     <Compile Include="Services\IAccountService.cs" />
-
     <Compile Include="Services\IDonorService.cs" />
     <Compile Include="Services\IFDPService.cs" />
     <Compile Include="Services\IForgetPasswordRequestService.cs" />
@@ -114,17 +111,13 @@
     <Compile Include="Services\IHubOwnerService.cs" />
     <Compile Include="Services\IHubSettingService.cs" />
     <Compile Include="Services\IHubSettingValueService.cs" />
-
     <Compile Include="Services\IAdminUnitService.cs" />
-    <Compile Include="Services\IInternalMovementService.cs" />
     <Compile Include="Services\ILedgerService.cs" />
     <Compile Include="Services\ILedgerTypeService.cs" />
-    <Compile Include="Services\InternalMovementService.cs" />
     <Compile Include="Services\IPartitionService.cs" />
     <Compile Include="Services\IPeriodService.cs" />
     <Compile Include="Services\IReceiveService.cs" />
     <Compile Include="Services\IReleaseNoteService.cs" />
-
     <Compile Include="Services\ISessionAttemptService.cs" />
     <Compile Include="Services\ISessionHistoryService.cs" />
     <Compile Include="Services\ISMSService.cs" />
@@ -160,9 +153,7 @@
     <Compile Include="Services\ReceiveService.cs" />
     <Compile Include="Services\ReleaseNoteService.cs" />
     <Compile Include="Services\RoleService.cs" />
-
     <Compile Include="Services\SessionAttemptService.cs" />
-
     <Compile Include="Services\SessionHistoryService.cs" />
     <Compile Include="Services\ShippingInstructionService.cs" />
     <Compile Include="Services\SMSService.cs" />

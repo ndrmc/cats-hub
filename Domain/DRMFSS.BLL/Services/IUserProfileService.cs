@@ -19,7 +19,7 @@ namespace DRMFSS.BLL.Services
 
        bool ChangePassword(int profileId, string password);
        UserProfile GetUser(string userName);
-      
+       bool EditInfo(BLL.UserProfile profile);
       
 
     }
