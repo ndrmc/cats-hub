@@ -12,6 +12,5 @@ namespace DRMFSS.Reports
         {
             InitializeComponent();
         }
-
     }
 }

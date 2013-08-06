@@ -38,13 +38,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NMock2">
-      <HintPath>..\..\packages\Selenium DLL\NMock2.dll</HintPath>
+      <HintPath>..\..\Selenium DLL\NMock2.dll</HintPath>
+    </Reference>
+    <Reference Include="NMock3">
+      <HintPath>..\..\packages\NMock3.3.5.44\lib\net40\NMock3.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core">
-      <HintPath>..\..\packages\Selenium DLL\nunit.core.dll</HintPath>
+      <HintPath>..\..\Selenium DLL\nunit.core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\packages\Selenium DLL\nunit.core.interfaces.dll</HintPath>
+      <HintPath>..\..\Selenium DLL\nunit.core.interfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
@@ -56,11 +59,12 @@
       <HintPath>..\..\packages\Selenium DLL\Selenium.WebDriverBackedSelenium.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="ThoughtWorks.Selenium.Core">
       <HintPath>..\..\packages\Selenium DLL\ThoughtWorks.Selenium.Core.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver">
-      <HintPath>..\..\packages\Selenium DLL\WebDriver.dll</HintPath>
+      <HintPath>..\..\packages\Selenium.WebDriver.2.33.0\lib\net40\WebDriver.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver.Common.Tests">
       <HintPath>..\..\packages\Selenium DLL\WebDriver.Common.Tests.dll</HintPath>
@@ -69,7 +73,34 @@
       <HintPath>..\..\packages\Selenium DLL\WebDriver.Remote.Tests.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver.Support">
-      <HintPath>..\..\packages\Selenium DLL\WebDriver.Support.dll</HintPath>
+      <HintPath>..\..\packages\Selenium.Support.2.33.0\lib\net40\WebDriver.Support.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.ExpressApp">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.ExpressApp.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.ExpressApp.AdditionalViewControlsProvider">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.ExpressApp.AdditionalViewControlsProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.ExpressApp.AdditionalViewControlsProvider.Web">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.ExpressApp.AdditionalViewControlsProvider.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.ExpressApp.Logic">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.ExpressApp.Logic.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.ExpressApp.Logic.Conditional">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.ExpressApp.Logic.Conditional.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.ExpressApp.Security">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.ExpressApp.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.ExpressApp.Web">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.ExpressApp.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.Persistent.BaseImpl">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.Persistent.BaseImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="Xpand.Utils">
+      <HintPath>..\..\packages\eXpandAdditionalViewControlsProviderWeb.13.1.5.15\lib\Xpand.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -85,6 +116,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="NMock3\NMockTest.cs" />
     <Compile Include="Tests\Authentication.cs" />
     <Compile Include="Tests\GiftCertiificates.cs" />
     <Compile Include="Tests\HubManagement.cs" />
@@ -105,6 +137,7 @@
     <Compile Include="WebDriverExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="NMock3\NMock3 Cheat Sheet.pdf" />
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>
