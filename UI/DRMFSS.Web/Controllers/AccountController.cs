@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using DRMFSS.BLL.Services;
 using DRMFSS.Web.Models;
 using DRMFSS.Shared;
 using DRMFSS.BLL;
@@ -20,11 +21,13 @@ namespace DRMFSS.Web.Controllers
         private IMembershipWrapper membership;
         private new IUrlHelperWrapper Url;
         private IFormsAuthenticationWrapper authentication;
-        private IUnitOfWork repository;
+        private IUserProfileService _userProfileService;
+        private IForgetPasswordRequestService _forgetPasswordRequestService;
+        private ISettingService _settingService;
         //
         // GET: /Account/LogOn
 
-
+       
         /// <summary>
         /// Initializes data that might not be available when the constructor is called.
         /// </summary>
@@ -40,10 +43,13 @@ namespace DRMFSS.Web.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
-        public AccountController()
+        public AccountController(IUserProfileService userProfileService,
+            IForgetPasswordRequestService forgetPasswordRequestService,ISettingService settingService)
             : this(new MembershipWrapper(), new FormsAuthenticationWrapper(), null)
         {
-            repository = new UnitOfWork();
+            _userProfileService = userProfileService;
+            _forgetPasswordRequestService = forgetPasswordRequestService;
+            _settingService = settingService;
         }
 
         /// <summary>
@@ -137,7 +143,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult NotUnique(string UserName)
         {
-            var user = repository.UserProfile.GetUser(UserName);
+            var user = _userProfileService.GetUser(UserName);
             return Json(user==null, JsonRequestBehavior.AllowGet);
         }
         //
@@ -152,7 +158,7 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Register(RegisterModel model)
         {
             //Server side validation for uniqueness of the username given
-            var userValid = repository.UserProfile.GetUser(model.UserName);
+            var userValid = _userProfileService.GetUser(model.UserName);
             if (userValid != null)
             {
                 ModelState.AddModelError("UserName", "There is an existing User with the specified UserName");
@@ -166,13 +172,13 @@ namespace DRMFSS.Web.Controllers
 
                 if (createStatus == MembershipCreateStatus.Success)
                 {
-                    BLL.UserProfile user = repository.UserProfile.GetUser(model.UserName);
+                    BLL.UserProfile user =_userProfileService.GetUser(model.UserName);
                     if (user != null)
                     {
                         user.FirstName = model.FirstName;
                         user.LastName = model.LastName;
                         user.GrandFatherName = model.GrandFatherName;
-                        repository.UserProfile.EditInfo(user);
+                       _userProfileService.EditInfo(user);
                         return Json(new { success = true });
                     }
 
@@ -317,7 +323,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                BLL.UserProfile profile = repository.UserProfile.GetUser(model.UserName);
+                BLL.UserProfile profile = _userProfileService.GetUser(model.UserName);
                 if (profile != null && !profile.LockedInInd)
                 {
                     BLL.ForgetPasswordRequest req = new BLL.ForgetPasswordRequest()
@@ -328,7 +334,7 @@ namespace DRMFSS.Web.Controllers
                         RequestKey = MD5Hashing.MD5Hash(Guid.NewGuid().ToString()),
                         UserProfileID = profile.UserProfileID
                     };
-                    if (repository.ForgetPasswordRequest.Add(req))
+                    if (_forgetPasswordRequestService.AddForgetPasswordRequest(req))
                     {
                        
                         string to = profile.Email;
@@ -350,11 +356,11 @@ namespace DRMFSS.Web.Controllers
                         {
                             // Read the configuration table for smtp settings.
 
-                           string from = repository.Setting.GetSettingValue("SMTP_EMAIL_FROM");
-                           string smtp = repository.Setting.GetSettingValue("SMTP_ADDRESS");
-                           int port = Convert.ToInt32(repository.Setting.GetSettingValue("SMTP_PORT"));
-                           string userName = repository.Setting.GetSettingValue("SMTP_USER_NAME");
-                           string password = repository.Setting.GetSettingValue("SMTP_PASSWORD");
+                           string from = _settingService.GetSettingValue("SMTP_EMAIL_FROM");
+                           string smtp = _settingService.GetSettingValue("SMTP_ADDRESS");
+                           int port = Convert.ToInt32(_settingService.GetSettingValue("SMTP_PORT"));
+                           string userName =_settingService.GetSettingValue("SMTP_USER_NAME");
+                           string password = _settingService.GetSettingValue("SMTP_PASSWORD");
                             // send the email using the utilty method in the shared dll.
                            Shared.SendMail mail = new Shared.SendMail(from, to, subject, body, null, true, smtp,userName,password, port);
                            return RedirectToAction("ConfirmPasswordChange");
@@ -389,7 +395,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult ForgetPassword(string key)
         {
-            BLL.ForgetPasswordRequest req = repository.ForgetPasswordRequest.GetValidRequest(key);
+            BLL.ForgetPasswordRequest req = _forgetPasswordRequestService.GetValidRequest(key);
             if (req != null)
             {
                 Models.ForgotPasswordModel model = new Models.ForgotPasswordModel();
@@ -404,9 +410,9 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (repository.UserProfile.ChangePassword(model.UserProfilID, MD5Hashing.MD5Hash(model.Password)))
+                if (_userProfileService.ChangePassword(model.UserProfilID, MD5Hashing.MD5Hash(model.Password)))
                 {
-                    repository.ForgetPasswordRequest.InvalidateRequest(model.UserProfilID);
+                    _forgetPasswordRequestService.InvalidateRequest(model.UserProfilID);
                 }
 
                 return RedirectToAction("LogOn");
@@ -418,7 +424,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (!string.IsNullOrEmpty(userName))
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(userName);
+                BLL.UserProfile user = _userProfileService.GetUser(userName);
                 if (user != null)
                 {
                     return Json(true, JsonRequestBehavior.AllowGet);
@@ -432,14 +438,14 @@ namespace DRMFSS.Web.Controllers
         public ActionResult ChangeUserSettings(UserPreferenceViewModel model)
          {
              // TODO: Do the saving here.
-             var UserProfile = repository.UserProfile.GetUser(User.Identity.Name);
+             var UserProfile = _userProfileService.GetUser(User.Identity.Name);
              // The User has to be attachable later. there has to be a better way of doing this than the current one.
-             UserProfile = repository.UserProfile.FindById(UserProfile.UserProfileID);
+             UserProfile = _userProfileService.FindById(UserProfile.UserProfileID);
              UserProfile.DatePreference = model.DateFormatPreference;
              UserProfile.DefaultTheme = model.ThemePreference;
              UserProfile.PreferedWeightMeasurment = model.WeightPrefernce;
              UserProfile.LanguageCode = model.Language;
-             repository.UserProfile.SaveChanges(UserProfile);
+             _userProfileService.EditUserProfile(UserProfile);
 
              return Redirect(this.Request.UrlReferrer.PathAndQuery);
          }

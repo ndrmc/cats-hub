@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using System.Web.Routing;
 using DRMFSS.Web.Helpers;
+using DRMFSS.Web.Infrastructure;
 using Elmah;
 
 namespace DRMFSS.Web
@@ -39,7 +40,7 @@ namespace DRMFSS.Web
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-
+            DependencyResolver.SetResolver(new NinjectDependencyResolver());
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
            

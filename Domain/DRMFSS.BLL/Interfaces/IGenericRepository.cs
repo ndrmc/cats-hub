@@ -12,10 +12,14 @@ namespace DRMFSS.BLL.Interfaces
         List<T> GetAll();
         List<T> FindBy(Expression<Func<T, bool>> predicate);
         bool Add(T entity);
-        void Delete(T entity);
-        void Edit(T entity);
-        void Save();
-        bool SaveChanges(T entity);
-      
+        bool Delete(T entity);
+        bool Edit(T entity);
+        T FindById(int id);
+
+        IEnumerable<T> Get(
+          Expression<Func<T, bool>> filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+          string includeProperties = "");
+
     }
 }

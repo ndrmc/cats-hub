@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace DRMFSS.BLL.ViewModels.Dispatch
 {
    public class DispatchHomeViewModel
     {
-       public DispatchHomeViewModel(IUnitOfWork repository, UserProfile user)
-       {
-           ToFDPs = repository.DispatchAllocation.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment.ToUpperInvariant(),null,null,null);
+       //TODO:Generated IDispatchAllocationService
+       //public DispatchHomeViewModel(IDispatchAllocationService dispatchAllocationService, UserProfile user)
+       //{
 
-           Loans = repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(user);
+       //    //ToFDPs = dispatchAllocationService.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment.ToUpperInvariant(), null, null, null);
 
-           Transfers = repository.OtherDispatchAllocation.GetAllToCurrentOwnerHubs(user);
+       //    //Loans = repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(user);
 
-           AdminUnits = new List<AdminUnit>() { repository.AdminUnit.FindById(1) };
+       //    //Transfers = repository.OtherDispatchAllocation.GetAllToCurrentOwnerHubs(user);
 
-           CommodityTypes = repository.CommodityType.GetAll();
+       //    //AdminUnits = new List<AdminUnit>() { repository.AdminUnit.FindById(1) };
 
-           CommodityTypeID = 1; //food is the default
-       }
+       //    //CommodityTypes = repository.CommodityType.GetAll();
+
+       //    //CommodityTypeID = 1; //food is the default
+       //}
 
        public int CommodityTypeID { get; set; }
 
