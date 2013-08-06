@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Services
 {
-   public interface IUnitService
+   public interface IUnitService:IDisposable
     {
         bool AddUnit(Unit unit);
         bool DeleteUnit(Unit unit);
