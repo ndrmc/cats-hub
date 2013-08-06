@@ -46,7 +46,7 @@ namespace DRMFSS.Web.Models
             {
                 if(_transporters == null)
                 {
-                    _transporters = Repository.Transporter.GetAll().OrderBy(o => o.Name).ToList();
+                    _transporters = Repository.TransporterRepository.GetAll().OrderBy(o => o.Name).ToList();
                 }
                 return _transporters;
             }

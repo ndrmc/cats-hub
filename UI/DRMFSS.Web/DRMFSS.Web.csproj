@@ -137,6 +137,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -424,6 +427,7 @@
     <Compile Include="Helpers\LanguageHelper.cs" />
     <Compile Include="Helpers\LetterTemplateHelper.cs" />
     <Compile Include="Helpers\MembershipProvider.cs" />
+    <Compile Include="Infrastructure\NinjectDependencyResolver.cs" />
     <Compile Include="Library\RoleProvider.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\VersionHelper.cs" />
@@ -2112,6 +2116,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Domain\DRMFSS.BLL.Service\DRMFSS.BLL.Services.csproj">
+      <Project>{6c3e7d04-6bbe-4a75-abfe-f62cb46c26ff}</Project>
+      <Name>DRMFSS.BLL.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Domain\DRMFSS.BLL\DRMFSS.BLL.csproj">
       <Project>{f05635b6-4da7-4b46-b0bd-0ced2edf9a38}</Project>
       <Name>DRMFSS.BLL</Name>
