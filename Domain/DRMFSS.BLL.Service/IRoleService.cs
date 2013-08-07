@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IRoleService
+    public interface IRoleService:IDisposable
     {
 
         bool AddRole(Role role);

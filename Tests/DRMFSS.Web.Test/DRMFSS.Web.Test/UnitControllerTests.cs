@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -52,6 +53,65 @@ namespace DRMFSS.Web.Test
             Assert.IsInstanceOf<ViewResult>(result);
             Assert.IsInstanceOf<IEnumerable<Unit>>(model);
             Assert.AreEqual(2, ((IEnumerable<Unit>)model).Count());
+        }
+
+        [Test]
+        public void CanViewDetails()
+        {
+            //ACT
+            var result = _unitController.Details(1);
+            var model = ((ViewResult)result).Model;
+            //Assert
+
+            Assert.IsInstanceOf<ViewResult>(result);
+            Assert.IsInstanceOf<Unit>(model);  
+            Assert.IsNotNullOrEmpty(((Unit)model).UnitID.ToString());
+            Assert.IsNotNullOrEmpty(((Unit)model).Name);
+        }
+
+        [Test]
+        public void CanDoPostBackCreate()
+        {
+            //ACT
+            Unit unit = new Unit();
+            unit.Name = "Litre";
+            var result = _unitController.Create(unit);
+            //Assert
+            Assert.IsInstanceOf<ActionResult>(result);
+            Assert.IsInstanceOf<int>(unit.UnitID);
+        }
+
+        [Test]
+        public void CanViewEdit()
+        {
+            //ACT
+            var result = _unitController.Edit(1);
+            var model = ((ActionResult)result).Model;
+            //Assert
+            Assert.IsInstanceOf<ActionResult>(result);
+            Assert.IsInstanceOf<Unit>(model);
+        }
+
+        [Test]
+        public void CanDoPostBackEdit()
+        {
+            //ACT
+            Unit unit = new Unit();
+            unit.UnitID = 1;
+            unit.Name = "Mt";
+            var result = _unitController.Edit(unit);
+            //Assert
+            Assert.IsInstanceOf<ActionResult>(result);
+            Assert.IsInstanceOf<Unit>(unit.UnitID);
+        }
+
+        [Test]
+        public void CanDoPostBackDelete()
+        {
+            //ACT
+            var result = _unitController.Delete(2);
+            //Assert
+            Assert.IsInstanceOf<ActionResult>(result);
         }
 
         #endregion

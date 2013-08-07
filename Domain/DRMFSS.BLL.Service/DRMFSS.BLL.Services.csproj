@@ -58,6 +58,7 @@
     <Compile Include="GiftCertificateDetailService.cs" />
     <Compile Include="GiftCertificateService.cs" />
     <Compile Include="HubOwnerService.cs" />
+    <Compile Include="HubService.cs" />
     <Compile Include="HubSettingService.cs" />
     <Compile Include="HubSettingValueService.cs" />
     <Compile Include="IAccountService.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="IGiftCertificateDetailService.cs" />
     <Compile Include="IGiftCertificateService.cs" />
     <Compile Include="IHubOwnerService.cs" />
+    <Compile Include="IHubService.cs" />
     <Compile Include="IHubSettingService.cs" />
     <Compile Include="IHubSettingValueService.cs" />
     <Compile Include="IInternalMovementService.cs" />

@@ -282,6 +282,12 @@ namespace DRMFSS.BLL.Services
 
         }
 
+
+
+        public List<AdminUnit> Get(Expression<Func<AdminUnit, bool>> filter = null, Func<IQueryable<AdminUnit>, IOrderedQueryable<AdminUnit>> orderBy = null, string includeProperties = "")
+        {
+          return  _unitOfWork.AdminUnitRepository.Get(filter, orderBy, includeProperties).ToList();
+        }
     }
 }
 

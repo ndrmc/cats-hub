@@ -87,6 +87,19 @@ namespace DRMFSS.BLL.Services
         {
             return _unitOfWork.UserProfileRepository.FindBy(predicate);
         }
+
+
+        public List<UserProfile> Get(Expression<Func<UserProfile, bool>> filter = null, Func<IQueryable<UserProfile>, IOrderedQueryable<UserProfile>> orderBy = null, string includeProperties = "")
+        {
+            return _unitOfWork.UserProfileRepository.Get(filter, orderBy, includeProperties).ToList();
+        }
+
+        public void Dispose()
+        {
+            _unitOfWork.Dispose();
+
+        }
+
     }
 }
 

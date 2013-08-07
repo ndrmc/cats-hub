@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IUserHubService
+    public interface IUserHubService:IDisposable
     {
        bool AddUserHub(UserHub entity);
        bool DeleteUserHub(UserHub entity);

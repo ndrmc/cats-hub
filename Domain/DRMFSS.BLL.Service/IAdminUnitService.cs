@@ -16,8 +16,10 @@ namespace DRMFSS.BLL.Services
         bool DeleteAdminUnit(AdminUnit adminUnit);
         bool DeleteById(int id);
         bool EditAdminUnit(AdminUnit adminUnit);
+
         AdminUnit FindById(int id);
         List<AdminUnit> GetAllAdminUnit();
+        List<AdminUnit> Get(Expression<Func<AdminUnit,bool>> filter=null,Func<IQueryable<AdminUnit>,IOrderedQueryable<AdminUnit>> orderBy=null,string includeProperties=""  );
         List<AdminUnit> FindBy(Expression<Func<AdminUnit, bool>> predicate);
 
 

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Services
 {
-   public  interface IUserProfileService
+   public  interface IUserProfileService:IDisposable
     {
 
        bool AddUserProfile(UserProfile entity);
@@ -15,12 +15,12 @@ namespace DRMFSS.BLL.Services
        bool EditUserProfile(UserProfile entity);
        UserProfile FindById(int id);
        List<UserProfile> GetAllUserProfile();
+       List<UserProfile> Get(Expression<Func<UserProfile, bool>> filter = null, Func<IQueryable<UserProfile>, IOrderedQueryable<UserProfile>> orderBy = null, string includeProperties = "");
        List<UserProfile> FindBy(Expression<Func<UserProfile, bool>> predicate);
 
        bool ChangePassword(int profileId, string password);
        UserProfile GetUser(string userName);
        bool EditInfo(BLL.UserProfile profile);
-      
 
     }
 }

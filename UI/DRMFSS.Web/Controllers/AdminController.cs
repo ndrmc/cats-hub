@@ -1,30 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 using DRMFSS.Shared;
 using System.Web.Security;
+using DRMFSS.Web.Models;
 
 namespace DRMFSS.Web.Controllers
 {
     public partial class AdminController : BaseController
     {
-        CTSContext db = new CTSContext();
-        IUnitOfWork repository = new BLL.UnitOfWork();
+        //CTSContext db = new CTSContext();
+        //IUnitOfWork repository = new BLL.UnitOfWork();
+        private readonly IUserProfileService _userProfileService;
+        private readonly IUserRoleService _userRoleService;
+        private readonly IRoleService _roleService;
+        private readonly IUserHubService _userHubService;
+        private readonly IHubService _hubService;
+
+        public AdminController(IUserProfileService userProfileService, IUserRoleService userRoleService, IRoleService roleService, IUserHubService userHubService, IHubService hubService)
+        {
+            this._userProfileService = userProfileService;
+            this._userRoleService = userRoleService;
+            this._roleService = roleService;
+            this._userHubService = userHubService;
+            this._hubService = hubService;
+        }
+
         public virtual ViewResult Index()
         {
-            var userProfiles = repository.UserProfile.GetAll();
-            return View("Users/Index", userProfiles.OrderBy(u => u.UserName).ToList());
+            var userProfiles = _userProfileService.Get(null,t=>t.OrderBy(o=>o.UserName)).ToList();
+            return View("Users/Index", userProfiles);
         }
 
         public virtual ActionResult Update()
         {
-            var userProfiles = repository.UserProfile.GetAll();
-            return PartialView("Users/Update", userProfiles.OrderBy(u => u.UserName).ToList());
+            var userProfiles = _userProfileService.Get(null, t => t.OrderBy(o => o.UserName)).ToList();
+            return PartialView("Users/Update", userProfiles);
         }
 
         public virtual ViewResult Home()
@@ -34,15 +47,15 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ViewResult Details(int id)
         {
-            UserProfile userprofile = repository.UserProfile.FindById(id); 
+            var userprofile = _userProfileService.FindById(id);
             return View("Users/Details", userprofile);
         }
 
         public virtual ActionResult Create()
         {
-            ViewBag.UserRoles = new SelectList(repository.UserRole.GetAll(), "UserRoleID", "UserRoleID");
+            ViewBag.UserRoles = new SelectList(_userRoleService.GetAllUserRole(), "UserRoleID", "UserRoleID");
             return PartialView("Users/Create");
-        } 
+        }
 
         //
         // POST: /Admin/Create
@@ -53,11 +66,11 @@ namespace DRMFSS.Web.Controllers
             if (ModelState.IsValid)
             {
                 userprofile.Password = MD5Hashing.MD5Hash(userprofile.Password);
-                repository.UserProfile.Add(userprofile);
+                _userProfileService.AddUserProfile(userprofile);
                 return Json(new { success = true });  
             }
 
-            ViewBag.UserProfileID = new SelectList(repository.UserRole.GetAll(), "UserRoleID", "UserRoleID", userprofile.UserProfileID);
+            ViewBag.UserProfileID = new SelectList(_userRoleService.GetAllUserRole(), "UserRoleID", "UserRoleID", userprofile.UserProfileID);
             return PartialView("Users/Create", userprofile);
         }
         
@@ -66,7 +79,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(int id)
         {
-            UserProfile userprofile = repository.UserProfile.FindById(id);
+            UserProfile userprofile = _userProfileService.FindById(id);
             //ViewData["roles"] = new SelectList(db.Roles, "RoleID", "Name", userprofile.UserRole.RoleID);
             //ViewBag.UserProfileID = new SelectList(db.Roles, "RoleID", "Name", userprofile.UserRole.RoleID);
             Session["SELECTEDUSER"] = userprofile;
@@ -79,18 +92,16 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public virtual ActionResult Edit(UserProfile userprofile)
         {
-            BLL.UserProfile cachedProfile = Session["SELECTEDUSER"] as BLL.UserProfile;
+            var cachedProfile = Session["SELECTEDUSER"] as BLL.UserProfile;
             this.ModelState.Remove("Password");
             if (ModelState.IsValid && cachedProfile != null)
             {
                 userprofile.Password = cachedProfile.Password;
-                db.UserProfiles.Attach(userprofile);
-                db.Entry(userprofile).State = EntityState.Modified;
-                db.SaveChanges();
+                _userProfileService.EditUserProfile(userprofile);
                 Session.Remove("SELECTEDUSER");
                 return Json(new { success = true }); ;
             }
-            ViewBag.UserProfileID = new SelectList(db.UserRoles, "UserRoleID", "UserRoleID", userprofile.UserProfileID);
+            ViewBag.UserProfileID = new SelectList(_userRoleService.GetAllUserRole(), "UserRoleID", "UserRoleID", userprofile.UserProfileID);
             return PartialView("Users/Edit", userprofile);
         }
 
@@ -99,7 +110,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Delete(int id)
         {
-            UserProfile userprofile = db.UserProfiles.Single(u => u.UserProfileID == id);
+            UserProfile userprofile = _userProfileService.FindById(id);
             return View("Users/Delete", userprofile);
         }
 
@@ -108,10 +119,8 @@ namespace DRMFSS.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
-        {            
-            UserProfile userprofile = db.UserProfiles.Single(u => u.UserProfileID == id);
-            db.UserProfiles.Remove(userprofile);
-            db.SaveChanges();
+        {   
+            _userProfileService.DeleteById(id);
             return RedirectToAction("Index");
         }
 
@@ -119,6 +128,7 @@ namespace DRMFSS.Web.Controllers
         {
             Models.UserRolesModel userroles = new Models.UserRolesModel();
             userroles.UserRoles = GetUserRoles(userName).OrderBy(o=>o.SortOrder).ToArray();
+            
             Session["Roles"] = userroles;
             Session["UserName"] = userName;
             return PartialView("Users/UserRoles", userroles);
@@ -146,7 +156,7 @@ namespace DRMFSS.Web.Controllers
                 model.Selected = userHubs.GetValue(string.Format("[{0}].Selected", model.HubID)).AttemptedValue.Contains("true");
                 if (model.Selected != hubModel.UserHubs[i].Selected)
                 {
-                    int userID = (from v in db.UserProfiles
+                    int userID = (from v in _userProfileService.GetAllUserProfile()
                                  where v.UserName == userName
                                  select v.UserProfileID).FirstOrDefault();
 
@@ -191,26 +201,30 @@ namespace DRMFSS.Web.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _userProfileService.Dispose();
+            _userRoleService.Dispose();
+            _userHubService.Dispose();
+            _hubService.Dispose();
+            _roleService.Dispose();
             base.Dispose(disposing);
         }
 
-        private List<Models.UserRoleModel> GetUserRoles(string userName)
+        private IEnumerable<UserRoleModel> GetUserRoles(string userName)
         {
             string[] roles = Roles.GetRolesForUser(userName);
-            BLL.CTSContext entities = new BLL.CTSContext();
-            var userRoles = from role in entities.Roles
+            var userRoles = from role in _roleService.GetAllRole()
                             select new Models.UserRoleModel() { RoleId = role.RoleID, RoleName = role.Name, Selected = roles.Contains(role.Name),SortOrder = role.SortOrder};
             return userRoles.ToList();
         }
 
-        private List<Models.UserHubModel> GetUserHubs(string userName)
+        private IEnumerable<UserHubModel> GetUserHubs(string userName)
         {
-            var warehouses = from v in db.UserHubs
+            
+            var warehouses = from v in _userHubService.GetAllUserHub()
                              where v.UserProfile.UserName == userName
                              select v.HubID;
            
-            var userHubs = from v in db.Hubs
+            var userHubs = from v in _hubService.GetAllHub()
                             select new Models.UserHubModel() { HubID = v.HubID, Name = v.Name + " : " + v.HubOwner.Name, Selected = warehouses.Contains(v.HubID) } ;
             return userHubs.ToList();
         }

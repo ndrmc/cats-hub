@@ -41,7 +41,9 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IShippingInstructionService>().To<ShippingInstructionService>();
             kernel.Bind<ITransactionService>().To<TransactionService>();
             kernel.Bind<IUnitService>().To<UnitService>();
-
+            kernel.Bind<IUserProfileService>().To<UserProfileService>();
+            kernel.Bind<IUserRoleService>().To<UserRoleService>();
+            kernel.Bind<IUserHubService>().To<UserHubService>();
         }
     }
 }
