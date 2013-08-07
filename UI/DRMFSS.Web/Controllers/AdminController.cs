@@ -9,7 +9,7 @@ using DRMFSS.Web.Models;
 
 namespace DRMFSS.Web.Controllers
 {
-    public partial class AdminController : BaseController
+    public class AdminController : BaseController
     {
         //CTSContext db = new CTSContext();
         //IUnitOfWork repository = new BLL.UnitOfWork();
@@ -21,11 +21,11 @@ namespace DRMFSS.Web.Controllers
 
         public AdminController(IUserProfileService userProfileService, IUserRoleService userRoleService, IRoleService roleService, IUserHubService userHubService, IHubService hubService)
         {
-            this._userProfileService = userProfileService;
-            this._userRoleService = userRoleService;
-            this._roleService = roleService;
-            this._userHubService = userHubService;
-            this._hubService = hubService;
+            _userProfileService = userProfileService;
+            _userRoleService = userRoleService;
+            _roleService = roleService;
+            _userHubService = userHubService;
+            _hubService = hubService;
         }
 
         public virtual ViewResult Index()
@@ -79,7 +79,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(int id)
         {
-            UserProfile userprofile = _userProfileService.FindById(id);
+            var userprofile = _userProfileService.FindById(id);
             //ViewData["roles"] = new SelectList(db.Roles, "RoleID", "Name", userprofile.UserRole.RoleID);
             //ViewBag.UserProfileID = new SelectList(db.Roles, "RoleID", "Name", userprofile.UserRole.RoleID);
             Session["SELECTEDUSER"] = userprofile;
@@ -92,14 +92,14 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public virtual ActionResult Edit(UserProfile userprofile)
         {
-            var cachedProfile = Session["SELECTEDUSER"] as BLL.UserProfile;
-            this.ModelState.Remove("Password");
+            var cachedProfile = Session["SELECTEDUSER"] as UserProfile;
+            ModelState.Remove("Password");
             if (ModelState.IsValid && cachedProfile != null)
             {
                 userprofile.Password = cachedProfile.Password;
                 _userProfileService.EditUserProfile(userprofile);
                 Session.Remove("SELECTEDUSER");
-                return Json(new { success = true }); ;
+                return Json(new { success = true });
             }
             ViewBag.UserProfileID = new SelectList(_userRoleService.GetAllUserRole(), "UserRoleID", "UserRoleID", userprofile.UserProfileID);
             return PartialView("Users/Edit", userprofile);
@@ -126,9 +126,9 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult UserRoles(string userName)
         {
-            Models.UserRolesModel userroles = new Models.UserRolesModel();
-            userroles.UserRoles = GetUserRoles(userName).OrderBy(o=>o.SortOrder).ToArray();
-            
+            var userroles = new UserRolesModel
+                {UserRoles = GetUserRoles(userName).OrderBy(o => o.SortOrder).ToArray()};
+
             Session["Roles"] = userroles;
             Session["UserName"] = userName;
             return PartialView("Users/UserRoles", userroles);
@@ -136,8 +136,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult UserHubs(string userName)
         {
-            Models.UserHubsModel userhubs = new Models.UserHubsModel();
-            userhubs.UserHubs = GetUserHubs(userName).OrderBy(o => o.Name).ToList();
+            var userhubs = new UserHubsModel {UserHubs = GetUserHubs(userName).OrderBy(o => o.Name).ToList()};
             Session["Hubs"] = userhubs;
             Session["UserName"] = userName;
             return PartialView( "Users/UserHubs", userhubs);
@@ -146,21 +145,21 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public virtual ActionResult UserHubs(FormCollection userHubs)
         {
-            Models.UserHubsModel hubModel = Session["Hubs"] as Models.UserHubsModel;
-            string userName = Session["UserName"].ToString();
-            for (int i = 0; i < hubModel.UserHubs.Count(); i++)
+            var hubModel = Session["Hubs"] as UserHubsModel;
+            var userName = Session["UserName"].ToString();
+            if (hubModel!=null)
             {
-                Models.UserHubModel model = new Models.UserHubModel();
-                model.HubID = hubModel.UserHubs[i].HubID;
-                model.Name = hubModel.UserHubs[i].Name;
-                model.Selected = userHubs.GetValue(string.Format("[{0}].Selected", model.HubID)).AttemptedValue.Contains("true");
-                if (model.Selected != hubModel.UserHubs[i].Selected)
+                for (var i = 0; i < hubModel.UserHubs.Count(); i++)
                 {
-                    int userID = (from v in _userProfileService.GetAllUserProfile()
-                                 where v.UserName == userName
-                                 select v.UserProfileID).FirstOrDefault();
+                    var model = new UserHubModel
+                        {HubID = hubModel.UserHubs[i].HubID, Name = hubModel.UserHubs[i].Name};
+                    model.Selected = userHubs.GetValue(string.Format("[{0}].Selected", model.HubID)).AttemptedValue.Contains("true");
+                    if (model.Selected == hubModel.UserHubs[i].Selected) continue;
+                    var userID = (from v in _userProfileService.GetAllUserProfile()
+                                  where v.UserName == userName
+                                  select v.UserProfileID).FirstOrDefault();
 
-                    BLL.Hub hub = new Hub();
+                    var hub = new Hub();
                     if (model.Selected)
                     {
                         hub.AddUser(model.HubID,userID);
@@ -168,10 +167,9 @@ namespace DRMFSS.Web.Controllers
                     {
                         hub.RemoveUser(model.HubID,userID);
                     }
-                      
                 }
-
             }
+            
             return Json(new { success = true });
         }
 
@@ -179,23 +177,25 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult UserRoles(FormCollection userRoles)
         {
             
-            Models.UserRolesModel roleModel = Session["Roles"] as Models.UserRolesModel;
-            string userName = Session["UserName"].ToString();
-            for (int i = 0; i < roleModel.UserRoles.Count(); i++)
+            var roleModel = Session["Roles"] as UserRolesModel;
+            var userName = Session["UserName"].ToString();
+            if(roleModel!=null)
             {
-                Models.UserRoleModel model = new Models.UserRoleModel();
-                model.RoleId = roleModel.UserRoles[i].RoleId;
-                model.RoleName = roleModel.UserRoles[i].RoleName;
-                model.Selected = userRoles.GetValue(string.Format("[{0}].Selected", model.RoleId)).AttemptedValue.Contains("true");
-                if (model.Selected != roleModel.UserRoles[i].Selected)
+                for (var i = 0; i < roleModel.UserRoles.Count(); i++)
                 {
-                    if(model.Selected)
-                    new BLL.Role().AddUserToRole(model.RoleId,userName);
-                    else
-                        new BLL.Role().RemoveRole(model.RoleName,userName);
+                    var model = new UserRoleModel { RoleId = roleModel.UserRoles[i].RoleId, RoleName = roleModel.UserRoles[i].RoleName };
+                    model.Selected = userRoles.GetValue(string.Format("[{0}].Selected", model.RoleId)).AttemptedValue.Contains("true");
+                    if (model.Selected != roleModel.UserRoles[i].Selected)
+                    {
+                        if (model.Selected)
+                            new Role().AddUserToRole(model.RoleId, userName);
+                        else
+                            new Role().RemoveRole(model.RoleName, userName);
+                    }
+
                 }
-                
             }
+            
             return Json(new { success = true }); 
         }
 
@@ -211,9 +211,9 @@ namespace DRMFSS.Web.Controllers
 
         private IEnumerable<UserRoleModel> GetUserRoles(string userName)
         {
-            string[] roles = Roles.GetRolesForUser(userName);
+            var roles = Roles.GetRolesForUser(userName);
             var userRoles = from role in _roleService.GetAllRole()
-                            select new Models.UserRoleModel() { RoleId = role.RoleID, RoleName = role.Name, Selected = roles.Contains(role.Name),SortOrder = role.SortOrder};
+                            select new UserRoleModel { RoleId = role.RoleID, RoleName = role.Name, Selected = roles.Contains(role.Name),SortOrder = role.SortOrder};
             return userRoles.ToList();
         }
 
@@ -225,7 +225,7 @@ namespace DRMFSS.Web.Controllers
                              select v.HubID;
            
             var userHubs = from v in _hubService.GetAllHub()
-                            select new Models.UserHubModel() { HubID = v.HubID, Name = v.Name + " : " + v.HubOwner.Name, Selected = warehouses.Contains(v.HubID) } ;
+                            select new UserHubModel { HubID = v.HubID, Name = v.Name + " : " + v.HubOwner.Name, Selected = warehouses.Contains(v.HubID) } ;
             return userHubs.ToList();
         }
     }

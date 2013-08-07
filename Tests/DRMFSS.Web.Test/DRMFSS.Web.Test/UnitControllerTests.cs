@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using DRMFSS.BLL;
 using DRMFSS.BLL.Services;
@@ -21,10 +19,10 @@ namespace DRMFSS.Web.Test
         [SetUp]
         public void Init()
         {
-            var units = new List<Unit>()
+            var units = new List<Unit>
                 {
-                    new Unit() {Name = "Kg", UnitID = 1},
-                    new Unit() {Name = "Ml", UnitID = 2},
+                    new Unit {Name = "Kg", UnitID = 1},
+                    new Unit {Name = "Ml", UnitID = 2},
                 };
             var unitService = new Mock<IUnitService>();
             unitService.Setup(t => t.GetAllUnit()).Returns(units);
@@ -47,7 +45,7 @@ namespace DRMFSS.Web.Test
         {
             //ACT
             var result = _unitController.Index();
-            var model = ((ViewResult)result).Model;
+            var model = result.Model;
             //Assert
 
             Assert.IsInstanceOf<ViewResult>(result);
@@ -60,12 +58,12 @@ namespace DRMFSS.Web.Test
         {
             //ACT
             var result = _unitController.Details(1);
-            var model = ((ViewResult)result).Model;
+            var model = result.Model;
             //Assert
 
             Assert.IsInstanceOf<ViewResult>(result);
             Assert.IsInstanceOf<Unit>(model);  
-            Assert.IsNotNullOrEmpty(((Unit)model).UnitID.ToString());
+            Assert.IsNotNullOrEmpty(((Unit)model).UnitID.ToString(CultureInfo.InvariantCulture));
             Assert.IsNotNullOrEmpty(((Unit)model).Name);
         }
 
@@ -73,8 +71,7 @@ namespace DRMFSS.Web.Test
         public void CanDoPostBackCreate()
         {
             //ACT
-            Unit unit = new Unit();
-            unit.Name = "Litre";
+            var unit = new Unit {Name = "Litre"};
             var result = _unitController.Create(unit);
             //Assert
             Assert.IsInstanceOf<ActionResult>(result);
@@ -86,7 +83,7 @@ namespace DRMFSS.Web.Test
         {
             //ACT
             var result = _unitController.Edit(1);
-            var model = ((ActionResult)result).Model;
+            var model = ((ViewResult)result).Model;
             //Assert
             Assert.IsInstanceOf<ActionResult>(result);
             Assert.IsInstanceOf<Unit>(model);
@@ -96,9 +93,7 @@ namespace DRMFSS.Web.Test
         public void CanDoPostBackEdit()
         {
             //ACT
-            Unit unit = new Unit();
-            unit.UnitID = 1;
-            unit.Name = "Mt";
+            var unit = new Unit {UnitID = 1, Name = "Mt"};
             var result = _unitController.Edit(unit);
             //Assert
             Assert.IsInstanceOf<ActionResult>(result);
