@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 using Telerik.Web.Mvc;
 using DRMFSS.Web.Models;
 using DRMFSS.BLL;
@@ -15,23 +15,22 @@ namespace DRMFSS.Web.Controllers
 
     public class AdminUnitController : BaseController
     {
-
-
-        public AdminUnitController(IUnitOfWork repository)
+        private readonly IAdminUnitService _adminUnitService;
+        private readonly IUserProfileService _userProfileService;
+        private readonly IDispatchAllocationService _dispatchAllocationService;
+        
+        public AdminUnitController(IAdminUnitService adminUnitService, IUserProfileService userProfileService,
+            IDispatchAllocationService dispatchAllocationService)
         {
-            this.repository = repository;
-        }
-
-
-        public AdminUnitController()
-        {
-
+            _adminUnitService = adminUnitService;
+            _userProfileService = userProfileService;
+            _dispatchAllocationService = dispatchAllocationService;
         }
 
         [Authorize]
         public ActionResult Index()
         {
-            var types = repository.AdminUnit.GetAdminUnitTypes();
+            var types = _adminUnitService.GetAdminUnitTypes();
             return View("Index", types);
         }
 
@@ -42,34 +41,24 @@ namespace DRMFSS.Web.Controllers
             {
                 return new EmptyResult();
             }
-            else
+            ViewBag.Regions = _adminUnitService.GetRegions();
+            var type = _adminUnitService.GetAdminUnitType(id.Value);
+            ViewBag.Title = type.Name + "s";
+            ViewBag.SelectedTypeId = id;
+            var list = type.AdminUnits.OrderBy(a => a.Name);
+            //.Select(s => new Models.AdminUnitItem()
+            //{ Id = s.AdminUnitID, Name = s.Name});
+            switch (id)
             {
-                ViewBag.Regions = repository.AdminUnit.GetRegions();
-                var type = repository.AdminUnit.GetAdminUnitType(id.Value);
-                ViewBag.Title = type.Name + "s";
-                ViewBag.SelectedTypeId = id;
-                var list = type.AdminUnits.OrderBy(a => a.Name);
-                //.Select(s => new Models.AdminUnitItem()
-                //{ Id = s.AdminUnitID, Name = s.Name});
-                if (id == 3)
-                {
-                    list = type.AdminUnits.OrderBy(a => a.AdminUnit2.Name).
-                        ThenBy(a => a.Name);
-                    //.Select(s => 
-                    //    new Models.AdminUnitItem() { Id = s.AdminUnitID, Name = s.Name });
-                }
-                else if (id == 4)
-                {
-                    list = type.AdminUnits.OrderBy(a => a.AdminUnit2.AdminUnit2.Name).
-                        ThenBy(a => a.AdminUnit2.Name).
-                        ThenBy(a => a.Name);
-                    //.Select(s => 
-                    //    new Models.AdminUnitItem() { Id = s.AdminUnitID, Name = s.Name });
-                }
-                var viewName = "Lists/AdminUnits." + id + "";
-                return PartialView(viewName, list);
+                case 3:
+                    list = type.AdminUnits.OrderBy(a => a.AdminUnit2.Name).ThenBy(a => a.Name);
+                    break;
+                case 4:
+                    list = type.AdminUnits.OrderBy(a => a.AdminUnit2.AdminUnit2.Name).ThenBy(a => a.AdminUnit2.Name).ThenBy(a => a.Name);
+                    break;
             }
-
+            var viewName = "Lists/AdminUnits." + id + "";
+            return PartialView(viewName, list);
         }
 
         //
@@ -77,7 +66,7 @@ namespace DRMFSS.Web.Controllers
         [Authorize]
         public ActionResult Create(int typeid)
         {
-            Models.AdminUnitModel model = new Models.AdminUnitModel();
+            var model = new AdminUnitModel();
             switch (typeid)
             {
                 case 2:
@@ -99,18 +88,17 @@ namespace DRMFSS.Web.Controllers
         [Authorize]
         public ActionResult CreateRegion()
         {
-            Models.AdminUnitModel model = new Models.AdminUnitModel();
-            model.SelectedAdminUnitTypeId = Shared.Configuration.RegionTypeId;
+            var model = new AdminUnitModel {SelectedAdminUnitTypeId = Shared.Configuration.RegionTypeId};
             return PartialView("CreateRegion", model);
         }
 
         [Authorize]
         public ActionResult CreateZone(int? regionId)
         {
-            Models.AdminUnitModel model = new Models.AdminUnitModel();
+            var model = new AdminUnitModel();
             if (regionId.HasValue)
             {
-                BLL.AdminUnit region = repository.AdminUnit.FindById(regionId.Value);
+                var region = _adminUnitService.FindById(regionId.Value);
                 model.SelectedRegionId = region.AdminUnitID;
                 model.SelectedRegionName = region.Name;
             }
@@ -120,12 +108,11 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult CreateWoreda(int? zoneId)
         {
-            Models.AdminUnitModel model = new Models.AdminUnitModel();
+            var model = new AdminUnitModel {SelectedAdminUnitTypeId = Shared.Configuration.WoredaTypeId};
 
-            model.SelectedAdminUnitTypeId = Shared.Configuration.WoredaTypeId;
             if (zoneId.HasValue)
             {
-                BLL.AdminUnit zone = repository.AdminUnit.FindById(zoneId.Value);
+                var zone = _adminUnitService.FindById(zoneId.Value);
                 model.SelectedZoneName = zone.Name;
                 model.SelectedZoneId = zone.AdminUnitID;
                 model.SelectedRegionId = zone.AdminUnit2.AdminUnitID;
@@ -138,14 +125,13 @@ namespace DRMFSS.Web.Controllers
         // POST: /AdminUnit/Create
 
         [HttpPost]
-        public ActionResult Create(Models.AdminUnitModel unit)
+        public ActionResult Create(AdminUnitModel unit)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    BLL.AdminUnit aunit = new BLL.AdminUnit();
-                    aunit.AdminUnitTypeID = unit.SelectedAdminUnitTypeId;
+                    var aunit = new AdminUnit {AdminUnitTypeID = unit.SelectedAdminUnitTypeId};
                     if (aunit.AdminUnitTypeID == Shared.Configuration.ZoneTypeId)
                     {
                         aunit.ParentID = unit.SelectedRegionId;
@@ -157,12 +143,10 @@ namespace DRMFSS.Web.Controllers
                     aunit.Name = unit.UnitName;
                     aunit.NameAM = unit.UnitNameAM;
 
-                    repository.AdminUnit.Add(aunit);
-
-
+                    _adminUnitService.AddAdminUnit(aunit);
                     return Json(new {success = true});
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return View();
                 }
@@ -175,7 +159,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            BLL.AdminUnit unit = repository.AdminUnit.FindById(id);
+            var unit = _adminUnitService.FindById(id);
             return PartialView("Edit", unit);
         }
 
@@ -183,12 +167,12 @@ namespace DRMFSS.Web.Controllers
         // POST: /AdminUnit/Edit/5
 
         [HttpPost]
-        public ActionResult Edit(int id, BLL.AdminUnit unit)
+        public ActionResult Edit(int id, AdminUnit unit)
         {
 
             if (ModelState.IsValid)
             {
-                repository.AdminUnit.SaveChanges(unit);
+                _adminUnitService.EditAdminUnit(unit);
                 return Json(new {success = true});
             }
             return PartialView("Edit", unit);
@@ -199,7 +183,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Delete(int id)
         {
-            BLL.AdminUnit unit = repository.AdminUnit.FindById(id);
+            var unit = _adminUnitService.FindById(id);
             return View("Delete", unit);
         }
 
@@ -207,12 +191,11 @@ namespace DRMFSS.Web.Controllers
         // POST: /AdminUnit/Delete/5
 
         [HttpPost]
-        public ActionResult Delete(int id, BLL.AdminUnit unit)
+        public ActionResult Delete(int id, AdminUnit unit)
         {
             try
             {
-                // TODO: Add delete logic here
-                repository.AdminUnit.Delete(unit);
+                _adminUnitService.DeleteAdminUnit(unit);
                 return RedirectToAction("Index");
             }
             catch
@@ -223,8 +206,8 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult GetRegions()
         {
-            var units = from item in repository.AdminUnit.GetRegions()
-                        select new Models.AdminUnitItem
+            var units = from item in _adminUnitService.GetRegions()
+                        select new AdminUnitItem
                                    {
                                        Id = item.AdminUnitID,
                                        Name = item.Name
@@ -234,72 +217,66 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult GetChildren(int? unitId)
         {
-            if (unitId.HasValue)
+            if (!unitId.HasValue)
             {
-                var units = from item in repository.AdminUnit.GetChildren(unitId.Value)
-                            select new Models.AdminUnitItem
-                                       {
-                                           Id = item.AdminUnitID,
-                                           Name = item.Name
-                                       };
-                return Json(new SelectList(units.OrderBy(o => o.Name), "Id", "Name"), JsonRequestBehavior.AllowGet);
+                return Json(new SelectList(new List<AdminUnitItem>(), "Id", "Name"), JsonRequestBehavior.AllowGet);
             }
-            else
-            {
-                return Json(new SelectList(new List<Models.AdminUnitItem>(), "Id", "Name"), JsonRequestBehavior.AllowGet);
-            }
+            var units = from item in _adminUnitService.GetChildren(unitId.Value)
+                        select new AdminUnitItem
+                            {
+                                Id = item.AdminUnitID,
+                                Name = item.Name
+                            };
+            return Json(new SelectList(units.OrderBy(o => o.Name), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetChildrenReport(int? unitId)
         {
             if (unitId.HasValue)
             {
-                var units = (from item in repository.AdminUnit.GetChildren(unitId.Value)
-                             select new Models.AdminUnitItem
+                var units = (from item in _adminUnitService.GetChildren(unitId.Value)
+                             select new AdminUnitItem
                                         {
                                             Id = item.AdminUnitID,
                                             Name = item.Name
                                         }).ToList();
                 return Json(new SelectList(units.OrderBy(o => o.Name), "Id", "Name"), JsonRequestBehavior.AllowGet);
             }
-            else
-            {
-                return Json(new SelectList(new List<Models.AdminUnitItem>(), "Id", "Name"), JsonRequestBehavior.AllowGet);
-            }
+            return Json(new SelectList(new List<AdminUnitItem>(), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetZones(int? SelectedRegionId)
+        public ActionResult GetZones(int? selectedRegionId)
         {
-            if (SelectedRegionId == null)
+            if (selectedRegionId == null)
             {
                 //
                 if (Request["SelectedRegionId2"] != null)
                 {
-                    SelectedRegionId = Convert.ToInt32(Request["SelectedRegionId2"]);
+                    selectedRegionId = Convert.ToInt32(Request["SelectedRegionId2"]);
                 }
                 else if (Request["RegionID"] != null)
                 {
-                    SelectedRegionId = Convert.ToInt32(Request["RegionID"]);
+                    selectedRegionId = Convert.ToInt32(Request["RegionID"]);
                 }
             }
-            return GetChildren(SelectedRegionId);
+            return GetChildren(selectedRegionId);
         }
 
 
-        public ActionResult GetWoredas(int? SelectedZoneId)
+        public ActionResult GetWoredas(int? selectedZoneId)
         {
-            if (SelectedZoneId == null)
+            if (selectedZoneId == null)
             {
                 if (Request["SelectedZoneId2"] != null)
                 {
-                    SelectedZoneId = Convert.ToInt32(Request["SelectedZoneId2"]);
+                    selectedZoneId = Convert.ToInt32(Request["SelectedZoneId2"]);
                 }
                 else if (Request["ZoneID"] != null)
                 {
-                    SelectedZoneId = Convert.ToInt32(Request["ZoneID"]);
+                    selectedZoneId = Convert.ToInt32(Request["ZoneID"]);
                 }
             }
-            return GetChildren(SelectedZoneId);
+            return GetChildren(selectedZoneId);
         }
 
         [GridAction]
@@ -307,40 +284,36 @@ namespace DRMFSS.Web.Controllers
         {
             if (parentId.HasValue)
             {
-                var units = from item in repository.AdminUnit.GetChildren(parentId.Value)
+                var units = from item in _adminUnitService.GetChildren(parentId.Value)
                             orderby item.Name
                             select new
-                                       {
-                                           AdminUnitID = item.AdminUnitID,
-                                           Name = item.Name,
-                                           AdminUnit2 = new
-                                                            {
-                                                                Name = item.AdminUnit2.Name,
-                                                                AdminUnit2 = new
-                                                                                 {
-                                                                                     Name =
-                                item.AdminUnit2.AdminUnit2.Name
-                                                                                 }
-                                                            },
-                                       };
+                            {
+                                item.AdminUnitID, item.Name,
+                                AdminUnit2 = new
+                                    {
+                                        item.AdminUnit2.Name,
+                                        AdminUnit2 = new
+                                            {
+                                                item.AdminUnit2.AdminUnit2.Name
+                                            }
+                                    },
+                            };
                 return View(new GridModel(units));
             }
-            var woredas = from item in repository.AdminUnit.GetAllWoredas()
+            var woredas = from item in _adminUnitService.GetAllWoredas()
                           orderby item.Name
                           select new
-                                     {
-                                         AdminUnitID = item.AdminUnitID,
-                                         Name = item.Name,
-                                         AdminUnit2 = new
-                                                          {
-                                                              Name = item.AdminUnit2.Name,
-                                                              AdminUnit2 = new
-                                                                               {
-                                                                                   Name =
-                              item.AdminUnit2.AdminUnit2.Name
-                                                                               }
-                                                          },
-                                     };
+                            {
+                                item.AdminUnitID, item.Name,
+                                AdminUnit2 = new
+                                    {
+                                        item.AdminUnit2.Name,
+                                        AdminUnit2 = new
+                                            {
+                                                item.AdminUnit2.AdminUnit2.Name
+                                            }
+                                    },
+                            };
             return View(new GridModel(woredas));
 
         }
@@ -348,36 +321,33 @@ namespace DRMFSS.Web.Controllers
         [GridAction]
         public ActionResult GetWoredasByParent(int? regionId, int? zoneId)
         {
-            List<BLL.AdminUnit> units = null;
+            List<AdminUnit> units = null;
             if (zoneId.HasValue)
             {
-                units = repository.AdminUnit.GetChildren(zoneId.Value);
+                units = _adminUnitService.GetChildren(zoneId.Value);
 
             }
             else if (regionId.HasValue)
             {
-                units = repository.AdminUnit.GetWoredasByRegion(regionId.Value);
+                units = _adminUnitService.GetWoredasByRegion(regionId.Value);
             }
-
 
             if (units != null)
             {
 
                 var woredas = from item in units
                               select new
-                                         {
-                                             AdminUnitID = item.AdminUnitID,
-                                             Name = item.Name,
-                                             AdminUnit2 = new
-                                                              {
-                                                                  Name = item.AdminUnit2.Name,
-                                                                  AdminUnit2 = new
-                                                                                   {
-                                                                                       Name =
-                                  item.AdminUnit2.AdminUnit2.Name
-                                                                                   }
-                                                              },
-                                         };
+                                {
+                                    item.AdminUnitID, item.Name,
+                                    AdminUnit2 = new
+                                        {
+                                            item.AdminUnit2.Name,
+                                            AdminUnit2 = new
+                                                {
+                                                    item.AdminUnit2.AdminUnit2.Name
+                                                }
+                                        },
+                                };
                 return View(new GridModel(woredas));
             }
             return View(new GridModel(new List<object>()));
@@ -387,94 +357,92 @@ namespace DRMFSS.Web.Controllers
         [GridAction]
         public ActionResult GetZonesByParent(int? regionId)
         {
-            List<BLL.AdminUnit> units = new List<BLL.AdminUnit>();
+            var units = new List<AdminUnit>();
 
             if (regionId.HasValue)
             {
-                units = repository.AdminUnit.GetChildren(regionId.Value);
+                units = _adminUnitService.GetChildren(regionId.Value);
             }
-
 
             var woredas = from item in units
                           select new
-                                     {
-                                         AdminUnitID = item.AdminUnitID,
-                                         Name = item.Name,
-                                         AdminUnit2 = new
-                                                          {
-                                                              Name = item.AdminUnit2.Name,
-                                                          },
-                                     };
+                            {
+                                item.AdminUnitID, item.Name,
+                                AdminUnit2 = new
+                                {
+                                    item.AdminUnit2.Name,
+                                },
+                            };
 
             return View(new GridModel(woredas));
         }
 
         public ActionResult GetTreeElts(TreeViewItem node, bool? closedToo)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            var user = _userProfileService.GetUser(User.Identity.Name);
 
-            int? parentId = !string.IsNullOrEmpty(node.Value) ? (int?) Convert.ToInt32(node.Value) : null;
+            var parentId = !string.IsNullOrEmpty(node.Value) ? (int?) Convert.ToInt32(node.Value) : null;
 
-            bool closedTooParam = !(closedToo == null || closedToo == false);
-
-            IEnumerable<TreeViewModel> thelist = repository.AdminUnit.GetTreeElts(parentId.Value, user.DefaultHub.HubID);
+            if (parentId == null)
+            {
+                // TODO: Here implement a null argument exception
+                return null;
+            }
+            var thelist = _adminUnitService.GetTreeElts(parentId.Value, user.DefaultHub.HubID);
             IEnumerable nodes = from item in thelist
                                 // where item.ParentID == parentId || (parentId == null && item.ParentID == null)
                                 group item by new {item.Value, item.Name, item.LoadOnDemand}
                                 into itm
                                 select new TreeViewItemModel
-                                           {
-                                               Text = itm.Key.Name + "( " + itm.Sum(l => l.Count) + " )",
-                                               //item.Name g.Sum(b => b.QuantityInMT)
-                                               Value = itm.Key.Value.ToString(),
-                                               LoadOnDemand = true,
-                                               //itm.Key.LoadOnDemand,
-                                               Enabled = true
-                                           };
+                                    {
+                                        Text = itm.Key.Name + "( " + itm.Sum(l => l.Count) + " )",
+                                        //item.Name g.Sum(b => b.QuantityInMT)
+                                        Value = itm.Key.Value.ToString(CultureInfo.InvariantCulture),
+                                        LoadOnDemand = true,
+                                        //itm.Key.LoadOnDemand,
+                                        Enabled = true
+                                    };
 
             return new JsonResult {Data = nodes};
         }
 
-        private int CountAllocationsUnder(int AdminUnitId)
+        private int CountAllocationsUnder(int adminUnitId)
         {
 
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            var unclosed = (from dAll in repository.DispatchAllocation.GetAll()
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            var unclosed = (from dAll in _dispatchAllocationService.GetAllDispatchAllocation()
                             where dAll.ShippingInstructionID.HasValue && dAll.ProjectCodeID.HasValue
                                   && user.DefaultHub.HubID == dAll.HubID && dAll.IsClosed == false
                             select dAll);
 
-            BLL.AdminUnit adminUnit = repository.AdminUnit.FindById(AdminUnitId);
+            var adminUnit = _adminUnitService.FindById(adminUnitId);
 
-            if (adminUnit.AdminUnitType.AdminUnitTypeID == 2) //by region
-                return
-                    unclosed.Where(p => p.FDP.AdminUnit.AdminUnit2.AdminUnit2.AdminUnitID == adminUnit.AdminUnitID).
-                        Count();
-            else if (adminUnit.AdminUnitType.AdminUnitTypeID == 3) //by zone
-                return
-                    unclosed.Where(p => p.FDP.AdminUnit.AdminUnit2.AdminUnitID == adminUnit.AdminUnitID).Count();
-            else if (adminUnit.AdminUnitType.AdminUnitTypeID == 4) //by woreda
-                return
-                    unclosed.Where(p => p.FDP.AdminUnit.AdminUnitID == adminUnit.AdminUnitID).Count();
-            else
-                return 0;
+            switch (adminUnit.AdminUnitType.AdminUnitTypeID)
+            {
+                case 2:
+                    return
+                        unclosed.Count(p => p.FDP.AdminUnit.AdminUnit2.AdminUnit2.AdminUnitID == adminUnit.AdminUnitID);
+                case 3:
+                    return
+                        unclosed.Count(p => p.FDP.AdminUnit.AdminUnit2.AdminUnitID == adminUnit.AdminUnitID);
+                case 4:
+                    return
+                        unclosed.Count(p => p.FDP.AdminUnit.AdminUnitID == adminUnit.AdminUnitID);
+                default:
+                    return 0;
+            }
         }
 
-        public ActionResult GetZonesReport(int? AreaId)
+        public ActionResult GetZonesReport(int? areaId)
         {
-            if (AreaId.HasValue)
-                return Json(new SelectList(repository.AdminUnit.GetZonesForReport(AreaId.Value), "AreaId", "AreaName"), JsonRequestBehavior.AllowGet);
-            else
-                return Json(new SelectList(Enumerable.Empty<SelectListItem>(), "AreaId", "AreaName"), JsonRequestBehavior.AllowGet);
+            return Json(areaId.HasValue ? new SelectList(_adminUnitService.GetZonesForReport(areaId.Value), "AreaId", "AreaName") : 
+                new SelectList(Enumerable.Empty<SelectListItem>(), "AreaId", "AreaName"), JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetWoredasReport(int? ZoneId)
+        public ActionResult GetWoredasReport(int? zoneId)
         {
-            if (ZoneId.HasValue)
-                return Json(new SelectList(repository.AdminUnit.GetWoredasForReport(ZoneId.Value), "AreaId", "AreaName"), JsonRequestBehavior.AllowGet);
-            else
-                return Json(new SelectList(Enumerable.Empty<SelectListItem>(), "AreaId", "AreaName"), JsonRequestBehavior.AllowGet);
+            return Json(zoneId.HasValue ? new SelectList(_adminUnitService.GetWoredasForReport(zoneId.Value), "AreaId", "AreaName") : 
+                new SelectList(Enumerable.Empty<SelectListItem>(), "AreaId", "AreaName"), JsonRequestBehavior.AllowGet);
         }
-
     }
 }

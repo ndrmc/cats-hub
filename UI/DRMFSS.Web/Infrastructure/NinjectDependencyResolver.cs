@@ -19,8 +19,6 @@ namespace DRMFSS.Web.Infrastructure
             AddBindings();
         }
 
-
-
         public object GetService(Type serviceType)
         {
             return kernel.TryGet(serviceType);
@@ -44,6 +42,8 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IUserProfileService>().To<UserProfileService>();
             kernel.Bind<IUserRoleService>().To<UserRoleService>();
             kernel.Bind<IUserHubService>().To<UserHubService>();
+            kernel.Bind<ICommodityTypeService>().To<CommodityTypeService>();
+            kernel.Bind<ICommodityGradeService>().To<CommodityGradeService>();
         }
     }
 }

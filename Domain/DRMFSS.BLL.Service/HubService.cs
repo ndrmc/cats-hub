@@ -27,7 +27,7 @@ namespace DRMFSS.BLL.Services
         public bool DeleteHub(Hub hub)
         {
             if (hub == null) return false;
-            _unitOfWork.HubOwnerRepository.Delete(hub);
+            _unitOfWork.HubRepository.Delete(hub);
             _unitOfWork.Save();
             return true;
         }
@@ -67,7 +67,6 @@ namespace DRMFSS.BLL.Services
         public void Dispose()
         {
             _unitOfWork.Dispose();
-
         }
     }
 }

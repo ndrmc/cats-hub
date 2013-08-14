@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI.WebControls.Expressions;
 using DRMFSS.BLL;
-using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 
 namespace DRMFSS.Web.Controllers
@@ -17,16 +11,15 @@ namespace DRMFSS.Web.Controllers
     [Authorize]
     public class CommodityController : BaseController
     {
+        private readonly ICommodityTypeService _commodityTypeService;
+        private readonly ICommodityService _commodityService;
+
         //
         // GET: /Commodity/
-        public CommodityController()
+        public CommodityController(ICommodityTypeService commodityTypeService, ICommodityService commodityService)
         {
-       
-        }
-
-        public CommodityController(IUnitOfWork _repository)
-        {
-            this.repository = _repository;
+            _commodityTypeService = commodityTypeService;
+            _commodityService = commodityService;
         }
 
         //public CommodityController(ICommodityRepository commodityRepository,
@@ -38,28 +31,21 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.CommodityTypes = repository.CommodityType.GetAll();
+            ViewBag.CommodityTypes = _commodityTypeService.GetAllCommodityType();
 
-            var parents = repository.Commodity.GetAllParents().OrderBy(o=>o.Name);
-            if (parents != null)
-                ViewBag.ParentID = new SelectList(parents, "CommodityID", "Name");
-            else
-                ViewBag.ParentID = new SelectList(new SelectList(Enumerable.Empty<SelectListItem>(), "CommodityID", "Name")); 
+            var parents = _commodityService.GetAllParents().OrderBy(o=>o.Name);
+            ViewBag.ParentID = new SelectList(parents, "CommodityID", "Name"); 
     
             var firstOrDefault =
-                repository.Commodity.GetAllParents() == null ? null : repository.Commodity.GetAllParents().FirstOrDefault();
+                _commodityService.GetAllParents() == null ? null : _commodityService.GetAllParents().FirstOrDefault();
             
-            if (firstOrDefault != null)
-                ViewBag.SelectedCommodityID = firstOrDefault.CommodityID;
-            else
-                ViewBag.SelectedCommodityID = 1;
+            ViewBag.SelectedCommodityID = firstOrDefault != null ? firstOrDefault.CommodityID : 1;
           
             ViewBag.Parents = parents;
 
-            var commReturn = repository.Commodity.GetAll() == null ? Enumerable.Empty<Commodity>() : repository.Commodity.GetAll().ToList();
+            var commReturn = _commodityService.GetAllCommodity() == null ? Enumerable.Empty<Commodity>() : _commodityService.GetAllCommodity().ToList();
 
             return View(commReturn);
-        
         }
         
         public ActionResult CommodityListPartial()
@@ -72,14 +58,10 @@ namespace DRMFSS.Web.Controllers
             }
             
             ViewBag.ShowParentCommodity = false;
-            var parents = repository.Commodity.GetAllParents().Where(o=>o.CommodityTypeID == commodityTypeId).OrderBy(o => o.Name);
-            var firstOrDefault =
-                parents == null ? null : parents.FirstOrDefault();
+            var parents = _commodityService.GetAllParents().Where(o=>o.CommodityTypeID == commodityTypeId).OrderBy(o => o.Name);
+            var firstOrDefault = parents.FirstOrDefault();
 
-            if (firstOrDefault != null)
-                ViewBag.SelectedCommodityID = firstOrDefault.CommodityID;
-            else
-                ViewBag.SelectedCommodityID = 1;
+            ViewBag.SelectedCommodityID = firstOrDefault != null ? firstOrDefault.CommodityID : 1;
             
             ViewBag.ParentID = new SelectList(parents, "CommodityID", "Name");
             return PartialView("_CommodityPartial",parents);
@@ -92,16 +74,16 @@ namespace DRMFSS.Web.Controllers
                 id = 1;
             }
             ViewBag.ShowParentCommodity = true;
-                ViewBag.SelectedCommodityID = id;
+            ViewBag.SelectedCommodityID = id;
 
-                return PartialView("_CommodityPartial",
-                                   repository.Commodity.GetAllSubCommoditiesByParantId(id.Value).OrderBy(o => o.Name));
+            return PartialView("_CommodityPartial",
+                                   _commodityService.GetAllSubCommoditiesByParantId(id.Value).OrderBy(o => o.Name));
         }
 
         public ActionResult GetParentList()
         {
-            var parents = from listItem in repository.Commodity.GetAllParents()
-                        select new Commodity()
+            var parents = from listItem in _commodityService.GetAllParents()
+                        select new Commodity
                         {
                             CommodityID = listItem.CommodityID,
                             Name = listItem.Name
@@ -117,12 +99,10 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Update(int? param)
         {
-
-            
             ViewBag.index = param != null ? 1 : 0;
 
-            var parents = repository.Commodity.GetAllParents();
-            if(param != null) 
+            var parents = _commodityService.GetAllParents();
+            if(param != null)
             {
                 //for rendering the subCommodityList accordingly 
                 ViewBag.SelectedCommodityID = param; 
@@ -131,27 +111,22 @@ namespace DRMFSS.Web.Controllers
             else //it's a child commodity
             {
                 var firstOrDefault =
-                    repository.Commodity.GetAllParents() == null ? null : repository.Commodity.GetAllParents().FirstOrDefault();
+                    _commodityService.GetAllParents() == null ? null : _commodityService.GetAllParents().FirstOrDefault();
 
-                if (firstOrDefault != null)
-                    ViewBag.SelectedCommodityID = firstOrDefault.CommodityID;
-                else
-                    ViewBag.SelectedCommodityID = 1;
-
+                ViewBag.SelectedCommodityID = firstOrDefault != null ? firstOrDefault.CommodityID : 1;
 
                 ViewBag.ParentID = new SelectList(parents, "CommodityID", "Name");
             }
             
-            
             ViewBag.Parents = parents;
-            return PartialView(repository.Commodity.GetAll().OrderBy(o => o.Name));
+            return PartialView(_commodityService.GetAllCommodity().OrderBy(o => o.Name));
         }
         //
         // GET: /Commodity/Details/5
 
         public ViewResult Details(int id)
         {
-            Commodity commodity = repository.Commodity.FindById(id);
+            Commodity commodity = _commodityService.FindById(id);
             return View("Details",commodity);
         }
         /**
@@ -161,37 +136,36 @@ namespace DRMFSS.Web.Controllers
         //
         // GET: /Commodity/Create
 
-        public ActionResult Create(int type, int? Parent)
+        public ActionResult Create(int type, int? parent)
         {
             //TODO  validation check @ the post server side if the user mischively sent a non-null parent 
             //this check should also be done for the editing part
             
             if (0 == type)
             {
-                ViewBag.ParentID = new SelectList(repository.Commodity.GetAllParents(), "CommodityID", "Name", Parent);
+                ViewBag.ParentID = new SelectList(_commodityService.GetAllParents(), "CommodityID", "Name", parent);
 
                 //drop down boxes don't remove thses cos i used them to set a hidden value
                 
-                var firstOrDefault =
-                    repository.Commodity.GetAllParents() == null ? null : repository.Commodity.GetAllParents().FirstOrDefault(p => p.CommodityID == Parent);
+                var firstOrDefault = _commodityService.GetAllParents().FirstOrDefault(p => p.CommodityID == parent);
                 
                 if (firstOrDefault != null){
-                    ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name",
+                    ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name",
                                                              firstOrDefault.CommodityTypeID);
                 }
                 else
                 {    
                    //TODO null value validation can be set here later 
-                    ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name");
+                    ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name");
                 }
 
                 //disabled text boxes (elias worte this part i think)
                 ViewBag.isParent = true;
                 
-                if (Parent != null)
+                if (parent != null)
                 {
-                    var commodity = repository.Commodity.FindById(Parent.Value);
-                    if ((commodity.CommodityType != null) && (commodity != null)){
+                    var commodity = _commodityService.FindById(parent.Value);
+                    if (commodity.CommodityType != null){
                         ViewBag.CommodityType = commodity.CommodityType.Name;
                         ViewBag.ParentCommodity = commodity.Name;
                         ViewBag.SelectedCommodityID = commodity.CommodityID;
@@ -207,15 +181,13 @@ namespace DRMFSS.Web.Controllers
 
             else
             {
-                ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name");
+                ViewBag.CommodityTypeID = new SelectList(_commodityService.GetAllCommodity(), "CommodityTypeID", "Name");
                 ViewBag.isParent = false;
             }
                 
             var partialCommodity = new Commodity();
             
-            var partialParent =
-                repository.Commodity.GetAllParents() == null ? null :
-                repository.Commodity.GetAllParents().FirstOrDefault(p => p.CommodityID == Parent);
+            var partialParent = _commodityService.GetAllParents().FirstOrDefault(p => p.CommodityID == parent);
            
             if (partialParent != null)
                 {
@@ -224,7 +196,7 @@ namespace DRMFSS.Web.Controllers
             
             //TODO either ways it will be null, but we can make this assignment to null/and move it in side else after testing
             //to be sure for preventing hierarchy(tree)
-            partialCommodity.ParentID = Parent;
+            partialCommodity.ParentID = parent;
             
             return PartialView(partialCommodity);
         }
@@ -235,22 +207,22 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public ActionResult Create(Commodity commodity)
         {
-            if(!repository.Commodity.IsCodeValid(commodity.CommodityID,commodity.CommodityCode))
+            if(!_commodityService.IsCodeValid(commodity.CommodityID,commodity.CommodityCode))
             {
                 ModelState.AddModelError("CommodityCode",@"Commodity Code should be unique.");
             }
-            if (!repository.Commodity.IsNameValid(commodity.CommodityID, commodity.Name))
+            if (!_commodityService.IsNameValid(commodity.CommodityID, commodity.Name))
             {
                 ModelState.AddModelError("Name", @"Commodity Name should be unique.");
             }
 
             if (ModelState.IsValid)
             {
-                repository.Commodity.Add(commodity);
+                _commodityService.AddCommodity(commodity);
                 return Json(new { success = true }); 
             }
 
-            this.Create(commodity.ParentID != null ? 0 : 1, commodity.ParentID);
+            Create(commodity.ParentID != null ? 0 : 1, commodity.ParentID);
             return PartialView(commodity);
         }
 
@@ -262,17 +234,16 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            Commodity commodity = repository.Commodity.FindById(id);
-            var commodities = repository.Commodity.GetAll();
+            var commodity = _commodityService.FindById(id);
+            var commodities = _commodityService.GetAllCommodity();
             
             //this node is already a parent(i.e. if we can find at least one record with this id as a parent) 
-            if (commodity != null && ((repository.Commodity.GetAllSubCommoditiesByParantId(id).Count() != 0) || commodity.ParentID == null))
+            if (commodity != null && ((_commodityService.GetAllSubCommoditiesByParantId(id).Count() != 0) || commodity.ParentID == null))
             {
                 ViewBag.ParentID = new SelectList(commodities.DefaultIfEmpty().Where(c => c.CommodityID == -1), "CommodityID", "Name", commodity.ParentID);
-                ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name", commodity.CommodityTypeID);
+                ViewBag.CommodityTypeID = new SelectList(_commodityService.GetAllCommodity(), "CommodityTypeID", "Name", commodity.CommodityTypeID);
                 ViewBag.ShowParentCommodity = false;
                 ViewBag.isParent = false;
-   
             }
             //they must be parents with no parents (i.e. parents with value ParentID = null ) 
             // and 
@@ -285,30 +256,27 @@ namespace DRMFSS.Web.Controllers
                         new SelectList(commodities.Where(c => c.ParentID == null && c.CommodityID != id),
                                        "CommodityID", "Name", commodity.ParentID);
                     ViewBag.CommodityTypeID =
-                        new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name", commodity.CommodityTypeID);
+                        new SelectList(_commodityService.GetAllCommodity(), "CommodityTypeID", "Name", commodity.CommodityTypeID);
 
                     ViewBag.CommodityType = commodity.CommodityType.Name;
                     ViewBag.ParentCommodity = commodity.Commodity2.Name;
                 }
-              
                 ViewBag.ShowParentCommodity = true;
                 ViewBag.isParent = true;
- 
-              
-                
             }
             //ViewBag.CommodityTypeID = new SelectList(db.CommodityTypes, "CommodityTypeID", "Name", commodity.CommodityTypeID);
             return PartialView(commodity);
         }
 
 
-        public ActionResult ParentCommodities(int CommodityTypeID)
+        public ActionResult ParentCommodities(int commodityTypeID)
         {
-            var commodities = from v in repository.CommodityType.FindById(CommodityTypeID).Commodities
+            var commodities = from v in _commodityTypeService.FindById(commodityTypeID).Commodities
                               where v.ParentID == null
                               select v;
             commodities = commodities.OrderBy(o => o.Name);
-            return Json(new SelectList(commodities, "CommodityID", "Name", commodities.FirstOrDefault().CommodityID));
+            var firstOrDefault = commodities.FirstOrDefault();
+            return firstOrDefault != null ? Json(new SelectList(commodities, "CommodityID", "Name", firstOrDefault.CommodityID)) : null;
         }
         //
         // POST: /Commodity/Edit/5
@@ -317,21 +285,21 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Edit(Commodity commodity)
         {
             // TODO: move this to a shared helper function.
-            if (!repository.Commodity.IsCodeValid(commodity.CommodityID, commodity.CommodityCode))
+            if (!_commodityService.IsCodeValid(commodity.CommodityID, commodity.CommodityCode))
             {
                 ModelState.AddModelError("CommodityCode", @"Commodity Code should be unique.");
             }
-            if (!repository.Commodity.IsNameValid(commodity.CommodityID, commodity.Name))
+            if (!_commodityService.IsNameValid(commodity.CommodityID, commodity.Name))
             {
                 ModelState.AddModelError("Name", @"Commodity Name should be unique.");
             }
 
             if (ModelState.IsValid)
             {
-                repository.Commodity.SaveChanges(commodity);
+                _commodityService.EditCommodity(commodity);
                 return Json(new { success = true });
             }
-            this.Edit(commodity.CommodityID);
+            Edit(commodity.CommodityID);
             return PartialView(commodity);
         }
 
@@ -340,7 +308,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Delete(int id)
         {
-            var delCommodity = repository.Commodity.FindById(id);
+            var delCommodity = _commodityService.FindById(id);
             return View("Delete",delCommodity);
         }
 
@@ -350,9 +318,8 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-
-            var delCommodity = repository.Commodity.FindById(id);
-            var countOfChildren = repository.Commodity.GetAllSubCommodities().Count(p => p.ParentID == id); 
+            var delCommodity = _commodityService.FindById(id);
+            var countOfChildren = _commodityService.GetAllSubCommodities().Count(p => p.ParentID == id); 
             
             if (delCommodity != null &&
                 (countOfChildren == 0) &&
@@ -361,82 +328,64 @@ namespace DRMFSS.Web.Controllers
                 delCommodity.DispatchAllocations.Count == 0  &&
                 delCommodity.GiftCertificateDetails.Count == 0)
             {
-
-                repository.Commodity.DeleteByID(id);
+                _commodityService.DeleteById(id);
                 return RedirectToAction("Index");
             }
 
             ViewBag.ERROR_MSG = "This Commodity is being referenced, so it can't be deleted";
             ViewBag.ERROR = true;
             return View("Delete", delCommodity); //this.Delete(id);
-            
         }
-        public ActionResult CommodityParentListByType(int? CommodityTypeID, int? editModeVal)
+        public ActionResult CommodityParentListByType(int? commodityTypeID, int? editModeVal)
         {
-            if (CommodityTypeID != null)
+            if (commodityTypeID != null)
             {
                 var comms =
-                    repository.Commodity.GetAllParents().Where(p => p.CommodityTypeID == CommodityTypeID).ToList();
+                    _commodityService.GetAllParents().Where(p => p.CommodityTypeID == commodityTypeID).ToList();
                 return Json(new SelectList(comms, "CommodityID", "Name", editModeVal), JsonRequestBehavior.AllowGet);
             }
-            else
+            return Json(new EmptyResult());
+        }
+
+        public ActionResult CommodityListByType(int? commodityTypeID, int? editModeVal, string siNumber, int? commoditySourceID)
+        {
+            var optGroupedList = new ArrayList();
+            if (commodityTypeID == null)
             {
                 return Json(new EmptyResult());
             }
-        }
+            var parents = _commodityService.GetAllParents().Where(p => p.CommodityTypeID == commodityTypeID).ToList();
 
-        public ActionResult CommodityListByType(int? CommodityTypeID, int? editModeVal, string SINumber, int? CommoditySourceID)
-        {
-
-            ArrayList optGroupedList = new ArrayList();
-            if (CommodityTypeID != null)
+            foreach (var parent in parents) 
             {
-                    List<Commodity> Parents = new List<Commodity>();
-                    Parents = repository.Commodity.GetAllParents().Where(p => p.CommodityTypeID == CommodityTypeID).ToList();
+                var subCommodities = parent.Commodity1;
+                optGroupedList.Add(
+                    new {Value = parent.CommodityID, Text = parent.Name, unselectable = false, id = parent.ParentID});
 
-                    foreach (Commodity Parent in Parents)
-                    {
-                        var subCommodities = Parent.Commodity1; 
-                        optGroupedList.Add(
-                                new { Value = Parent.CommodityID, Text = Parent.Name, unselectable = false, id = Parent.ParentID });
-                        
-                        if (subCommodities != null) //only if it has a subCommodity
-                        {
-                            foreach (Commodity subCommodity in subCommodities)
+                if (subCommodities == null) continue;
+                foreach (var subCommodity in subCommodities)
+                {
+                    optGroupedList.Add(
+                        new
                             {
-                                optGroupedList.Add(
-                                    new
-                                    {
-                                        Value = subCommodity.CommodityID,
-                                        Text = subCommodity.Name,
-                                        unselectable = true,
-                                        id = subCommodity.ParentID
-                                    });
-                            }
-                        }
-                    }
-               return Json(optGroupedList, JsonRequestBehavior.AllowGet);
+                                Value = subCommodity.CommodityID,
+                                Text = subCommodity.Name,
+                                unselectable = true,
+                                id = subCommodity.ParentID
+                            });
+                }
             }
-            else
-            {
-                return Json(new EmptyResult());
-            }
+            return Json(optGroupedList, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult IsCodeValid(int? CommodityID, string CommodityCode)
+        public JsonResult IsCodeValid(int? commodityID, string commodityCode)
         {
-            return Json(repository.Commodity.IsCodeValid(CommodityID, CommodityCode),JsonRequestBehavior.AllowGet);
+            return Json(_commodityService.IsCodeValid(commodityID, commodityCode),JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult IsNameValid(int?CommodityID, string Name)
+        public JsonResult IsNameValid(int?commodityID, string name)
         {
-            return Json(repository.Commodity.IsNameValid(CommodityID, Name), JsonRequestBehavior.AllowGet);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-           // CommodityRepo.Dispose();//we should despose the CommodityRepo Oject here
-            base.Dispose(disposing);
+            return Json(_commodityService.IsNameValid(commodityID, name), JsonRequestBehavior.AllowGet);
         }
     }
 }

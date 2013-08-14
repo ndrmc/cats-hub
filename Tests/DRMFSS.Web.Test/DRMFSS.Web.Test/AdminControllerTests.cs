@@ -140,6 +140,19 @@ namespace DRMFSS.Web.Test
         }
 
         [Test]
+        public void CanRedirectDeleteConfirm()
+        {
+            //ACt
+            var redirectToRouteResult = _adminController.DeleteConfirmed(1) as RedirectToRouteResult;
+
+            //Assert
+            Assert.NotNull(redirectToRouteResult);
+            Assert.AreEqual("Index", redirectToRouteResult.RouteValues["Action"]);
+            Assert.AreEqual("Home", redirectToRouteResult.RouteValues["controller"]);
+
+        }
+
+        [Test]
         public void CanViewUserRoles()
         {
             //ACT

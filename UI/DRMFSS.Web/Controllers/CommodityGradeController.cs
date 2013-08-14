@@ -1,24 +1,31 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     [Authorize]
     public class CommodityGradeController : BaseController
     {
-        private IUnitOfWork repository = new UnitOfWork();
+        private readonly ICommodityGradeService _commodityGradeService;
+
+        public CommodityGradeController(ICommodityGradeService commodityGradeService)
+        {
+            _commodityGradeService = commodityGradeService;
+        }
+
         //
         // GET: /CommodityGrade/
 
         public ViewResult Index()
         {
-            return View("Index", repository.CommodityGrade.GetAll().ToList());
+            return View("Index", _commodityGradeService.GetAllCommodityGrade().ToList());
         }
 
         public ActionResult Update()
         {
-            return PartialView(repository.CommodityGrade.GetAll().ToList());
+            return PartialView(_commodityGradeService.GetAllCommodityGrade().ToList());
         }
 
         //
@@ -26,7 +33,7 @@ namespace DRMFSS.Web.Controllers
 
         public ViewResult Details(int id)
         {
-            CommodityGrade commoditygrade = repository.CommodityGrade.FindById(id);
+            CommodityGrade commoditygrade = _commodityGradeService.FindById(id);
             return View(commoditygrade);
         }
 
@@ -46,7 +53,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.CommodityGrade.Add(commoditygrade);
+                _commodityGradeService.AddCommodityGrade(commoditygrade);
                 return Json(new { success = true }); 
             }
 
@@ -58,7 +65,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            CommodityGrade commoditygrade = repository.CommodityGrade.FindById(id);
+            CommodityGrade commoditygrade = _commodityGradeService.FindById(id);
             return PartialView(commoditygrade);
         }
 
@@ -70,7 +77,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.CommodityGrade.SaveChanges(commoditygrade);
+                _commodityGradeService.EditCommodityGrade(commoditygrade);
                 return Json(new { success = true });
                 //return RedirectToAction("Index");
             }
@@ -82,7 +89,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Delete(int id)
         {
-            CommodityGrade commoditygrade = repository.CommodityGrade.FindById(id);
+            CommodityGrade commoditygrade = _commodityGradeService.FindById(id);
             return View(commoditygrade);
         }
 
@@ -92,11 +99,10 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            CommodityGrade delCommodityGrade = repository.CommodityGrade.FindById(id);
+            CommodityGrade delCommodityGrade = _commodityGradeService.FindById(id);
             if (delCommodityGrade != null )
             {
-
-                repository.CommodityGrade.DeleteByID(id);
+                _commodityGradeService.DeleteById(id);
                 return RedirectToAction("Index");
             }
 

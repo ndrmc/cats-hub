@@ -88,7 +88,6 @@ namespace DRMFSS.BLL.Services
         public List<AdminUnit> GetByUnitType(int typeId)
         {
             return _unitOfWork.AdminUnitRepository.FindBy(t => t.AdminUnitTypeID == typeId);
-
         }
 
         /// <summary>
@@ -98,9 +97,6 @@ namespace DRMFSS.BLL.Services
         public List<AdminUnit> GetRegions()
         {
             return _unitOfWork.AdminUnitRepository.FindBy(t => t.AdminUnitTypeID == 2);
-
-
-
         }
 
         /// <summary>
