@@ -6,25 +6,33 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
-     [Authorize]
+    [Authorize]
     public partial class UnitController : BaseController
     {
-         private CTSContext db = new CTSContext();
 
+        private readonly IUnitService _unitService;
+
+        public UnitController(IUnitService unitService)
+        {
+            this._unitService = unitService;
+        }
         //
         // GET: /Unit/
 
         public virtual ViewResult Index()
         {
-            return View(db.Units.ToList());
+            var units = _unitService.GetAllUnit();
+            return View(units);
         }
 
         public virtual ActionResult Update()
         {
-            return PartialView(db.Units.ToList());
+            var units = _unitService.GetAllUnit();
+            return PartialView(units);
         }
 
         //
@@ -32,7 +40,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ViewResult Details(int id)
         {
-            Unit unit = db.Units.Single(u => u.UnitID == id);
+            Unit unit = _unitService.FindById(id);
             return View(unit);
         }
 
@@ -42,7 +50,7 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult Create()
         {
             return PartialView();
-        } 
+        }
 
         //
         // POST: /Unit/Create
@@ -52,21 +60,21 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Units.Add(unit);
-                db.SaveChanges();
-                return Json(new { success = true }); 
+                _unitService.AddUnit(unit);
+                return Json(new { success = true });
             }
 
             return PartialView(unit);
         }
-        
+
         //
         // GET: /Unit/Edit/5
 
         public virtual ActionResult Edit(int id)
         {
-            Unit unit = db.Units.Single(u => u.UnitID == id);
-            ViewBag.UnitID = new SelectList(db.Units, "UnitID", "Name", unit.UnitID);
+            Unit unit = _unitService.FindById(id);
+            var units = _unitService.GetAllUnit();
+            ViewBag.UnitID = new SelectList(units, "UnitID", "Name", unit.UnitID);
             return PartialView(unit);
         }
 
@@ -78,13 +86,17 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Units.Attach(unit);
-                db.Entry(unit).State=EntityState.Modified;
-                db.SaveChanges();                       
+                var origin = _unitService.FindById(unit.UnitID);
+                origin.Name = unit.Name;
+
+                _unitService.EditUnit(origin);
+
+
                 //return RedirectToAction("Index");
                 return Json(new { success = true });
             }
-            ViewBag.UnitID = new SelectList(db.Units, "UnitID", "Name", unit.UnitID);
+
+            ViewBag.UnitID = new SelectList(_unitService.GetAllUnit(), "UnitID", "Name", unit.UnitID);
             return PartialView(unit);
         }
 
@@ -93,7 +105,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Delete(int id)
         {
-            Unit unit = db.Units.Single(u => u.UnitID == id);
+            var unit = _unitService.FindById(id);
             return View(unit);
         }
 
@@ -102,16 +114,14 @@ namespace DRMFSS.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
-        {            
-            Unit unit = db.Units.Single(u => u.UnitID == id);
-            db.Units.Remove(unit);
-            db.SaveChanges();
+        {
+            _unitService.DeleteById(id);
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _unitService.Dispose();
             base.Dispose(disposing);
         }
     }

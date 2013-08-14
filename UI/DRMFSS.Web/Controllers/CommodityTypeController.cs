@@ -8,42 +8,37 @@ using System.Web.Mvc;
 using DRMFSS.BLL;
 using DRMFSS.BLL.Interfaces;
 using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     [Authorize]
     public class CommodityTypeController : BaseController
     {
-        private IUnitOfWork repository;
+        private readonly ICommodityTypeService _commodityTypeService;
         //
         // GET: /CommodityType/
 
-        public CommodityTypeController()
+        public CommodityTypeController(ICommodityTypeService commodityTypeService)
         {
-            repository = new UnitOfWork();
+            _commodityTypeService = commodityTypeService;
         }
-
-
-        public CommodityTypeController(IUnitOfWork _repository)
-        {
-            this.repository = repository;
-        }
-
+        
         public ViewResult Index()
         {
-            return View("Index", repository.CommodityType.GetAll().ToList());
+            return View("Index", _commodityTypeService.GetAllCommodityType().ToList());
         }
 
         public ActionResult Update()
         {
-            return PartialView("Update",repository.CommodityType.GetAll().ToList());
+            return PartialView("Update",_commodityTypeService.GetAllCommodityType().ToList());
         }
         //
         // GET: /CommodityType/Details/5
 
         public ViewResult Details(int id)
         {
-            CommodityType commoditytype =repository.CommodityType.FindById(id);
+            var commoditytype =_commodityTypeService.FindById(id);
             return View(commoditytype);
         }
 
@@ -63,7 +58,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.CommodityType.Add(commoditytype);
+                _commodityTypeService.AddCommodityType(commoditytype);
                 return Json(new { success = true });  
             }
 
@@ -75,7 +70,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            CommodityType commoditytype = repository.CommodityType.FindById(id);
+            var commoditytype = _commodityTypeService.FindById(id);
             return PartialView(commoditytype);
         }
 
@@ -88,7 +83,7 @@ namespace DRMFSS.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                repository.CommodityType.SaveChanges(commoditytype);
+                _commodityTypeService.EditCommodityType(commoditytype);
                 return Json(new { success = true });
             }
            // ViewBag.CommodityTypeID = new SelectList(db.Warehouses, "CommodityTypeID", "Name", store.WarehouseID);
@@ -101,7 +96,7 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Delete(int id)
         {
             
-            CommodityType commoditytype = repository.CommodityType.FindById(id);
+            CommodityType commoditytype = _commodityTypeService.FindById(id);
             return View(commoditytype);
         }
 
@@ -112,37 +107,28 @@ namespace DRMFSS.Web.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             //Commodity commodity = CommodityRepo.FindById(id);
-            var delCommodityType = repository.CommodityType.FindById(id);
+            var delCommodityType = _commodityTypeService.FindById(id);
             if (delCommodityType != null &&
                 (delCommodityType.Commodities.Count == 0))
             {
 
-                repository.CommodityType.DeleteByID(id);
+                _commodityTypeService.DeleteById(id);
                 return RedirectToAction("Index");
             }
 
             ViewBag.ERROR_MSG = "This Commodity Type is referenced, so it can't be deleted";
             ViewBag.ERROR = true;
-            return this.Delete(id);
+            return Delete(id);
         }
 
         [HttpPost]
         public ActionResult _GetCommodityTypes()
         {
-                List<CommodityType> result = new List<CommodityType>();
-                result = repository.CommodityType.GetAll();
-                return new JsonResult
+            var result = _commodityTypeService.GetAllCommodityType();
+            return new JsonResult
                 {
                     Data = new SelectList(result.ToList(), "CommodityTypeID", "Name")
                 };
-
-        }
-
-
-        protected override void Dispose(bool disposing)
-        {
-           // db.Dispose();
-            base.Dispose(disposing);
         }
     }
 }

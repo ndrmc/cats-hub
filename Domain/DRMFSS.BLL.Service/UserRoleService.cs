@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 
@@ -68,6 +69,10 @@ namespace DRMFSS.BLL.Services
 
         }
 
+        public List<UserRole> Get(Expression<Func<UserRole, bool>> filter = null, Func<System.Linq.IQueryable<UserRole>, System.Linq.IOrderedQueryable<UserRole>> orderBy = null, string includeProperties = "")
+        {
+            return _unitOfWork.UserRoleRepository.Get(filter, orderBy, includeProperties).ToList();
+        }
     }
 }
 

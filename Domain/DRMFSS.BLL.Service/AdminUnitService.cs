@@ -88,7 +88,6 @@ namespace DRMFSS.BLL.Services
         public List<AdminUnit> GetByUnitType(int typeId)
         {
             return _unitOfWork.AdminUnitRepository.FindBy(t => t.AdminUnitTypeID == typeId);
-
         }
 
         /// <summary>
@@ -98,9 +97,6 @@ namespace DRMFSS.BLL.Services
         public List<AdminUnit> GetRegions()
         {
             return _unitOfWork.AdminUnitRepository.FindBy(t => t.AdminUnitTypeID == 2);
-
-
-
         }
 
         /// <summary>
@@ -282,6 +278,12 @@ namespace DRMFSS.BLL.Services
 
         }
 
+
+
+        public List<AdminUnit> Get(Expression<Func<AdminUnit, bool>> filter = null, Func<IQueryable<AdminUnit>, IOrderedQueryable<AdminUnit>> orderBy = null, string includeProperties = "")
+        {
+          return  _unitOfWork.AdminUnitRepository.Get(filter, orderBy, includeProperties).ToList();
+        }
     }
 }
 

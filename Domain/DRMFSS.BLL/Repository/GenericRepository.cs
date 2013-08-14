@@ -93,10 +93,7 @@ namespace DRMFSS.BLL.Repository
             {
                 query = query.Include(includeProperty);
             }
-
-           
-                return query.ToList();
-           
+            return query.ToList();
         }
     }
 }

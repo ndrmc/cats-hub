@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
-using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     [Authorize]
     public class CommoditySourceController : BaseController
     {
-        private IUnitOfWork repository;
+        private readonly ICommoditySourceService _commoditySourceService;
 
-        public CommoditySourceController()
+        public CommoditySourceController(ICommoditySourceService commodityGradeService)
         {
-            repository = new UnitOfWork();
+            _commoditySourceService = commodityGradeService;
         }
 
         //
@@ -26,19 +20,19 @@ namespace DRMFSS.Web.Controllers
 
         public ViewResult Index()
         {
-            return View(repository.CommoditySource.GetAll().ToList());
+            return View(_commoditySourceService.GetAllCommoditySource().ToList());
         }
 
         public ActionResult Update()
         {
-            return PartialView(repository.CommoditySource.GetAll().ToList());
+            return PartialView(_commoditySourceService.GetAllCommoditySource().ToList());
         }
         //
         // GET: /CommoditySource/Details/5
 
         public ViewResult Details(int id)
         {
-            CommoditySource commoditysource = repository.CommoditySource.FindById(id);
+            var commoditysource = _commoditySourceService.FindById(id);
             return View(commoditysource);
         }
 
@@ -58,7 +52,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.CommoditySource.Add(commoditysource);
+                _commoditySourceService.AddCommoditySource(commoditysource);
                 return Json(new { success = true }); 
             }
 
@@ -70,7 +64,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            CommoditySource commoditysource = repository.CommoditySource.FindById(id);
+            var commoditysource = _commoditySourceService.FindById(id);
             return PartialView(commoditysource);
         }
 
@@ -82,7 +76,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.CommoditySource.SaveChanges(commoditysource);
+                _commoditySourceService.EditCommoditySource(commoditysource);
                 return Json(new { success = true });
                 //return RedirectToAction("Index");
             }
@@ -94,7 +88,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Delete(int id)
         {
-            CommoditySource commoditysource = repository.CommoditySource.FindById(id);
+            CommoditySource commoditysource = _commoditySourceService.FindById(id);
             return View(commoditysource);
         }
 
@@ -104,24 +98,18 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            var delCommoditysource = repository.CommoditySource.FindById(id);
+            var delCommoditysource = _commoditySourceService.FindById(id);
             if (delCommoditysource != null &&
                 (delCommoditysource.Receives.Count == 0))
             {
 
-                repository.CommoditySource.DeleteByID(id);
+                _commoditySourceService.DeleteById(id);
                 return RedirectToAction("Index");
             }
 
             ViewBag.ERROR_MSG = "This Commodity Source is being referenced, so it can't be deleted";
             ViewBag.ERROR = true;
-            return this.Delete(id);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            //db.Dispose();
-            base.Dispose(disposing);
+            return Delete(id);
         }
     }
 }

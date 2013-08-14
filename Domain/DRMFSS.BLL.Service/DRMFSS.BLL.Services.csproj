@@ -43,6 +43,7 @@
     <Compile Include="AdjustmentReasonService.cs" />
     <Compile Include="AdjustmentService.cs" />
     <Compile Include="AdminUnitService.cs" />
+    <Compile Include="AuditSevice.cs" />
     <Compile Include="CommodityGradeService.cs" />
     <Compile Include="CommodityService.cs" />
     <Compile Include="CommoditySourceService.cs" />
@@ -58,12 +59,14 @@
     <Compile Include="GiftCertificateDetailService.cs" />
     <Compile Include="GiftCertificateService.cs" />
     <Compile Include="HubOwnerService.cs" />
+    <Compile Include="HubService.cs" />
     <Compile Include="HubSettingService.cs" />
     <Compile Include="HubSettingValueService.cs" />
     <Compile Include="IAccountService.cs" />
     <Compile Include="IAdjustmentReasonService.cs" />
     <Compile Include="IAdjustmentService.cs" />
     <Compile Include="IAdminUnitService.cs" />
+    <Compile Include="IAuditService.cs" />
     <Compile Include="ICommodityGradeService.cs" />
     <Compile Include="ICommodityService.cs" />
     <Compile Include="ICommoditySourceService.cs" />
@@ -79,6 +82,7 @@
     <Compile Include="IGiftCertificateDetailService.cs" />
     <Compile Include="IGiftCertificateService.cs" />
     <Compile Include="IHubOwnerService.cs" />
+    <Compile Include="IHubService.cs" />
     <Compile Include="IHubSettingService.cs" />
     <Compile Include="IHubSettingValueService.cs" />
     <Compile Include="IInternalMovementService.cs" />
