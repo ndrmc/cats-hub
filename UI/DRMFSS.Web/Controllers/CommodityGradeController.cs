@@ -111,10 +111,5 @@ namespace DRMFSS.Web.Controllers
             return this.Delete(id);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-           // db.Dispose();
-            base.Dispose(disposing);
-        }
     }
 }
