@@ -18,6 +18,12 @@ namespace DRMFSS.Web.Controllers
         //
         // GET: /CommodityType/
 
+
+
+
+
+
+
         public CommodityTypeController()
         {
             repository = new UnitOfWork();
