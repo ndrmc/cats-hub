@@ -93,7 +93,7 @@ namespace DRMFSS.BLL.Services
         /// <returns></returns>
         public List<DispatchAllocation> GetUncommitedAllocationsByHub(int hubId)
         {
-            return _unitOfWork.DispatchAllocationRepository.Get(p => p.HubID == hubId && !p.ShippingInstructionID.HasValue && !p.ProjectCodeID.HasValue).ToList();
+            return _unitOfWork.DispatchAllocationRepository.Get(p => p.HubID == hubId && !p.ShippingInstructionID.HasValue && !p.ProjectCodeID.HasValue, null, "FDP,FDP.AdminUnit,FDP.AdminUnit.AdminUnit2").ToList();
         }
 
         /// <summary>

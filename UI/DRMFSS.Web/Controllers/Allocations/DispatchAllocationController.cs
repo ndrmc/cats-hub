@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 using DRMFSS.BLL.ViewModels;
 using DRMFSS.BLL.ViewModels.Dispatch;
 using Telerik.Web.Mvc;
@@ -15,33 +16,69 @@ namespace DRMFSS.Web.Controllers.Allocations
         //
         // GET: /DispatchAllocation/
 
-      
+        private readonly IUserProfileService _userProfileService;
+        private readonly IDispatchAllocationService _dispatchAllocationService;
+        private readonly IShippingInstructionService _shippingInstructionService;
+        private readonly IProjectCodeService _projectCodeService;
+        private readonly IOtherDispatchAllocationService _otherDispatchAllocationService;
+
+        public DispatchAllocationController(IDispatchAllocationService dispatchAllocationService,IUserProfileService userProfileService)
+        {
+            this._dispatchAllocationService = dispatchAllocationService;
+            this._userProfileService = userProfileService;
+        }
         public ActionResult Index()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            return View(repository.DispatchAllocation.GetAvailableRequisionNumbers(user.DefaultHub.HubID, true));
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            return View(_dispatchAllocationService.GetAvailableRequisionNumbers(user.DefaultHub.HubID, true));
         }
 
         public ActionResult AllocationList()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             BLL.Hub hub = user.DefaultHub;
-            var list = repository.DispatchAllocation.GetUncommitedAllocationsByHub(hub.HubID);
-            return PartialView("AllocationList", list);
-        }
+            var list = _dispatchAllocationService.GetUncommitedAllocationsByHub(hub.HubID);
+            var listViewModel = (from item in list select BindDispatchAllocationViewModelDto(item));
 
-        [HttpPost]
+            return PartialView("AllocationList", listViewModel);
+        }
+        private DispatchAllocationViewModelDto BindDispatchAllocationViewModelDto(DispatchAllocation dispatchAllocation)
+        {
+            var target = new DispatchAllocationViewModelDto();
+            target.Amount = dispatchAllocation.Amount;
+            target.AmountInUnit = dispatchAllocation.AmountInUnit;
+            target.BidRefNo = dispatchAllocation.BidRefNo;
+            target.CommodityID = dispatchAllocation.CommodityID;
+            target.CommodityName = dispatchAllocation.Commodity.Name;
+            target.DispatchAllocationID = dispatchAllocation.DispatchAllocationID;
+            target.DispatchedAmount = dispatchAllocation.DispatchedAmount;
+            target.DispatchedAmountInUnit = dispatchAllocation.DispatchedAmountInUnit;
+            target.FDPName = dispatchAllocation.FDP.Name;
+            target.IsClosed = dispatchAllocation.IsClosed;
+            target.ProjectCodeID = dispatchAllocation.ProjectCodeID;
+            //TODO:Check Region,zone,woreda Name
+            target.Region = dispatchAllocation.FDP.AdminUnit.AdminUnit2.Name;
+            target.RemainingQuantityInQuintals = dispatchAllocation.RemainingQuantityInQuintals;
+            target.RemainingQuantityInUnit = dispatchAllocation.RemainingQuantityInUnit;
+            target.RequisitionNo = dispatchAllocation.RequisitionNo;
+            target.ShippingInstructionID = dispatchAllocation.ShippingInstructionID;
+            target.TransporterName = dispatchAllocation.Transporter.Name;
+            target.Woreda = dispatchAllocation.FDP.AdminUnit.Name;
+            target.Zone = dispatchAllocation.FDP.AdminUnit.AdminUnit2.Name;
+            return target;
+        }
+            [HttpPost]
         public ActionResult CommitAllocation(string[] checkedRecords, int? SINumber, int? ProjectCode, string Sitext, string ProjectCodeText )
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            var user = _userProfileService.GetUser(User.Identity.Name);
             if(checkedRecords != null && SINumber != -1 && ProjectCode != -1)
             {
                 if(SINumber == 0 || ProjectCode == 0 )
                 {
-                    SINumber = repository.ShippingInstruction.GetSINumberIdWithCreate(Sitext).ShippingInstructionID;
-                    ProjectCode = repository.ProjectCode.GetProjectCodeIdWIthCreate(ProjectCodeText).ProjectCodeID;
+                    SINumber =_shippingInstructionService.GetSINumberIdWithCreate(Sitext).ShippingInstructionID;
+                    ProjectCode = _projectCodeService.GetProjectCodeIdWIthCreate(ProjectCodeText).ProjectCodeID;
                 }
-                repository.DispatchAllocation.CommitDispatchAllocation(checkedRecords, SINumber.Value, user, ProjectCode.Value);
+                _dispatchAllocationService.CommitDispatchAllocation(checkedRecords, SINumber.Value, user, ProjectCode.Value);
             }
             
             return RedirectToAction("Index","Dispatch");
@@ -49,10 +86,10 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult GetAvailableSINumbers(int? CommodityID)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (CommodityID.HasValue)
             {
-                var nums = from si in repository.DispatchAllocation.GetAvailableSINumbersWithUncommitedBalance(CommodityID.Value,user.DefaultHub.HubID)
+                var nums = from si in _dispatchAllocationService.GetAvailableSINumbersWithUncommitedBalance(CommodityID.Value,user.DefaultHub.HubID)
                            select new { Name = si.Value, Id = si.ShippingInstructionID };
 
                 return Json(new SelectList(nums, "Id", "Name"), JsonRequestBehavior.AllowGet);
@@ -64,7 +101,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         {
             if (!string.IsNullOrEmpty(RequisitionNo))
             {
-                var commodities = from c in repository.DispatchAllocation.GetAvailableCommodities(RequisitionNo)
+                var commodities = from c in _dispatchAllocationService.GetAvailableCommodities(RequisitionNo)
                            select new { Text = c.Name, Value = c.CommodityID };
                 return Json(commodities, JsonRequestBehavior.AllowGet);
             }
@@ -75,9 +112,9 @@ namespace DRMFSS.Web.Controllers.Allocations
         {
             // THIS only considers the first commodity
             // TODO: check if has to be that way.
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            Commodity commodity = repository.DispatchAllocation.GetAvailableCommodities(requisition).FirstOrDefault();
-            List<SIBalance> sis = repository.DispatchAllocation.GetUncommitedSIBalance(UserProfile.DefaultHub.HubID, commodity.CommodityID,user.PreferedWeightMeasurment);
+           var user = _userProfileService.GetUser(User.Identity.Name);
+            Commodity commodity = _dispatchAllocationService.GetAvailableCommodities(requisition).FirstOrDefault();
+            List<SIBalance> sis = _dispatchAllocationService.GetUncommitedSIBalance(UserProfile.DefaultHub.HubID, commodity.CommodityID,user.PreferedWeightMeasurment);
             ViewBag.UnitType = commodity.CommodityTypeID;
             return PartialView("SIBalance", sis);
         }
@@ -86,8 +123,8 @@ namespace DRMFSS.Web.Controllers.Allocations
         {
             if (siNumber.HasValue && commodityId.HasValue)
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-                List<SIBalance> si = (from v in repository.DispatchAllocation.GetUncommitedSIBalance(
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+                List<SIBalance> si = (from v in _dispatchAllocationService.GetUncommitedSIBalance(
                                               UserProfile.DefaultHub.HubID,
                                               commodityId.Value,user.PreferedWeightMeasurment)
                                       select v).ToList();
@@ -112,14 +149,14 @@ namespace DRMFSS.Web.Controllers.Allocations
             ViewBag.Com = CommodityID;
             ViewBag.Uncommited = Uncommited;
             var list = new List<BLL.DispatchAllocation>();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (!string.IsNullOrEmpty(RquisitionNo) && CommodityID.HasValue)
             {
-                list = repository.DispatchAllocation.GetAllocations(RquisitionNo, CommodityID.Value, user.DefaultHub.HubID, Uncommited, user.PreferedWeightMeasurment);
+                list = _dispatchAllocationService.GetAllocations(RquisitionNo, CommodityID.Value, user.DefaultHub.HubID, Uncommited, user.PreferedWeightMeasurment);
             }
             else if (!string.IsNullOrEmpty(RquisitionNo))
             {
-                list = repository.DispatchAllocation.GetAllocations(RquisitionNo, user.DefaultHub.HubID, Uncommited);
+                list = _dispatchAllocationService.GetAllocations(RquisitionNo, user.DefaultHub.HubID, Uncommited);
             }
 
             List<DispatchAllocationViewModelDto> FDPAllocations = new List<DispatchAllocationViewModelDto>();
@@ -174,14 +211,14 @@ namespace DRMFSS.Web.Controllers.Allocations
             bool commitStatus = true;
             if (Uncommited.HasValue) commitStatus = Uncommited.Value;
             var list = new List<BLL.DispatchAllocation>();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (!string.IsNullOrEmpty(RquisitionNo) && CommodityID.HasValue)
             {
-                list = repository.DispatchAllocation.GetAllocations(RquisitionNo, CommodityID.Value, user.DefaultHub.HubID, commitStatus, user.PreferedWeightMeasurment);
+                list = _dispatchAllocationService.GetAllocations(RquisitionNo, CommodityID.Value, user.DefaultHub.HubID, commitStatus, user.PreferedWeightMeasurment);
             }
             else if (!string.IsNullOrEmpty(RquisitionNo))
             {
-                list = repository.DispatchAllocation.GetAllocations(RquisitionNo, user.DefaultHub.HubID, commitStatus);
+                list = _dispatchAllocationService.GetAllocations(RquisitionNo, user.DefaultHub.HubID, commitStatus);
             }
             List<DispatchAllocationViewModelDto> FDPAllocations = new List<DispatchAllocationViewModelDto>();
             foreach (var dispatchAllocation in list)
@@ -230,15 +267,15 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult GetSIBalances()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            var list = repository.DispatchAllocation.GetSIBalances(user.DefaultHub.HubID);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            var list = _dispatchAllocationService.GetSIBalances(user.DefaultHub.HubID);
             return PartialView("SIBalance", list);
         }
 
         public ActionResult AvailableRequistions(bool UnCommited)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            return Json(repository.DispatchAllocation.GetAvailableRequisionNumbers(user.DefaultHub.HubID, UnCommited), JsonRequestBehavior.AllowGet);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            return Json(_dispatchAllocationService.GetAvailableRequisionNumbers(user.DefaultHub.HubID, UnCommited), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Create()
@@ -263,10 +300,10 @@ namespace DRMFSS.Web.Controllers.Allocations
         {
             if (ModelState.IsValid)
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
                 BLL.DispatchAllocation alloc = GetAllocationModel(allocation);
                 alloc.HubID = user.DefaultHub.HubID;
-                repository.DispatchAllocation.Add(alloc);
+                _dispatchAllocationService.Add(alloc);
                 if (this.Request.UrlReferrer != null) return Redirect(Request.UrlReferrer.PathAndQuery);
                 else return RedirectToAction("Index");
             }
@@ -277,7 +314,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult Edit(string id)
         {
-            BLL.DispatchAllocation allocation = repository.DispatchAllocation.FindById(Guid.Parse(id));
+            BLL.DispatchAllocation allocation = _dispatchAllocationService.FindById(Guid.Parse(id));
             BLL.ViewModels.DispatchAllocationViewModel alloc = GetAllocationModel(allocation);
             alloc.CommodityTypeID = allocation.Commodity.CommodityTypeID;
             PrepareEdit(alloc);
@@ -308,7 +345,7 @@ namespace DRMFSS.Web.Controllers.Allocations
             if (ModelState.IsValid)
             {
                 BLL.DispatchAllocation alloc = GetAllocationModel(allocation);
-                repository.DispatchAllocation.SaveChanges(alloc);
+                _dispatchAllocationService.SaveChanges(alloc);
                 if (this.Request.UrlReferrer != null) return Redirect(Request.UrlReferrer.PathAndQuery);
                 else return RedirectToAction("Index");
                 //return Json(true, JsonRequestBehavior.AllowGet);
@@ -403,7 +440,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult SelectionHeader( string requisition)
         {
             DispatchAllocation dispatchAllocation =
-                repository.DispatchAllocation.GetAllocations(requisition).FirstOrDefault();
+                _dispatchAllocationService.GetAllocations(requisition).FirstOrDefault();
            return PartialView(dispatchAllocation);
         }
 
@@ -472,7 +509,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         /// <returns></returns>
         public ActionResult ToOtherOwners()
         {
-            var model = repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(repository.UserProfile.GetUser(User.Identity.Name));
+            var model = repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(_userProfileService.GetUser(User.Identity.Name));
             return View(model);
             
         }
@@ -483,21 +520,21 @@ namespace DRMFSS.Web.Controllers.Allocations
         /// <returns></returns>
         public ActionResult ToHubs()
         {
-            var model = repository.OtherDispatchAllocation.GetAllToCurrentOwnerHubs(repository.UserProfile.GetUser(User.Identity.Name));
+            var model = repository.OtherDispatchAllocation.GetAllToCurrentOwnerHubs(_userProfileService.GetUser(User.Identity.Name));
             return View(model);
         }
 
         public ActionResult CreateTransfer()
         {
             var model = new OtherDispatchAllocationViewModel();
-            model.InitTransfer( repository.UserProfile.GetUser(User.Identity.Name), repository );
+            model.InitTransfer( _userProfileService.GetUser(User.Identity.Name), repository );
             return PartialView("EditTransfer", model);
         }
 
         public ActionResult EditTransfer(string id)
         {
             var model = repository.OtherDispatchAllocation.GetViewModelByID( Guid.Parse(id));
-            model.InitTransfer(repository.UserProfile.GetUser(User.Identity.Name), repository);
+            model.InitTransfer(_userProfileService.GetUser(User.Identity.Name), repository);
             return PartialView("EditTransfer", model);
         }
 
@@ -505,7 +542,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         [HttpPost]
         public ActionResult SaveTransfer(OtherDispatchAllocationViewModel model)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             model.FromHubID = user.DefaultHub.HubID;
             if (ModelState.IsValid)
             {
@@ -516,7 +553,7 @@ namespace DRMFSS.Web.Controllers.Allocations
             }
             else
             {
-                model.InitTransfer(repository.UserProfile.GetUser(User.Identity.Name), repository);
+                model.InitTransfer(_userProfileService.GetUser(User.Identity.Name), repository);
                 return PartialView("EditTransfer", model);
             }
         }
@@ -525,14 +562,14 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult CreateLoan()
         {
             var model = new OtherDispatchAllocationViewModel();
-            model.InitLoan(repository.UserProfile.GetUser(User.Identity.Name), repository);
+            model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
             return PartialView("EditLoans", model);
         }
 
         public ActionResult EditLoan(string id)
         {
             var model = repository.OtherDispatchAllocation.GetViewModelByID( Guid.Parse(id));
-            model.InitLoan(repository.UserProfile.GetUser(User.Identity.Name), repository);
+            model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
             return PartialView("EditLoans", model);
         }
 
@@ -540,7 +577,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         [HttpPost]
         public ActionResult SaveLoan(OtherDispatchAllocationViewModel model)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             model.FromHubID = user.DefaultHub.HubID;
             if (ModelState.IsValid)
             {
@@ -551,7 +588,7 @@ namespace DRMFSS.Web.Controllers.Allocations
             }
             else
             {
-                model.InitLoan(repository.UserProfile.GetUser(User.Identity.Name), repository);
+                model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
                 return PartialView("EditLoans", model);
             }
         }
@@ -559,7 +596,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         // remote validations
         public ActionResult IsProjectValid(string ProjectCode)
         {
-            var count = repository.ProjectCode.GetProjectCodeId(ProjectCode);
+            var count = _projectCodeService.GetProjectCodeId(ProjectCode);
             var result = (count > 0);
             return (Json(result, JsonRequestBehavior.AllowGet));
         }
@@ -567,23 +604,23 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult IsSIValid(string ShippingInstruction)
         {
             bool result = false;
-            result = repository.ShippingInstruction.GetShipingInstructionId(ShippingInstruction) > 0;
+            result = _shippingInstructionService.GetShipingInstructionId(ShippingInstruction) > 0;
             return (Json(result, JsonRequestBehavior.AllowGet));
         }
 
         public ActionResult Close(string id)
         {
-            var closeAllocation = repository.DispatchAllocation.FindById(Guid.Parse(id));
+            var closeAllocation = _dispatchAllocationService.FindById(Guid.Parse(id));
             return PartialView("Close", closeAllocation);
         }
 
         [HttpPost, ActionName("Close")]
         public ActionResult CloseConfirmed(string id)
         {
-            var closeAllocation = repository.DispatchAllocation.FindById(Guid.Parse(id));
+            var closeAllocation = _dispatchAllocationService.FindById(Guid.Parse(id));
             if (closeAllocation != null)
             {
-                repository.DispatchAllocation.CloseById(Guid.Parse(id));
+                _dispatchAllocationService.CloseById(Guid.Parse(id));
                 return Json(new { gridNum = 1 }, JsonRequestBehavior.AllowGet);
                 //if (this.Request.UrlReferrer != null) return Redirect(Request.UrlReferrer.PathAndQuery);
                 //else return RedirectToAction("Index");
@@ -601,7 +638,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult OtherCloseConfirmed(string id)
         {
             var closeAllocation = repository.OtherDispatchAllocation.FindById(Guid.Parse(id));
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (closeAllocation != null)
             {
                 repository.OtherDispatchAllocation.CloseById(Guid.Parse(id));
