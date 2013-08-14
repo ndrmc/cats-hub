@@ -44,6 +44,7 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IUserHubService>().To<UserHubService>();
             kernel.Bind<ICommodityTypeService>().To<CommodityTypeService>();
             kernel.Bind<ICommodityGradeService>().To<CommodityGradeService>();
+            kernel.Bind<ICommoditySourceService>().To<CommoditySourceService>();
         }
     }
 }
