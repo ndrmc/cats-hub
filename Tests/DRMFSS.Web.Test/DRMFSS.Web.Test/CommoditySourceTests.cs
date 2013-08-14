@@ -68,6 +68,56 @@ namespace DRMFSS.Web.Test
             Assert.IsInstanceOf<CommoditySource>(model);
         }
 
+        [Test]
+        public void CanDoCreatePostBack()
+        {
+            //ACT
+            var commoditySource = new CommoditySource { Name = "Return" };
+            var jsonResult = _commoditySourceController.Create(commoditySource) as JsonResult;
+
+            //ASSERT
+            Assert.NotNull(jsonResult);
+            dynamic data = jsonResult.Data;
+            Assert.AreEqual(true, data.success);
+        }
+
+        [Test]
+        public void CanViewEdit()
+        {
+            //ACT
+            var viewResult = _commoditySourceController.Edit(1) as ViewResult;
+
+            //ASSERT
+            Assert.NotNull(viewResult);
+            var model = viewResult.Model;
+            Assert.IsInstanceOf<CommoditySource>(model);
+        }
+        
+        [Test]
+        public void CanDoEditPostBack()
+        {
+            //ACT
+            var commoditySource = new CommoditySource { Name = "Donation" };
+            var jsonResult = _commoditySourceController.Edit(commoditySource) as JsonResult;
+
+            //ASSERT
+            Assert.NotNull(jsonResult);
+            dynamic data = jsonResult.Data;
+            Assert.AreEqual(true, data.success);
+        }
+
+        [Test]
+        public void CanRedirectDeleteConfirm()
+        {
+            //ACt
+            var redirectToRouteResult = _commoditySourceController.DeleteConfirmed(1) as RedirectToRouteResult;
+
+            //Assert
+            Assert.NotNull(redirectToRouteResult);
+            Assert.AreEqual("Index", redirectToRouteResult.RouteValues["Action"]);
+            Assert.AreEqual("CommoditySource", redirectToRouteResult.RouteValues["controller"]);
+        }
+
         #endregion
     }
 }

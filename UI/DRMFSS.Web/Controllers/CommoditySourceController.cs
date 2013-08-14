@@ -64,7 +64,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            CommoditySource commoditysource = _commoditySourceService.FindById(id);
+            var commoditysource = _commoditySourceService.FindById(id);
             return PartialView(commoditysource);
         }
 
