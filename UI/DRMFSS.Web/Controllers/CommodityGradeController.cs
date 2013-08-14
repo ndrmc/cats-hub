@@ -65,7 +65,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            CommodityGrade commoditygrade = _commodityGradeService.FindById(id);
+            var commoditygrade = _commodityGradeService.FindById(id);
             return PartialView(commoditygrade);
         }
 
