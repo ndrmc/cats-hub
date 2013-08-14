@@ -37,6 +37,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Moq">
       <HintPath>..\..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
@@ -47,6 +48,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -61,10 +64,32 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AdminControllerTests.cs" />
+    <Compile Include="AdminUnitControllerTest.cs" />
+    <Compile Include="CommodityControllerTests.cs" />
+    <Compile Include="CommodityGradeTests.cs" />
+    <Compile Include="CommoditySourceTests.cs" />
+    <Compile Include="CommodityTypeControllerTests.cs" />
+    <Compile Include="ContactControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Domain\DRMFSS.BLL.Service\DRMFSS.BLL.Services.csproj">
+      <Project>{6c3e7d04-6bbe-4a75-abfe-f62cb46c26ff}</Project>
+      <Name>DRMFSS.BLL.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Domain\DRMFSS.BLL\DRMFSS.BLL.csproj">
+      <Project>{f05635b6-4da7-4b46-b0bd-0ced2edf9a38}</Project>
+      <Name>DRMFSS.BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\UI\DRMFSS.Web\DRMFSS.Web.csproj">
+      <Project>{91e890ef-e882-44e2-a85b-b94ab79a8dcd}</Project>
+      <Name>DRMFSS.Web</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
