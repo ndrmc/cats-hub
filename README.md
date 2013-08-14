@@ -1,4 +1,4 @@
-The Commodity & Allocation Tracking System (CATS) 
+Commodity & Allocation Tracking System (CATS) 
 -----
 
 **Background**
