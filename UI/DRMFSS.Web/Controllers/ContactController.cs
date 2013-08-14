@@ -1,29 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
-using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     public class ContactController : BaseController
     {
-        private CTSContext db = new CTSContext();
+        private readonly IContactService _contactService;
+        private readonly IFDPService _fdpService;
 
-        private IUnitOfWork repository;
-
-        public ContactController(IUnitOfWork repository)
+        public ContactController(IContactService contactService, IFDPService fdpService)
         {
-            this.repository = repository;
-        }
-        public ContactController()
-        {
-            repository = new UnitOfWork();
+            _contactService = contactService;
+            _fdpService = fdpService;
         }
         //
         // GET: /Contact/
@@ -32,14 +23,14 @@ namespace DRMFSS.Web.Controllers
         {
             if (fdpId.HasValue)
             {
-                var contacts = repository.Contact.GetByFdp(fdpId.Value);
+                var contacts = _contactService.GetByFdp(fdpId.Value);
                 ViewBag.FDPID = fdpId.Value;
-                ViewBag.FDPName = repository.FDP.FindById(fdpId.Value).Name;
+                ViewBag.FDPName = _fdpService.FindById(fdpId.Value).Name;
                 return View("Index", contacts.ToList());
             }
             else
             {
-                var contacts = repository.Contact.GetAll();
+                var contacts = _contactService.GetAllContact();
                 return View("Index", contacts);
             }
         }
@@ -49,7 +40,7 @@ namespace DRMFSS.Web.Controllers
 
         public ViewResult Details(int id)
         {
-            Contact contact = repository.Contact.FindById(id);
+            var contact = _contactService.FindById(id);
             ViewBag.FDPName = contact.FDP.Name;
             ViewBag.FDPID = contact.FDPID;
             return View("Details", contact);
@@ -60,9 +51,9 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Create(int fdpId)
         {
-            ViewBag.FDPName = repository.Contact.FindById(fdpId).FDP.Name;
+            ViewBag.FDPName = _contactService.FindById(fdpId).FDP.Name;
             ViewBag.FDPID = fdpId;
-            Contact contact = new Contact() { FDPID = fdpId };
+            var contact = new Contact { FDPID = fdpId };
             return View("Create", contact);
         } 
 
@@ -74,10 +65,10 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Contact.Add(contact);
+                _contactService.AddContact(contact);
                 return RedirectToAction("Index", new { fdpId = contact.FDPID });  
             }
-            ViewBag.FDPName = repository.Contact.FindById(contact.ContactID).FDP.Name;
+            ViewBag.FDPName = _contactService.FindById(contact.ContactID).FDP.Name;
             ViewBag.FDPID = contact.FDPID;
             return View("Create", contact);
         }
@@ -87,7 +78,7 @@ namespace DRMFSS.Web.Controllers
  
         public ActionResult Edit(int id)
         {
-            Contact contact = repository.Contact.FindById(id);
+            Contact contact = _contactService.FindById(id);
             ViewBag.FDPName = contact.FDP.Name;
             ViewBag.FDPID = contact.FDPID;
             return View("Edit", contact);
@@ -101,11 +92,11 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Contact.SaveChanges(contact);
+                _contactService.EditContact(contact);
                 return RedirectToAction("Index", new { fdpId = contact.FDPID });
             }
 
-            ViewBag.FDPName = repository.Contact.FindById(contact.FDPID).FDP.Name;
+            ViewBag.FDPName = _contactService.FindById(contact.FDPID).FDP.Name;
             ViewBag.FDPID = contact.FDPID;
             return View("Edit", contact);
         }
@@ -115,7 +106,7 @@ namespace DRMFSS.Web.Controllers
  
         public ActionResult Delete(int id)
         {
-            Contact contact = repository.Contact.FindById(id);
+            Contact contact = _contactService.FindById(id);
             ViewBag.FDPID = contact.FDPID;
             return View("Delete", contact);
         }
@@ -126,22 +117,16 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Contact contact = repository.Contact.FindById(id);
+            Contact contact = _contactService.FindById(id);
             try
             {
-                repository.Contact.Delete(contact);
+                _contactService.DeleteContact(contact);
                 return RedirectToAction("Index", new { fdpId = contact.FDPID });
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return View("Delete", contact);
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-          
-            base.Dispose(disposing);
         }
     }
 }

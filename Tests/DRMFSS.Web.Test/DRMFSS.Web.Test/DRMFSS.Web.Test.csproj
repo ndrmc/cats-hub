@@ -67,6 +67,10 @@
     <Compile Include="AdminControllerTests.cs" />
     <Compile Include="AdminUnitControllerTest.cs" />
     <Compile Include="CommodityControllerTests.cs" />
+    <Compile Include="CommodityGradeTests.cs" />
+    <Compile Include="CommoditySourceTests.cs" />
+    <Compile Include="CommodityTypeControllerTests.cs" />
+    <Compile Include="ContactControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitControllerTests.cs" />
   </ItemGroup>
