@@ -11,7 +11,7 @@ using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
-    public partial class ProgramController : BaseController
+    public class ProgramController : BaseController
     {
 
         private IProgramService _programService;

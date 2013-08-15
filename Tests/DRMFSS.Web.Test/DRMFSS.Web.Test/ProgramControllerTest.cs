@@ -13,6 +13,8 @@ namespace DRMFSS.Web.Test
     public class ProgramControllerTest
     {
         private ProgramController _programController;
+
+        #region SetUp
         [SetUp]
         void Init()
         {
@@ -32,8 +34,10 @@ namespace DRMFSS.Web.Test
             _programController.Dispose();
         }
 
-        #region Tests
-        [Test]
+        #endregion
+
+         #region Tests
+         [Test]
         public void CanShowIndex()
         {
             var viewResult = _programController.Index();

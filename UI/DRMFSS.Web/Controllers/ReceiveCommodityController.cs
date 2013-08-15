@@ -3,19 +3,38 @@ using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
-    public partial class ReceiveDetailController : BaseController
+    public class ReceiveDetailController : BaseController
     {
         private CTSContext db = new CTSContext();
+        private IReceiveDetailService _receiveDetailService;
+        private ICommodityService _commodityService;
+        private ICommodityGradeService _commodityGradeService;
+        private IReceiveService _receiveService;
+        private IUnitService _unitService;
+
+        public ReceiveDetailController(IReceiveDetailService receiveDetailService,
+                                       ICommodityService commodityService,
+                                       ICommodityGradeService commodityGradeService,
+                                       IReceiveService receiveService,IUnitService unitService)
+        {
+            _receiveDetailService = receiveDetailService;
+            _commodityService = commodityService;
+            _commodityGradeService = commodityGradeService;
+            _receiveService = receiveService;
+            _unitService = unitService;
+        }
 
         //
         // GET: /ReceiveDetail/
 
         public virtual ViewResult Index()
         {
-            var ReceiveDetails = db.ReceiveDetails.Include("Commodity").Include("CommodityGrade").Include("Receive").Include("Unit");
+            var ReceiveDetails = _receiveDetailService.GetAllReceiveDetail();
+                //db.ReceiveDetails.Include("Commodity").Include("CommodityGrade").Include("Receive").Include("Unit");
             return View(ReceiveDetails.ToList());
         }
 
@@ -25,10 +44,10 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Create()
         {
-            ViewBag.CommodityID = new SelectList(db.Commodities, "CommodityID", "Name");
-            ViewBag.CommodityGradeID = new SelectList(db.CommodityGrades, "CommodityGradeID", "Name");
-            ViewBag.ReceiveID = new SelectList(db.Receives, "ReceiveID", "SINumber");
-            ViewBag.UnitID = new SelectList(db.Units, "UnitID", "Name");
+            ViewBag.CommodityID = new SelectList(_commodityService.GetAllCommodity(), "CommodityID", "Name");
+            ViewBag.CommodityGradeID = new SelectList(_commodityGradeService.GetAllCommodityGrade(), "CommodityGradeID", "Name");
+            ViewBag.ReceiveID = new SelectList(_receiveService.GetAllReceive(), "ReceiveID", "SINumber");
+            ViewBag.UnitID = new SelectList(_unitService.GetAllUnit(), "UnitID", "Name");
             return View();
         } 
 
@@ -36,20 +55,20 @@ namespace DRMFSS.Web.Controllers
         // POST: /ReceiveDetail/Create
 
         [HttpPost]
-        public virtual ActionResult Create(ReceiveDetail ReceiveDetail)
+        public virtual ActionResult Create(ReceiveDetail receiveDetail)
         {
             if (ModelState.IsValid)
             {
-                db.ReceiveDetails.Add(ReceiveDetail);
-                db.SaveChanges();
+               
+                _receiveDetailService.AddReceiveDetail(receiveDetail);
                 return RedirectToAction("Index");  
             }
 
-            ViewBag.CommodityID = new SelectList(db.Commodities, "CommodityID", "Name", ReceiveDetail.CommodityID);
-            ViewBag.CommodityGradeID = new SelectList(db.CommodityGrades, "CommodityGradeID", "Name");
-            ViewBag.ReceiveID = new SelectList(db.Receives, "ReceiveID", "SINumber", ReceiveDetail.ReceiveID);
-            ViewBag.UnitID = new SelectList(db.Units, "UnitID", "Name", ReceiveDetail.UnitID);
-            return View(ReceiveDetail);
+            ViewBag.CommodityID = new SelectList(_commodityService.GetAllCommodity(), "CommodityID", "Name", receiveDetail.CommodityID);
+            ViewBag.CommodityGradeID = new SelectList(_commodityGradeService.GetAllCommodityGrade(), "CommodityGradeID", "Name");
+            ViewBag.ReceiveID = new SelectList(_receiveService.GetAllReceive(), "ReceiveID", "SINumber", receiveDetail.ReceiveID);
+            ViewBag.UnitID = new SelectList(_unitService.GetAllUnit(), "UnitID", "Name", receiveDetail.UnitID);
+            return View(receiveDetail);
         }
         
         //
@@ -57,11 +76,12 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(string id)
         {
-            ReceiveDetail ReceiveDetail = db.ReceiveDetails.Single(r => r.ReceiveDetailID == Guid.Parse(id));
-            ViewBag.CommodityID = new SelectList(db.Commodities, "CommodityID", "Name", ReceiveDetail.CommodityID);
-            ViewBag.CommodityGradeID = new SelectList(db.CommodityGrades, "CommodityGradeID", "Name");
-            ViewBag.ReceiveID = new SelectList(db.Receives, "ReceiveID", "SINumber", ReceiveDetail.ReceiveID);
-            ViewBag.UnitID = new SelectList(db.Units, "UnitID", "Name", ReceiveDetail.UnitID);
+            var ReceiveDetail = _receiveDetailService.Get(m=>m.ReceiveDetailID==Guid.Parse(id),null).FirstOrDefault();
+                //db.ReceiveDetails.Single(r => r.ReceiveDetailID == Guid.Parse(id));
+            ViewBag.CommodityID = new SelectList(_commodityService.GetAllCommodity(), "CommodityID", "Name", ReceiveDetail.CommodityID);
+            ViewBag.CommodityGradeID = new SelectList(_commodityGradeService.GetAllCommodityGrade(), "CommodityGradeID", "Name");
+            ViewBag.ReceiveID = new SelectList(_receiveService.GetAllReceive(), "ReceiveID", "SINumber", ReceiveDetail.ReceiveID);
+            ViewBag.UnitID = new SelectList(_unitService.GetAllUnit(), "UnitID", "Name", ReceiveDetail.UnitID);
             return View(ReceiveDetail);
         }
 
@@ -73,15 +93,14 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.ReceiveDetails.Attach(ReceiveDetail);
-                db.Entry(ReceiveDetail).State= EntityState.Modified;
-                db.SaveChanges();
+               
+                _receiveDetailService.EditReceiveDetail(ReceiveDetail);
                 return RedirectToAction("Index");
             }
-            ViewBag.CommodityID = new SelectList(db.Commodities, "CommodityID", "Name", ReceiveDetail.CommodityID);
-            ViewBag.CommodityGradeID = new SelectList(db.CommodityGrades, "CommodityGradeID", "Name");
-            ViewBag.ReceiveID = new SelectList(db.Receives, "ReceiveID", "SINumber", ReceiveDetail.ReceiveID);
-            ViewBag.UnitID = new SelectList(db.Units, "UnitID", "Name", ReceiveDetail.UnitID);
+            ViewBag.CommodityID = new SelectList(_commodityService.GetAllCommodity(), "CommodityID", "Name", ReceiveDetail.CommodityID);
+            ViewBag.CommodityGradeID = new SelectList(_commodityGradeService.GetAllCommodityGrade(), "CommodityGradeID", "Name");
+            ViewBag.ReceiveID = new SelectList(_receiveService.GetAllReceive(), "ReceiveID", "SINumber", ReceiveDetail.ReceiveID);
+            ViewBag.UnitID = new SelectList(_unitService.GetAllUnit(), "UnitID", "Name", ReceiveDetail.UnitID);
             return View(ReceiveDetail);
         }
 
