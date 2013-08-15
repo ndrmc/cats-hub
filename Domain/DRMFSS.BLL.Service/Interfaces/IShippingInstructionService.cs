@@ -8,7 +8,7 @@ using DRMFSS.BLL.ViewModels.Common;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IShippingInstructionService:IDisposable
+    public interface IShippingInstructionService
     {
 
         bool AddShippingInstruction(ShippingInstruction shippingInstruction);

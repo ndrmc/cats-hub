@@ -9,7 +9,7 @@ using DRMFSS.BLL.ViewModels.Report;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IAdminUnitService:IDisposable
+    public interface IAdminUnitService
     {
 
         bool AddAdminUnit(AdminUnit adminUnit);

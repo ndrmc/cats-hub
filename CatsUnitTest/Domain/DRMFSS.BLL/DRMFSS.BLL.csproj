@@ -1,0 +1,625 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F05635B6-4DA7-4B46-B0BD-0CED2EDF9A38}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DRMFSS.BLL</RootNamespace>
+    <AssemblyName>DRMFSS.BLL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\DRMFSS.Web\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\packages\EntityFramework.4.3.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Replication, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.Replication.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Replication.BusinessLogicSupport, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Desktop\COM\Microsoft.SqlServer.Replication.BusinessLogicSupport.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Rmo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.Rmo.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helpers\BaseEntities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IReportRepository.cs" />
+    <Compile Include="Repository\ReportRepository.cs" />
+    <Compile Include="UnitOfWork\IUnitOfWork.cs" />
+    <Compile Include="MetaModels\AccountMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\AdjustmentMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\AdjustmentReasonMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\AdminUnit.cs" />
+    <Compile Include="MetaModels\AdminUnitMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\AdminUnitTypeMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\AuditMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\CommodityGradeMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\CommodityMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\CommoditySourceMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\CommodityTypeMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ContactMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\DetailMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\DispatchAllocationMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\DispatchDetailMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\DispatchMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\DonorMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ErrorLogMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\FDPMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ForgetPasswordRequestMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\GiftCertificateDetailMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\GiftCertificateMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\HubMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\HubOwnerMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\HubSettingMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\HubSettingValueMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\InternalMovementMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\LedgerMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\LedgerTypeMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\LetterTemplateMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\MasterMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\OtherDispatchAllocationMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\PeriodMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ProgramMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ProjectCodeMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ReceiptAllocationMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ReceiveDetailMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ReceiveMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ReleaseNoteMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\RoleMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\SessionAttemptMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\SessionHistoryMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\SettingMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\ShippingInstructionMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\SMSMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\StackEventMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\StackEventTypeMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\StoreMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\TransactionGroupMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\TransactionMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\TranslationMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\TransporterMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\UnitMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\UserHubMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\UserProfileMetaModel.cs">
+    </Compile>
+    <Compile Include="MetaModels\UserRoleMetaModel.cs">
+    </Compile>
+    <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\Adjustment.cs" />
+    <Compile Include="Models\AdjustmentReason.cs" />
+    <Compile Include="Models\AdminUnit.cs" />
+    <Compile Include="Models\AdminUnitType.cs" />
+    <Compile Include="Models\Audit.cs" />
+    <Compile Include="Models\BinCardReport.cs" />
+    <Compile Include="Models\Commodity.cs" />
+    <Compile Include="Models\CommodityGrade.cs" />
+    <Compile Include="Models\CommoditySource.cs" />
+    <Compile Include="Models\CommodityType.cs" />
+    <Compile Include="Models\Contact.cs" />
+    <Compile Include="Models\CTSContext.cs" />
+    <Compile Include="Models\Detail.cs" />
+    <Compile Include="Models\Dispatch.cs" />
+    <Compile Include="Models\DispatchAllocation.cs" />
+    <Compile Include="Models\DispatchDetail.cs" />
+    <Compile Include="Models\DispatchFulfillmentStatus_Result.cs" />
+    <Compile Include="Models\Donor.cs" />
+    <Compile Include="Models\ErrorLog.cs" />
+    <Compile Include="Models\FDP.cs" />
+    <Compile Include="Models\ForgetPasswordRequest.cs" />
+    <Compile Include="Models\GiftCertificate.cs" />
+    <Compile Include="Models\GiftCertificateDetail.cs" />
+    <Compile Include="Models\Hub.cs" />
+    <Compile Include="Models\HubOwner.cs" />
+    <Compile Include="Models\HubSetting.cs" />
+    <Compile Include="Models\HubSettingValue.cs" />
+    <Compile Include="Models\InternalMovement.cs" />
+    <Compile Include="Models\Ledger.cs" />
+    <Compile Include="Models\LedgerType.cs" />
+    <Compile Include="Models\LetterTemplate.cs" />
+    <Compile Include="Models\Mapping\AccountMap.cs" />
+    <Compile Include="Models\Mapping\AdjustmentMap.cs" />
+    <Compile Include="Models\Mapping\AdjustmentReasonMap.cs" />
+    <Compile Include="Models\Mapping\AdminUnitMap.cs" />
+    <Compile Include="Models\Mapping\AdminUnitTypeMap.cs" />
+    <Compile Include="Models\Mapping\AuditMap.cs" />
+    <Compile Include="Models\Mapping\CommodityGradeMap.cs" />
+    <Compile Include="Models\Mapping\CommodityMap.cs" />
+    <Compile Include="Models\Mapping\CommoditySourceMap.cs" />
+    <Compile Include="Models\Mapping\CommodityTypeMap.cs" />
+    <Compile Include="Models\Mapping\ContactMap.cs" />
+    <Compile Include="Models\Mapping\DetailMap.cs" />
+    <Compile Include="Models\Mapping\DispatchAllocationMap.cs" />
+    <Compile Include="Models\Mapping\DispatchDetailMap.cs" />
+    <Compile Include="Models\Mapping\DispatchMap.cs" />
+    <Compile Include="Models\Mapping\DonorMap.cs" />
+    <Compile Include="Models\Mapping\ErrorLogMap.cs" />
+    <Compile Include="Models\Mapping\FDPMap.cs" />
+    <Compile Include="Models\Mapping\ForgetPasswordRequestMap.cs" />
+    <Compile Include="Models\Mapping\GiftCertificateDetailMap.cs" />
+    <Compile Include="Models\Mapping\GiftCertificateMap.cs" />
+    <Compile Include="Models\Mapping\HubMap.cs" />
+    <Compile Include="Models\Mapping\HubOwnerMap.cs" />
+    <Compile Include="Models\Mapping\HubSettingMap.cs" />
+    <Compile Include="Models\Mapping\HubSettingValueMap.cs" />
+    <Compile Include="Models\Mapping\InternalMovementMap.cs" />
+    <Compile Include="Models\Mapping\LedgerMap.cs" />
+    <Compile Include="Models\Mapping\LedgerTypeMap.cs" />
+    <Compile Include="Models\Mapping\LetterTemplateMap.cs" />
+    <Compile Include="Models\Mapping\MasterMap.cs" />
+    <Compile Include="Models\Mapping\OtherDispatchAllocationMap.cs" />
+    <Compile Include="Models\Mapping\PartitionMap.cs" />
+    <Compile Include="Models\Mapping\PeriodMap.cs" />
+    <Compile Include="Models\Mapping\ProgramMap.cs" />
+    <Compile Include="Models\Mapping\ProjectCodeMap.cs" />
+    <Compile Include="Models\Mapping\ReceiptAllocationMap.cs" />
+    <Compile Include="Models\Mapping\ReceiveDetailMap.cs" />
+    <Compile Include="Models\Mapping\ReceiveMap.cs" />
+    <Compile Include="Models\Mapping\ReleaseNoteMap.cs" />
+    <Compile Include="Models\Mapping\RoleMap.cs" />
+    <Compile Include="Models\Mapping\SessionAttemptMap.cs" />
+    <Compile Include="Models\Mapping\SessionHistoryMap.cs" />
+    <Compile Include="Models\Mapping\SettingMap.cs" />
+    <Compile Include="Models\Mapping\ShippingInstructionMap.cs" />
+    <Compile Include="Models\Mapping\SMMap.cs" />
+    <Compile Include="Models\Mapping\StackEventMap.cs" />
+    <Compile Include="Models\Mapping\StackEventTypeMap.cs" />
+    <Compile Include="Models\Mapping\StoreMap.cs" />
+    <Compile Include="Models\Mapping\sysdiagramMap.cs" />
+    <Compile Include="Models\Mapping\TransactionGroupMap.cs" />
+    <Compile Include="Models\Mapping\TransactionMap.cs" />
+    <Compile Include="Models\Mapping\TranslationMap.cs" />
+    <Compile Include="Models\Mapping\TransporterMap.cs" />
+    <Compile Include="Models\Mapping\UnitMap.cs" />
+    <Compile Include="Models\Mapping\UserHubMap.cs" />
+    <Compile Include="Models\Mapping\UserProfileMap.cs" />
+    <Compile Include="Models\Mapping\UserRoleMap.cs" />
+    <Compile Include="Models\Master.cs" />
+    <Compile Include="Models\OtherDispatchAllocation.cs" />
+    <Compile Include="Models\Partition.cs" />
+    <Compile Include="Models\Period.cs" />
+    <Compile Include="Models\Program.cs" />
+    <Compile Include="Models\ProjectCode.cs" />
+    <Compile Include="Models\ReceiptAllocation.cs" />
+    <Compile Include="Models\Receive.cs" />
+    <Compile Include="Models\ReceiveDetail.cs" />
+    <Compile Include="Models\ReleaseNote.cs" />
+    <Compile Include="Models\ReportBinCard.cs" />
+    <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\RPT_Distribution_Result.cs" />
+    <Compile Include="Models\RPT_MonthGiftSummary_Result.cs" />
+    <Compile Include="Models\RPT_MonthlyGiftSummary_Result.cs" />
+    <Compile Include="Models\RPT_Offloading_Result.cs" />
+    <Compile Include="Models\RPT_ReceiptReport_Result.cs" />
+    <Compile Include="Models\SessionAttempt.cs" />
+    <Compile Include="Models\SessionHistory.cs" />
+    <Compile Include="Models\Setting.cs" />
+    <Compile Include="Models\ShippingInstruction.cs" />
+    <Compile Include="Models\SMS.cs" />
+    <Compile Include="Models\StackEvent.cs" />
+    <Compile Include="Models\StackEventType.cs" />
+    <Compile Include="Models\StatusReportBySI_Result.cs" />
+    <Compile Include="Models\StockStatusReport.cs" />
+    <Compile Include="Models\Store.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
+    <Compile Include="Models\Transaction.cs" />
+    <Compile Include="Models\TransactionGroup.cs" />
+    <Compile Include="Models\Translation.cs" />
+    <Compile Include="Models\Transporter.cs" />
+    <Compile Include="Models\Unit.cs" />
+    <Compile Include="Models\UserHub.cs" />
+    <Compile Include="Models\UserProfile.cs" />
+    <Compile Include="Models\UserRole.cs" />
+    <Compile Include="Models\util_GetDispatchedAllocationFromSI_Result.cs" />
+    <Compile Include="Partials\Account.cs">
+    </Compile>
+    <Compile Include="Partials\AdminUnit.cs">
+    </Compile>
+    <Compile Include="Partials\AdminUnitType.cs">
+    </Compile>
+    <Compile Include="Partials\Audit.cs">
+    </Compile>
+    <Compile Include="Partials\Commodity.cs">
+    </Compile>
+    <Compile Include="Partials\CommodityGrade.cs">
+    </Compile>
+    <Compile Include="Partials\CommoditySource.cs">
+    </Compile>
+    <Compile Include="Partials\CommodityType.cs">
+    </Compile>
+    <Compile Include="Partials\Contact.cs">
+    </Compile>
+    <Compile Include="Partials\Detail.cs">
+    </Compile>
+    <Compile Include="Partials\Dispatch.cs">
+    </Compile>
+    <Compile Include="Partials\DispatchAllocation.cs">
+    </Compile>
+    <Compile Include="Partials\Donor.cs">
+    </Compile>
+    <Compile Include="Partials\ErrorLog.cs">
+    </Compile>
+    <Compile Include="Partials\FDP.cs">
+    </Compile>
+    <Compile Include="Partials\ForgetPasswordRequest.cs">
+    </Compile>
+    <Compile Include="Partials\GiftCertificate.cs">
+    </Compile>
+    <Compile Include="Partials\GiftCertificateDetail.cs">
+    </Compile>
+    <Compile Include="Partials\Hub.cs">
+    </Compile>
+    <Compile Include="Partials\HubOwner.cs">
+    </Compile>
+    <Compile Include="Partials\HubSetting.cs">
+    </Compile>
+    <Compile Include="Partials\HubSettingValue.cs">
+    </Compile>
+    <Compile Include="Partials\Ledger.cs">
+    </Compile>
+    <Compile Include="Partials\LedgerType.cs">
+    </Compile>
+    <Compile Include="Partials\LetterTemplate.cs">
+    </Compile>
+    <Compile Include="Partials\Master.cs">
+    </Compile>
+    <Compile Include="Partials\Period.cs">
+    </Compile>
+    <Compile Include="Partials\Program.cs">
+    </Compile>
+    <Compile Include="Partials\ProjectCode.cs">
+    </Compile>
+    <Compile Include="Partials\ReceiptAllocation.cs">
+    </Compile>
+    <Compile Include="Partials\Receive.cs">
+    </Compile>
+    <Compile Include="Partials\ReceiveDetail.cs">
+    </Compile>
+    <Compile Include="Partials\ReleaseNote.cs">
+    </Compile>
+    <Compile Include="Partials\Role.cs">
+    </Compile>
+    <Compile Include="Partials\SessionAttempt.cs">
+    </Compile>
+    <Compile Include="Partials\SessionHistory.cs">
+    </Compile>
+    <Compile Include="Partials\Setting.cs">
+    </Compile>
+    <Compile Include="Partials\ShippingInstruction.cs">
+    </Compile>
+    <Compile Include="Partials\SMS.cs">
+    </Compile>
+    <Compile Include="Partials\Store.cs">
+    </Compile>
+    <Compile Include="Partials\Transaction.cs">
+    </Compile>
+    <Compile Include="Partials\TransactionGroup.cs">
+    </Compile>
+    <Compile Include="Partials\Translation.cs" />
+    <Compile Include="Partials\Transporter.cs">
+    </Compile>
+    <Compile Include="Partials\Unit.cs">
+    </Compile>
+    <Compile Include="Partials\UserHub.cs">
+    </Compile>
+    <Compile Include="Partials\UserProfile.cs">
+    </Compile>
+    <Compile Include="Partials\UserRole.cs">
+    </Compile>
+    <Compile Include="Repository\GenericRepository.cs" />
+    <Compile Include="Interfaces\IGenericRepository.cs" />
+    <Compile Include="Repository\viewModel.cs" />
+    <Compile Include="UnitOfWork\UnitOfWork.cs" />
+    <Compile Include="ViewModels\Common\BidRefViewModel.cs" />
+    <Compile Include="ViewModels\Dispatch\IDispatchAllocationService.cs" />
+    <Compile Include="ViewModels\Report\Data\DeliveryReport.cs" />
+    <Compile Include="ViewModels\Report\Data\DistributionReport.cs" />
+    <Compile Include="ViewModels\Report\Data\ReceiveReport.cs" />
+    <Compile Include="ViewModels\Report\Filters\DistributionViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\FreeStockFilter.cs" />
+    <Compile Include="ViewModels\TreeViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\Account.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\AccountModels.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\AdminUnitModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\AdminUnitType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Audit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\AvailableReceiptAllocations.cs" />
+    <Compile Include="ViewModels\BinCardModels.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\CommoditySource.cs" />
+    <Compile Include="ViewModels\Common\CommodityViewModel.cs" />
+    <Compile Include="ViewModels\Common\ReasonViewModel.cs" />
+    <Compile Include="ViewModels\Common\StoreBalanceViewModel.cs" />
+    <Compile Include="ViewModels\DateStartAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Dispatch\Dispatch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Dispatch\DispatchAllocation.cs" />
+    <Compile Include="ViewModels\Dispatch\DispatchAllocationViewModel.cs" />
+    <Compile Include="Partials\DispatchDetail.cs" />
+    <Compile Include="ViewModels\Dispatch\DispatchDetailViewModel.cs" />
+    <Compile Include="ViewModels\Dispatch\DispatchHomeViewModel.cs" />
+    <Compile Include="ViewModels\Dispatch\OtherDispatchAllocation.cs" />
+    <Compile Include="ViewModels\Dispatch\OtherDispatchAllocationViewModel.cs" />
+    <Compile Include="ViewModels\Dispatch\DispatchViewModel.cs" />
+    <Compile Include="ViewModels\Dispatch\RequisitionSummary.cs" />
+    <Compile Include="ViewModels\ErrorModels.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\FDPBalance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\GiftCertificateDetailsViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\GiftCertificateModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\GiftCertificateViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\GroupedTransportation.cs" />
+    <Compile Include="ViewModels\Hub.cs" />
+    <Compile Include="ViewModels\InternalMovementLogViewModel.cs" />
+    <Compile Include="ViewModels\InternalMovementViewModel.cs" />
+    <Compile Include="ViewModels\Ledger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\LookupViewModel.cs" />
+    <Compile Include="ViewModels\LossAndAdjustmentLogViewModel.cs" />
+    <Compile Include="ViewModels\LossesAndAdjustmentsViewModel.cs" />
+    <Compile Include="ViewModels\Master.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Period.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\ReceiptAllocation.cs" />
+    <Compile Include="ViewModels\ReceiptAllocationViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Receive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\ReceiveDetailViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\ReceiveViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\ReplicationViewModel.cs" />
+    <Compile Include="ViewModels\Report\Data\BaseReport.cs" />
+    <Compile Include="ViewModels\Report\Data\BinCardViewModel.cs" />
+    <Compile Include="ViewModels\Report\Data\FreeStockReport.cs" />
+    <Compile Include="ViewModels\Report\Data\OffloadingReport.cs" />
+    <Compile Include="ViewModels\Report\Filters\AreaViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\ArrivalsVsReceiptsViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\CodesViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\CommittedVsDispatchedViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\CommoditySourceViewModel.cs" />
+    <Compile Include="ViewModels\Common\CommodityTypeViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\DeliveryAgainstDispatchViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\DispatchesViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\DistributionByOwnerViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\DistributionDeliveryDispatchViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\DonorViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\InTransitViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\PeriodViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\PortViewModel.cs" />
+    <Compile Include="ViewModels\Common\ProgramViewModel.cs" />
+    <Compile Include="ViewModels\Common\ProjectCodeViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\ReceiptsViewModel.cs" />
+    <Compile Include="ViewModels\Common\ShippingInstructionViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\StockBalanceViewModel.cs" />
+    <Compile Include="ViewModels\Report\Filters\TypeViewModel.cs" />
+    <Compile Include="ViewModels\Role.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\RoleModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\SelectListItemModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\SelectTemplateModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Setting.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\SIBalance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\SIReportModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\SMS.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\SMTPConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\StackEventLogViewModel.cs" />
+    <Compile Include="ViewModels\StackEventViewModel.cs" />
+    <Compile Include="ViewModels\StartingBalanceViewModel.cs" />
+    <Compile Include="ViewModels\Store.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Common\StoreViewModel.cs" />
+    <Compile Include="ViewModels\Unit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\UnitModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\UserHubsModel.cs" />
+    <Compile Include="ViewModels\UserPreferenceViewModel.cs" />
+    <Compile Include="ViewModels\UserProfile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\UserRolesModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\UserWarehouseModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModels\Warehouse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\DataSources\DRMFSSEntities1.datasource" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Partials\Generator\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\DRMFSS.Shared\DRMFSS.Shared.csproj">
+      <Project>{85DD7228-1691-4BF3-86DC-2CCF813A7940}</Project>
+      <Name>DRMFSS.Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

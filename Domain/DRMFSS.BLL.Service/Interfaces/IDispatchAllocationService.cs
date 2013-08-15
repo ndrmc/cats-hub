@@ -10,7 +10,7 @@ using DRMFSS.BLL.ViewModels.Dispatch;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IDispatchAllocationService:IDisposable
+    public interface IDispatchAllocationService
     {
 
         bool AddDispatchAllocation(DispatchAllocation dispatchAllocation);
@@ -20,7 +20,7 @@ namespace DRMFSS.BLL.Services
         DispatchAllocation FindById(int id);
         List<DispatchAllocation> GetAllDispatchAllocation();
         List<DispatchAllocation> FindBy(Expression<Func<DispatchAllocation, bool>> predicate);
-        DispatchAllocation FindById(System.Guid id);
+
         /// <summary>
         /// Gets the uncommited balance of an SI, commodity and hub combination.
         /// </summary>
