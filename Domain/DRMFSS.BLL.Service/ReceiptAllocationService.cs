@@ -76,7 +76,10 @@ namespace DRMFSS.BLL.Services
 
         }
 
-
+        public ReceiptAllocation FindById(Guid id)
+        {
+            return _unitOfWork.ReceiptAllocationRepository.FindBy(t => t.ReceiptAllocationID == id).FirstOrDefault();
+        }
 
         public List<ReceiptAllocation> FindBySINumber(string SINumber)
         {

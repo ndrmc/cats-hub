@@ -23,6 +23,11 @@ namespace DRMFSS.BLL.Services
 
         List<ReceiveDetail> GetByReceiveId(Guid receiveId);
         List<ReceiveDetailViewModelDto> ByReceiveIDetached(Guid? receiveId, string weightMeasurmentCode);
+        IEnumerable<ReceiveDetail> Get(
+        IEnumerable<ReceiveDetail> Get(
+            Expression<Func<ReceiveDetail, bool>> filter = null,
+            Func<IQueryable<ReceiveDetail>, IOrderedQueryable<ReceiveDetail>> orderBy = null,
+            string includeProperties = "");
 
     }
 }

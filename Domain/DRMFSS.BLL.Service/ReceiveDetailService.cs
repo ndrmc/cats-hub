@@ -63,13 +63,25 @@ namespace DRMFSS.BLL.Services
         }
         #endregion
 
+        public IEnumerable<ReceiveDetail> Get(System.Linq.Expressions.Expression<Func<ReceiveDetail, bool>> filter = null,
+                                   Func<IQueryable<ReceiveDetail>, IOrderedQueryable<ReceiveDetail>> orderBy = null,
+                                   string includeProperties = "")
+        {
+            return _unitOfWork.ReceiveDetailRepository.Get(filter, orderBy, includeProperties);
+        }
+
         public void Dispose()
         {
             _unitOfWork.Dispose();
 
         }
 
-
+        public IEnumerable<ReceiveDetail> Get(System.Linq.Expressions.
+           Expression<Func<ReceiveDetail, bool>> filter = null,
+           Func<IQueryable<ReceiveDetail>, IOrderedQueryable<ReceiveDetail>> orderBy = null, string includeProperties = "")
+        {
+            return _unitOfWork.ReceiveDetailRepository.Get(filter, orderBy, includeProperties);
+        }
 
 
         /// Gets the by receive id.

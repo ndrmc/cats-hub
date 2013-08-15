@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
-using DRMFSS.BLL.ViewModels;
+using DRMFSS.BLL.Services;
 using Telerik.Web.Mvc;
 using DRMFSS.Web.Models;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace DRMFSS.Web.Controllers
@@ -19,15 +17,45 @@ namespace DRMFSS.Web.Controllers
     [Authorize]
     public partial class ReceiveController : BaseController
     {
-       
+        private readonly IReceiveService _receiveService;
+        private readonly IGiftCertificateService _giftCertificateService;
+        private readonly IReceiptAllocationService _receiptAllocationService;
+        private readonly IUserProfileService _userProfileService;
+        private readonly ICommodityService _commodityService;
+        private readonly ICommodityTypeService _commodityTypeService;
+        private readonly IReceiveDetailService _receiveDetailService;
+        private readonly IStoreService _storeService;
+        private readonly ITransactionService _transactionService;
+        private readonly IUnitService _unitService;
+        private readonly IShippingInstructionService _shippingInstructionService;
+
+        public ReceiveController(IReceiveService receiveService,IGiftCertificateService giftCertificateService,
+                                 IReceiptAllocationService receiptAllocationService,IUserProfileService userProfileService,
+                                 ICommodityTypeService commodityTypeService ,IReceiveDetailService receiveDetailService,
+                                 ICommodityService commodityService,IStoreService storeService,ITransactionService transactionService,
+                                 IUnitService unitService,IShippingInstructionService shippingInstructionService)
+        {
+            _receiveService = receiveService;
+            _giftCertificateService = giftCertificateService;
+            _receiptAllocationService = receiptAllocationService;
+            _userProfileService = userProfileService;
+            _commodityTypeService = commodityTypeService;
+            _receiveDetailService = receiveDetailService;
+            _commodityService = commodityService;
+            _storeService = storeService;
+            _transactionService = transactionService;
+            _unitService = unitService;
+            _shippingInstructionService = shippingInstructionService;
+
+        }
         public ActionResult SINotUnique(string SINUmber, int CommoditySourceID)
         {
 
             //check allocation and gc for the same record
-            var fromGc = repository.GiftCertificate.FindBySINumber(SINUmber);
+            var fromGc = _giftCertificateService.FindBySINumber(SINUmber);
             var fromRall =
-                repository.ReceiptAllocation.FindBySINumber(SINUmber).FirstOrDefault(p => p.CommoditySourceID == BLL.CommoditySource.Constants.DONATION);
-
+                _receiptAllocationService.FindBySINumber(SINUmber).FirstOrDefault(
+                    p => p.CommoditySourceID == BLL.CommoditySource.Constants.DONATION);
 
             if (CommoditySourceID == BLL.CommoditySource.Constants.LOCALPURCHASE)
             {
@@ -36,7 +64,8 @@ namespace DRMFSS.Web.Controllers
             }
             //just incase the user is bad
             var fromRallt =
-                repository.ReceiptAllocation.FindBySINumber(SINUmber).FirstOrDefault(p => p.CommoditySourceID == BLL.CommoditySource.Constants.LOCALPURCHASE);
+                _receiptAllocationService.FindBySINumber(SINUmber).FirstOrDefault(
+                    p => p.CommoditySourceID == BLL.CommoditySource.Constants.LOCALPURCHASE);
 
             if (CommoditySourceID == BLL.CommoditySource.Constants.DONATION)
             {
@@ -53,7 +82,7 @@ namespace DRMFSS.Web.Controllers
         public ActionResult NotFoundSI(String SINumber, int CommodityID)
         {
             return
-                Json(repository.ReceiptAllocation.GetAvailableCommodities(SINumber,repository.UserProfile.GetUser(User.Identity.Name).DefaultHub.HubID).Select(
+                Json(_receiptAllocationService.GetAvailableCommodities(SINumber,_userProfileService.GetUser(User.Identity.Name).DefaultHub.HubID).Select(
                     p => p.CommodityID == CommodityID).Any(), JsonRequestBehavior.AllowGet );
 
         }
@@ -64,15 +93,15 @@ namespace DRMFSS.Web.Controllers
             //Just return an empty list and bind it later
             List<ReceiptAllocation> list = new List<ReceiptAllocation>();
             ViewBag.CommoditySourceType = type;
-            ViewBag.CommodityTypes = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name", 1); //make the inital binding a food type
+            ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name", 1); //make the inital binding a food type
             return PartialView("Allocations", list);
         }
 
         [GridAction]
         public ActionResult AllocationListGrid(int type, bool? closedToo, int? CommodityType)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            List<ReceiptAllocation> list = repository.ReceiptAllocation.GetUnclosedAllocationsDetached(user.DefaultHub.HubID, type, closedToo, user.PreferedWeightMeasurment, CommodityType);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            List<ReceiptAllocation> list = _receiptAllocationService.GetUnclosedAllocationsDetached(user.DefaultHub.HubID, type, closedToo, user.PreferedWeightMeasurment, CommodityType);
             return View(new GridModel(list));
         }
 
@@ -87,7 +116,7 @@ namespace DRMFSS.Web.Controllers
         {
 
             BLL.Receive receive = BLL.Receive.GetReceiveByGRN(grn);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             Guid guidParse = Guid.Empty;
             if (Guid.TryParse(receiveId, out guidParse))
             {
@@ -119,8 +148,8 @@ namespace DRMFSS.Web.Controllers
         
         public virtual ActionResult Index()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            List<BLL.Receive> receives = repository.Receive.ByHubId(user.DefaultHub.HubID);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            List<BLL.Receive> receives = _receiveService.ByHubId(user.DefaultHub.HubID);
          
             return View(receives);
         }
@@ -128,14 +157,14 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult Log()
         {
             
-            List<BLL.Receive> receives = repository.Receive.ByHubId(GetCurrentUserProfile().DefaultHub.HubID);
+            List<BLL.Receive> receives = _receiveService.ByHubId(GetCurrentUserProfile().DefaultHub.HubID);
             return View(receives);
         }
         
         [GridAction]
         public ActionResult ReceiveListGrid(string ReceiptAllocationID)
         {
-            BLL.UserProfile user =  repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user =  _userProfileService.GetUser(User.Identity.Name);
            //TODO cascade using allocation id
             List<ReceiveViewModelDto> receives = repository.Receive.ByHubIdAndAllocationIDetached(user.DefaultHub.HubID, Guid.Parse(ReceiptAllocationID));
             return View(new GridModel(receives));
@@ -144,9 +173,9 @@ namespace DRMFSS.Web.Controllers
         [GridAction]
         public ActionResult ReceiveListGridListGrid(string ReceiveID)
         {
-            BLL.UserProfile user =  repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user =  _userProfileService.GetUser(User.Identity.Name);
             //(user.DefaultHub.HubID)
-            List<ReceiveDetailViewModelDto> receiveDetails = repository.ReceiveDetail.ByReceiveIDetached(Guid.Parse(ReceiveID),user.PreferedWeightMeasurment);
+            List<ReceiveDetailViewModelDto> receiveDetails = _receiveDetailService.ByReceiveIDetached(Guid.Parse(ReceiveID),user.PreferedWeightMeasurment);
             return View(new GridModel(receiveDetails));
         }
 
@@ -155,11 +184,11 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Create(string receiveId)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             if (receiveId != "" && receiveId != null)
             {
-                BLL.Receive receive = repository.Receive.FindById(Guid.Parse(receiveId));
+                BLL.Receive receive = _receiveService.FindById(Guid.Parse(receiveId));
 
                 if (receive != null && (receive.HubID == user.DefaultHub.HubID))
                 {
@@ -207,13 +236,13 @@ namespace DRMFSS.Web.Controllers
                 //TODO we can load all the sub-commodites here
                 //var rAllocation = repository.ReceiptAllocation.FindBySINumber(receiveViewModel.SINumber).FirstOrDefault(
                 //    p => p.CommoditySourceID == receiveViewModel.CommoditySourceID && p.HubID == user.DefaultHub.HubID && p.IsClosed == false);
-                var rAllocation = repository.ReceiptAllocation.FindById(receiptAllocationID);
+                var rAllocation = _receiptAllocationService.FindById(receiptAllocationID);
 
                 if (rAllocation != null)
                 {
 
                     //Only for loading Waybill no
-                    BLL.GiftCertificate gCertificate = repository.GiftCertificate.FindBySINumber(rAllocation.SINumber);
+                    var gCertificate = _giftCertificateService.FindBySINumber(rAllocation.SINumber);
                     if (gCertificate != null)
                     {
                         var giftCertificateDetail = gCertificate.GiftCertificateDetails.FirstOrDefault();
@@ -265,7 +294,7 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult _ReceivePartial(string grnNo)
         {
 
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             BLL.Receive receive = BLL.Receive.GetReceiveByGRN(grnNo);
             if (receive != null && (receive.HubID == user.DefaultHub.HubID))
@@ -311,11 +340,11 @@ namespace DRMFSS.Web.Controllers
         {
 
             MembershipProvider membership = new MembershipProvider();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
-            List<Models.ReceiveDetailViewModel> insertCommodities = new List<Models.ReceiveDetailViewModel>();
-            List<Models.ReceiveDetailViewModel> updateCommodities = new List<Models.ReceiveDetailViewModel>();
-            List<Models.ReceiveDetailViewModel> prevCommodities = new List<Models.ReceiveDetailViewModel>();
+            var insertCommodities = new List<Models.ReceiveDetailViewModel>();
+            var updateCommodities = new List<Models.ReceiveDetailViewModel>();
+            var prevCommodities = new List<Models.ReceiveDetailViewModel>();
             if (receiveModels.JSONPrev != null)
             {
                 prevCommodities = GetSelectedCommodities(receiveModels.JSONPrev);
@@ -357,8 +386,8 @@ namespace DRMFSS.Web.Controllers
                     {
                         errorMessage = string.Format("{0}, {1}", errorMessage, v.ErrorMessage);
                     }
-                    Commodity comms = repository.Commodity.FindById(receiveDetailViewModel.CommodityID);
-                    CommodityType commType = repository.CommodityType.FindById(receiveModels.CommodityTypeID);
+                    Commodity comms = _commodityService.FindById(receiveDetailViewModel.CommodityID);
+                    CommodityType commType = _commodityTypeService.FindById(receiveModels.CommodityTypeID);
                     if (receiveModels.CommodityTypeID != comms.CommodityTypeID)
                         ModelState.AddModelError("ReceiveDetails", comms.Name + " is not of type " + commType.Name);
                 }
@@ -395,7 +424,7 @@ namespace DRMFSS.Web.Controllers
             {
                 if (receiveModels.ChangeStoreManPermanently != null && receiveModels.ChangeStoreManPermanently == true)
                 {
-                    BLL.Store storeTobeChanged = repository.Store.FindById(receiveModels.StoreID);
+                    BLL.Store storeTobeChanged = _storeService.FindById(receiveModels.StoreID);
                     if (storeTobeChanged != null && receiveModels.ChangeStoreManPermanently == true)
                     storeTobeChanged.StoreManName = receiveModels.ReceivedByStoreMan;
                     //repository.Store.SaveChanges(storeTobeChanged);
@@ -415,7 +444,7 @@ namespace DRMFSS.Web.Controllers
                             gridCommodities.SentQuantityInMT /= 10;
                         }
                     }
-                    repository.Transaction.SaveReceiptTransaction(receiveModels, user);
+                    _transactionService.SaveReceiptTransaction(receiveModels, user);
                 }
                 else
                 {
@@ -484,7 +513,7 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult JsonReceive(string grnNo)
         {
             BLL.Receive receive = BLL.Receive.GetReceiveByGRN(grnNo);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (receive != null)
             {
                 return Json(true, JsonRequestBehavior.AllowGet);
@@ -503,7 +532,7 @@ namespace DRMFSS.Web.Controllers
         /// <returns></returns>
         public ActionResult LoadDataBySI(string SINumber,string receiptAllocationID )
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             string WayBillNo = null;
             string ProjectCode = null;
@@ -515,9 +544,9 @@ namespace DRMFSS.Web.Controllers
             int? ResponsibleDonorID = null;
             int? SourceDonorID = null;
 
-            if (repository.GiftCertificate.FindBySINumber(SINumber) != null)
+            if (_giftCertificateService.FindBySINumber(SINumber) != null)
             {
-                BLL.GiftCertificate gCertificate = repository.GiftCertificate.FindBySINumber(SINumber);
+                BLL.GiftCertificate gCertificate = _giftCertificateService.FindBySINumber(SINumber);
                 var giftCertificateDetail = gCertificate.GiftCertificateDetails.FirstOrDefault();
                 if (giftCertificateDetail != null)
                 {
@@ -531,7 +560,7 @@ namespace DRMFSS.Web.Controllers
             
             if (receiptAllocationID != null && receiptAllocationID != "")
             {
-                var theAllocation = repository.ReceiptAllocation.FindById(Guid.Parse(receiptAllocationID));
+                var theAllocation = _receiptAllocationService.FindById(Guid.Parse(receiptAllocationID));
                 if(theAllocation!=null)
                 {
                    ProjectCode = theAllocation.ProjectNumber;
@@ -546,11 +575,11 @@ namespace DRMFSS.Web.Controllers
                 }
             }
             else{
-            if (repository.ReceiptAllocation.FindBySINumber(SINumber) != null &&
-                repository.ReceiptAllocation.FindBySINumber(SINumber).Any())
+            if (_receiptAllocationService.FindBySINumber(SINumber) != null &&
+                _receiptAllocationService.FindBySINumber(SINumber).Any())
             {
                 BLL.ReceiptAllocation rAllocation =
-                    repository.ReceiptAllocation.GetAll().FirstOrDefault(
+                    _receiptAllocationService.GetAllReceiptAllocation().FirstOrDefault(
                         p => p.SINumber == SINumber && p.HubID == user.DefaultHub.HubID);
 
                 if (rAllocation != null)
@@ -599,8 +628,8 @@ namespace DRMFSS.Web.Controllers
             bool resultGC = true;
             bool resultRA = true;
             ArrayList result = new ArrayList();
-            resultGC = repository.GiftCertificate.FindBySINumber(SINumber) != null;
-            resultRA = repository.ReceiptAllocation.FindBySINumber(SINumber) != null;
+            resultGC = _receiptAllocationService.FindBySINumber(SINumber) != null;
+            resultRA = _receiptAllocationService.FindBySINumber(SINumber) != null;
             result.Add(resultGC);
             result.Add(resultRA);
             return (Json(result, JsonRequestBehavior.AllowGet));
@@ -613,7 +642,7 @@ namespace DRMFSS.Web.Controllers
         /// <returns></returns>
         public ActionResult GetSIBalanceBySI(string SINumber)
         {
-            var list = repository.GiftCertificate.GetSIBalances();
+            var list = _receiptAllocationService.GetBalanceForSI(SINumber);
             return PartialView("SIBalance", list);
         }
 
@@ -627,7 +656,7 @@ namespace DRMFSS.Web.Controllers
         {
             
             BLL.Receive receive = BLL.Receive.GetReceiveByGRN(grnNo);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             if (receive != null && user.DefaultHub != null)
             {
@@ -658,7 +687,7 @@ namespace DRMFSS.Web.Controllers
 
             if (receiveId != null && receiveId != "") // && receiveGrn != null)
             {
-                var receiveGrn = repository.Receive.FindById(Guid.Parse(receiveId));
+                var receiveGrn = _receiveService.FindById(Guid.Parse(receiveId));
                 return Json(new { receive = receiveGrn.GRN }, JsonRequestBehavior.AllowGet);
             }
             else {
@@ -678,9 +707,9 @@ namespace DRMFSS.Web.Controllers
             var commodities = new List<Models.ReceiveDetailViewModel>();
             if (receiveId != "" && receiveId != null)
             {
-                commodities = ReceiveDetailViewModel.GenerateReceiveDetailModels(repository.Receive.FindById(Guid.Parse(receiveId)).ReceiveDetails);
+                commodities = ReceiveDetailViewModel.GenerateReceiveDetailModels(_receiveService.FindById(Guid.Parse(receiveId)).ReceiveDetails);
                 
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
                 foreach (var gridCommodities in commodities)
                 {
@@ -735,8 +764,8 @@ namespace DRMFSS.Web.Controllers
                 }
             }
           
-            ViewData["Commodities"] =  repository.Commodity.GetAllSubCommodities().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
-            ViewData["Units"] = repository.Unit.GetAll().Select(u => new Models.UnitModel() { Id = u.UnitID, Name = u.Name }).ToList();
+            ViewData["Commodities"] =  _commodityService.GetAllSubCommodities().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
+            ViewData["Units"] = _unitService.GetAllUnit().Select(u => new Models.UnitModel() { Id = u.UnitID, Name = u.Name }).ToList();
             return View(new GridModel(commodities));
         }
 
@@ -753,7 +782,7 @@ namespace DRMFSS.Web.Controllers
             List <Commodity> comms = new List<Commodity>();
             if (receiptAllocationID != null && receiptAllocationID != "")
             {
-                var theComm = repository.ReceiptAllocation.FindById(Guid.Parse(receiptAllocationID)).Commodity;
+                var theComm = _receiptAllocationService.FindById(Guid.Parse(receiptAllocationID)).Commodity;
                 comms.Add(theComm);
                 if (theComm.ParentID == null)
                     foreach (var childcom in theComm.Commodity1)
@@ -762,8 +791,8 @@ namespace DRMFSS.Web.Controllers
                     }
             }
             if (!comms.Any())
-                comms = repository.ReceiptAllocation.GetAvailableCommodities(SINumber,
-                                                                                 repository.UserProfile.GetUser(
+                comms = _receiptAllocationService.GetAvailableCommodities(SINumber,
+                                                                                 _userProfileService.GetUser(
                                                                                      User.Identity.Name).DefaultHub.
                                                                                      HubID);
             if (comms.Any())
@@ -785,10 +814,10 @@ namespace DRMFSS.Web.Controllers
                 List<Commodity> Parents = new List<Commodity>();
                 if (commodityTypeId.HasValue)
                 {
-                    Parents = repository.Commodity.GetAllParents().Where(p => p.CommodityTypeID == commodityTypeId).ToList();
+                    Parents = _commodityService.GetAllParents().Where(p => p.CommodityTypeID == commodityTypeId).ToList();
                 }else
                 {
-                    Parents = repository.Commodity.GetAllParents();
+                    Parents = _commodityService.GetAllParents();
                 }
 
                 foreach (Commodity Parent in Parents)
@@ -823,7 +852,7 @@ namespace DRMFSS.Web.Controllers
         /// <returns></returns>
         public ActionResult AllocationStatus(string SINumber, int? CommoditySourceID, int? CommodityID, string receiptAllocationID)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             decimal totalAllocation = 0;
             decimal receivedAllocation = 0;
             decimal remainingAllocation = 0;
@@ -842,8 +871,7 @@ namespace DRMFSS.Web.Controllers
 
                 if (receiptAllocationID != null && receiptAllocationID != "")
                 {
-                    ReceiptAllocation theCurrentAllocation =
-                        repository.ReceiptAllocation.FindById(Guid.Parse(receiptAllocationID));
+                    ReceiptAllocation theCurrentAllocation =_receiptAllocationService.FindById(Guid.Parse(receiptAllocationID));
                     if (theCurrentAllocation != null)
                     {
                         Commodity commodity1 = theCurrentAllocation.Commodity;
@@ -855,7 +883,7 @@ namespace DRMFSS.Web.Controllers
 
                         decimal tAllocation = theCurrentAllocation.QuantityInMT;
                         
-                        decimal recAllocation = repository.ReceiptAllocation.GetReceivedAlready(theCurrentAllocation);
+                        decimal recAllocation = _receiptAllocationService.GetReceivedAlready(theCurrentAllocation);
 
                         list.Add(
                             new
@@ -877,7 +905,7 @@ namespace DRMFSS.Web.Controllers
                                  tAllocation = theCurrentAllocation.QuantityInUnit.Value;
                             }
                             
-                            decimal recAllocation = repository.ReceiptAllocation.GetReceivedAlreadyInUnit(theCurrentAllocation);
+                            decimal recAllocation = _receiptAllocationService.GetReceivedAlreadyInUnit(theCurrentAllocation);
                                
                                 list.Add(
                                     new
@@ -899,7 +927,7 @@ namespace DRMFSS.Web.Controllers
                 else
                 {
                     if (!commodities.Any())
-                        commodities = repository.ReceiptAllocation.GetAvailableCommoditiesFromUnclosed(SINumber,
+                        commodities = _receiptAllocationService.GetAvailableCommoditiesFromUnclosed(SINumber,
                                                                                                        user.DefaultHub.
                                                                                                            HubID, CommoditySourceID);
                     //TODO: make this work for all commodities that are available in the gift certificate
@@ -908,25 +936,25 @@ namespace DRMFSS.Web.Controllers
                     {
                         foreach (Commodity commodity1 in commodities)
                         {
-                            decimal tAllocation = repository.ReceiptAllocation.GetTotalAllocation(SINumber,
+                            decimal tAllocation = _receiptAllocationService.GetTotalAllocation(SINumber,
                                                                                                   commodity1.CommodityID,
                                                                                                   user.DefaultHub.HubID,CommoditySourceID);
                             
-                            int sI = repository.ShippingInstruction.GetShipingInstructionId(SINumber);
+                            int sI = _shippingInstructionService.GetShipingInstructionId(SINumber);
 
                             //TODO ask the details from elias about the line below
                             decimal sum = 0;
                                if(commodity1.CommodityTypeID == 1){
                                    foreach (ReceiptAllocation rAllocates in commodity1.ReceiptAllocations.Where(p => p.HubID == user.DefaultHub.HubID && p.CommoditySourceID == CommoditySourceID && p.IsClosed == false))
                                     {
-                                        sum = sum + repository.ReceiptAllocation.GetReceivedAlready(rAllocates);
+                                        sum = sum + _receiptAllocationService.GetReceivedAlready(rAllocates);
                                     }
                                }
                                else
                                {
                                    foreach (ReceiptAllocation rAllocates in commodity1.ReceiptAllocations.Where(p => p.HubID == user.DefaultHub.HubID && p.CommoditySourceID == CommoditySourceID && p.IsClosed == false))
                                    {
-                                       sum = sum + repository.ReceiptAllocation.GetReceivedAlreadyInUnit(rAllocates);
+                                       sum = sum + _receiptAllocationService.GetReceivedAlreadyInUnit(rAllocates);
                                    }
                                } 
                             decimal recAllocation = sum;
