@@ -6,26 +6,35 @@ using System.Web.Mvc;
 using DRMFSS.BLL;
 using System.Data;
 using DRMFSS.Web.Models;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     public class RolesController : BaseController
     {
         private CTSContext db = new CTSContext();
+        private readonly IRoleService _roleService;
 
+        public RolesController(IRoleService roleSerivce)
+        {
+            _roleService = roleSerivce;
+        }
         //
         // GET: /Admin/
+
 
         //[AutoMap(typeof(BLL.Role),typeof(DRMFSS.Web.Models.RoleModel))]
         public ViewResult Index()
         {
-            var roles = db.Roles;
-            return View("Index", roles.OrderBy(r => r.SortOrder).ToList());
+            var roles =  _roleService.GetAllRole().OrderBy(r=>r.SortOrder).ToList();
+            return View("Index",roles);
+            //var roles = db.Roles;
+            //return View("Index", roles.OrderBy(r => r.SortOrder).ToList());
         }
 
         public ActionResult Update()
         {
-            return PartialView(db.Roles.OrderBy(r => r.SortOrder).ToList());
+            return PartialView(_roleService.GetAllRole().OrderBy(r=>r.SortOrder)).ToList();
         }
 
         //
@@ -33,13 +42,16 @@ namespace DRMFSS.Web.Controllers
         //[AutoMap(typeof(BLL.Role), typeof(DRMFSS.Web.Models.RoleModel))]
         public ViewResult Details(int id)
         {
-            Role role = db.Roles.Single(u => u.RoleID == id);
+            Role role = _roleService.FindBy(r => r.RoleID == id);
             return View("Details", role);
+
+            //Role role = db.Roles.Single(u => u.RoleID == id);
+            //return View("Details", role);
         }
 
         public ActionResult Create()
         {
-            ViewBag.RoleId = new SelectList(db.Roles, "RoleID", "RoleID");
+            ViewBag.RoleId = new SelectList(_roleService.GetAllRole().ToList(), "RoleID", "RoleID");
             return PartialView("Create");
         }
         public bool testing(Role role)
@@ -52,8 +64,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)//testing(role))//
             {
-                db.Roles.Add(role);
-                db.SaveChanges();
+                _roleService.AddRole(role);
                 return Json(new { success = true }); 
             }
 
@@ -66,7 +77,8 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            Role role = db.Roles.Single(u => u.RoleID == id);
+            Role role = _roleService.FindBy(r => r.RoleID == id);
+            
             ViewBag.UserProfileID = new SelectList(db.UserRoles, "UserRoleID", "UserRoleID", role.RoleID);
             return PartialView("Edit", role);
         }
@@ -79,9 +91,8 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Roles.Attach(role);
-                db.Entry(role).State = EntityState.Modified;
-                db.SaveChanges();
+                _roleService.EditRole(role);
+                
                 return Json(new { success = true }); 
             }
             ViewBag.UserProfileID = new SelectList(db.Roles, "RoleID", "RoleID", role.RoleID);
@@ -93,7 +104,8 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Delete(int id)
         {
-            Role role = db.Roles.Single(u => u.RoleID == id);
+            Role role = _roleService.FindBy(r => r.RoleID == id);
+            
             return View(role);
         }
 
@@ -103,9 +115,10 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Role role = db.Roles.Single(u => u.RoleID == id);
-            db.Roles.Remove(role);
-            db.SaveChanges();
+            Role role = _roleService.FindBy(r => r.RoleID == id);
+
+            _roleService.DeleteRole(role);
+           
             return RedirectToAction("Index");
         }
 
