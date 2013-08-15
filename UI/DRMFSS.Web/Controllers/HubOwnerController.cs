@@ -6,8 +6,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
-using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
@@ -15,21 +15,22 @@ namespace DRMFSS.Web.Controllers
     {
 
        
+        private readonly IHubOwnerService _hubOwnerService;
 
-        public HubOwnerController()
+        public HubOwnerController(IHubOwnerService hubOwnerServiceParam)
         {
-            repository = new UnitOfWork();
+            this._hubOwnerService = hubOwnerServiceParam;
         }
 
 
         public virtual ActionResult Index()
         {
-            return View(repository.HubOwner.GetAll());
+            return View(_hubOwnerService.GetAllHubOwner());
         }
 
         public virtual ActionResult Update()
         {
-            return PartialView(repository.HubOwner.GetAll());
+            return PartialView(_hubOwnerService.GetAllHubOwner());
         }
         
         //
@@ -37,7 +38,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ViewResult Details(int id)
         {
-            HubOwner HubOwner = repository.HubOwner.FindById(id);
+            HubOwner HubOwner = _hubOwnerService.FindById(id);
             return View(HubOwner);
         }
 
@@ -57,7 +58,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.HubOwner.Add(HubOwner);
+                _hubOwnerService.AddHubOwner(HubOwner);
                 return Json(new { success = true }); 
             }
 
@@ -69,7 +70,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(int id)
         {
-            HubOwner HubOwner = repository.HubOwner.FindById(id);
+            HubOwner HubOwner = _hubOwnerService.FindById(id);
             return PartialView(HubOwner);
         }
 
@@ -81,7 +82,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.HubOwner.SaveChanges(HubOwner);
+                _hubOwnerService.EditHubOwner(HubOwner);
                 return Json(new { success = true }); 
             }
             return PartialView(HubOwner);
@@ -92,7 +93,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Delete(int id)
         {
-            HubOwner HubOwner = repository.HubOwner.FindById(id);
+            HubOwner HubOwner = _hubOwnerService.FindById(id);
             return View(HubOwner);
         }
 
@@ -102,7 +103,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            repository.HubOwner.DeleteByID(id);
+            _hubOwnerService.DeleteById(id);
             return RedirectToAction("Index");
         }
     }

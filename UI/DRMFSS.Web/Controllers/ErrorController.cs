@@ -5,14 +5,18 @@ using System.Web;
 using System.Web.Mvc;
 using DRMFSS.Web.Models;
 using DRMFSS.BLL;
-
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     public partial class ErrorController : BaseController
     {
-        private CTSContext db = new CTSContext();
+        private readonly IErrorService _ErrorService;
 
+        public ErrorController(IErrorService errorServiceParam)
+        {
+            _ErrorService = errorServiceParam;
+        }
         public virtual ActionResult NotFound(string url)
         {
             var originalUri = url ?? Request.QueryString["aspxerrorpath"] ?? Request.Url.OriginalString;
@@ -33,44 +37,17 @@ namespace DRMFSS.Web.Controllers
         // GET: /Error/
         public virtual ActionResult ViewErrors()
         {
+            
             //get all the errors here and paginate them for the admin/developer role
-            var errors = db.ErrorLogs.OrderByDescending(p => p.Sequence);
+            IEnumerable<ErrorLog> errors = _ErrorService.GetAllError();
             return View(errors.ToList());
         }
 
-       /* protected override void HandleUnknownAction(string actionName)
-        {
-            var name = GetViewName(ControllerContext, "~/Views/Error/{0}.cshtml".FormatWith(actionName),
-                                  "~/Views/Error/Error.cshtml",
-                                  "~/Views/Error/General.cshtml",
-                                  "~/Views/Shared/Error.cshtml");
-
-            var controllerName = (string)RouteData.Values["controller"];
-            var model = new HandleErrorInfo(Server.GetLastError(), controllerName, actionName);
-            var result = new ViewResult
-            {
-                ViewName = name,
-                ViewData = new ViewDataDictionary<HandleErrorInfo>(model),
-            };
-
-            Response.StatusCode = 501;
-            result.ExecuteResult(ControllerContext);
-        }
-
-        protected string GetViewName(ControllerContext context, params string[] names)
-        {
-            foreach (var name in names)
-            {
-                var result = ViewEngines.Engines.FindView(ControllerContext, name, null);
-                if (result.View != null)
-                    return name;
-            }
-            return null;
-        }*/
+       
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _ErrorService.Dispose();
             base.Dispose(disposing);
         }
 
