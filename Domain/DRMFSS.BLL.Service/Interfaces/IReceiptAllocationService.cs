@@ -17,6 +17,7 @@ namespace DRMFSS.BLL.Services
         ReceiptAllocation FindById(int id);
         List<ReceiptAllocation> GetAllReceiptAllocation();
         List<ReceiptAllocation> FindBy(Expression<Func<ReceiptAllocation, bool>> predicate);
+        ReceiptAllocation FindById(Guid id);
 
         // <summary>
         /// Finds the by SI number.
@@ -162,7 +163,7 @@ namespace DRMFSS.BLL.Services
 
         bool DeleteByID(Guid id);
 
-        ReceiptAllocation FindById(Guid id);
+        ReceiptAllocation FindByID(Guid id);
    
     }
 }
