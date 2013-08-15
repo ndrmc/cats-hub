@@ -6,19 +6,25 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     public class LetterTemplateController : BaseController
     {
         private IUnitOfWork repositories = new UnitOfWork();
+        private readonly ILetterTemplateService _letterTemplateService;
 
+        private LetterTemplateController(ILetterTemplateService letterTemplateService)
+        {
+            _letterTemplateService = letterTemplateService;
+        }
         //
         // GET: /LetterTemplate/
 
         public ViewResult Index()
         {
-            return View(repositories.LetterTemplate.GetAll());
+            return View(_letterTemplateService.GetAllLetterTemplate());
         }
 
         //
@@ -26,9 +32,12 @@ namespace DRMFSS.Web.Controllers
 
         public ViewResult Details(int id)
         {
-            LetterTemplate lettertemplate = repositories.LetterTemplate.FindById(id);
+            LetterTemplate lettertemplate = _letterTemplateService.FindById(id);
             lettertemplate.Template = Server.HtmlDecode(lettertemplate.Template);
             return View(lettertemplate);
+            //LetterTemplate lettertemplate = repositories.LetterTemplate.FindById(id);
+            //lettertemplate.Template = Server.HtmlDecode(lettertemplate.Template);
+            //return View(lettertemplate);
         }
 
         //
@@ -49,7 +58,8 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repositories.LetterTemplate.Add(lettertemplate);
+                _letterTemplateService.AddLetterTemplate(lettertemplate);
+               // repositories.LetterTemplate.Add(lettertemplate);
                 return RedirectToAction("Index");  
             }
 
@@ -61,7 +71,8 @@ namespace DRMFSS.Web.Controllers
  
         public ActionResult Edit(int id)
         {
-            LetterTemplate lettertemplate = repositories.LetterTemplate.FindById(id);
+
+            LetterTemplate lettertemplate = _letterTemplateService.FindById(id);
             lettertemplate.Template = Server.HtmlDecode(lettertemplate.Template);
             return View(lettertemplate);
         }
@@ -74,7 +85,8 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repositories.LetterTemplate.SaveChanges(lettertemplate);
+                _letterTemplateService.EditLetterTemplate(lettertemplate);
+               
                 return RedirectToAction("Index");
             }
             return View(lettertemplate);
@@ -85,7 +97,7 @@ namespace DRMFSS.Web.Controllers
  
         public ActionResult Delete(int id)
         {
-            LetterTemplate lettertemplate = repositories.LetterTemplate.FindById(id);
+            LetterTemplate lettertemplate = _letterTemplateService.FindById(id);
             return View(lettertemplate);
         }
 
@@ -95,14 +107,15 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            repositories.LetterTemplate.DeleteByID(id);
+            _letterTemplateService.DeleteById(id);
+            //repositories.LetterTemplate.DeleteByID(id);
             return RedirectToAction("Index");
         }
 
 
         public ActionResult SelectPrintTemplate(int certificateId)
         {
-            List<BLL.LetterTemplate> templates = repositories.LetterTemplate.GetAll();
+            List<BLL.LetterTemplate> templates = _letterTemplateService.GetAllLetterTemplate();
             ViewBag.Templates = new SelectList(templates.OrderBy(p => p.Name),"LetterTemplateID", "Name");
             Models.PrintCertificateModel model = new Models.PrintCertificateModel();
             model.SelectedCertificateId = certificateId;
@@ -114,6 +127,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 return RedirectToAction("LetterPreview",new {certificateId = model.SelectedCertificateId, templateId = model.SelctedTemplateId});
             }
             return View();
@@ -129,7 +143,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult LetterPreview(int certificateId)
         {
-            List<BLL.LetterTemplate> templates = repositories.LetterTemplate.GetAll();
+            List<BLL.LetterTemplate> templates = _letterTemplateService.GetAllLetterTemplate();
             ViewBag.Templates = new SelectList(templates.OrderBy(p => p.Name), "LetterTemplateID", "Name");
             Models.PrintCertificateModel model = new Models.PrintCertificateModel();
             model.SelectedCertificateId = certificateId;
