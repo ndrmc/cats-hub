@@ -15,7 +15,7 @@ namespace DRMFSS.Web.Controllers
     {
 
          private readonly ITransporterService _transporterService;
-         public void Transporter(ITransporterService transporterService)
+         public  TransporterController(ITransporterService transporterService)
          {
              _transporterService = transporterService;
          }
