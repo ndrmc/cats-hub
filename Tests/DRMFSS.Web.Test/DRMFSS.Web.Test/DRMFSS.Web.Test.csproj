@@ -71,6 +71,7 @@
     <Compile Include="CommoditySourceTests.cs" />
     <Compile Include="CommodityTypeControllerTests.cs" />
     <Compile Include="ContactControllerTests.cs" />
+    <Compile Include="CurrentHubControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitControllerTests.cs" />
   </ItemGroup>
