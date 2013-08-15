@@ -33,9 +33,9 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ViewResult Index()
         {
-            var ReceiveDetails = _receiveDetailService.GetAllReceiveDetail();
+            var receiveDetails = _receiveDetailService.GetAllReceiveDetail();
                 //db.ReceiveDetails.Include("Commodity").Include("CommodityGrade").Include("Receive").Include("Unit");
-            return View(ReceiveDetails.ToList());
+            return View(receiveDetails.ToList());
         }
 
        

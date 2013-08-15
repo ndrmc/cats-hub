@@ -91,7 +91,11 @@ namespace DRMFSS.BLL.Services
             return ports;
         }
 
+        public Receive FindByGuId(System.Guid id)
+        {
+            return _unitOfWork.ReceiveRepository.FindBy(t => t.ReceiveID == id).FirstOrDefault();
 
+        }
 
     }
 }
