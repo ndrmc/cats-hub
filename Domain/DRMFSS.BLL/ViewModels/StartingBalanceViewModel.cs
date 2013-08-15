@@ -30,7 +30,7 @@ namespace DRMFSS.BLL.ViewModels
         {
         }
 
-
+        
 
         [Required(ErrorMessage = "Commodity is required")]
         public Int32 CommodityID { get; set; }
@@ -73,13 +73,14 @@ namespace DRMFSS.BLL.ViewModels
         public List<Unit> Units { get; set; }
         public List<Donor> Donors { get; set; }
 
-        public StartingBalanceViewModel(IUnitOfWork repository, UserProfile user)
+        public StartingBalanceViewModel(List<Commodity> com,List<Store> stores,List<Unit> units, List<Program> programs, List<Donor> donors, UserProfile user)
         {
-           Commodities = repository.Commodity.GetAll();
-           Stores = repository.Store.GetAll().Where(p=>p.HubID == user.DefaultHub.HubID).ToList();
-           Units = repository.Unit.GetAll();
-           Programs = repository.Program.GetAll();
-           Donors = repository.Donor.GetAll();
+
+           Commodities = com;
+           Stores = stores;
+           Units = units;
+           Programs = programs;
+           Donors = donors;
         }
     }
 }
