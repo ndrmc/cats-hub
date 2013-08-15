@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 using DRMFSS.Web.Models;
 
 namespace DRMFSS.Web.Controllers.Allocations
@@ -13,10 +14,24 @@ namespace DRMFSS.Web.Controllers.Allocations
     [Authorize]
     public class ReceiptAllocationController : BaseController
     {
+        private readonly IReceiptAllocationService _receiptAllocationService;
+        private readonly IUserProfileService _userProfileService;
+        private readonly ICommoditySourceService _commoditySourceService;
+        private readonly IGiftCertificateService _giftCertificateService;
+        private readonly ICommodityService _commodityService;
+        private readonly IDonorService _donorService;
+        private readonly IGiftCertificateDetailService _giftCertificateDetailService;
 
-        public ReceiptAllocationController()
+        public ReceiptAllocationController(IReceiptAllocationService receiptAllocationService,IUserProfileService userProfileService,ICommoditySourceService commoditySourceService,IGiftCertificateService giftCertificateService,ICommodityService commodityService,
+            IDonorService donorService,IGiftCertificateDetailService giftCertificateDetailService)
         {
-
+            this._receiptAllocationService = receiptAllocationService;
+            this._userProfileService = userProfileService;
+            this._commoditySourceService = commoditySourceService;
+            this._giftCertificateService = giftCertificateService;
+            this._commodityService = commodityService;
+            this._donorService = donorService;
+            this._giftCertificateDetailService = giftCertificateDetailService;
         }
 
         public ActionResult SelfReference(int HubID, int? SourceHubID)
@@ -31,9 +46,9 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult QuantityNotValid(Decimal QuantityInMt, string SINumber)
         {
 
-            decimal AlreadyAllocateDBalance = repository.ReceiptAllocation.GetBalanceForSI(SINumber);
+            decimal AlreadyAllocateDBalance = _receiptAllocationService.GetBalanceForSI(SINumber);
             // decimal TotalAllocatedOnGiftCetificate =
-            //     repository.GiftCertificateDetail.GetAll().Where(p=>p.GiftCertificate.SINumber == SINumber).Aggregate(q=>q.WeightInMT);
+            //     _giftCertificateServiceDetail.GetAll().Where(p=>p.GiftCertificate.SINumber == SINumber).Aggregate(q=>q.WeightInMT);
 
             return Json(true, JsonRequestBehavior.AllowGet);
         }
@@ -48,9 +63,9 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult AllocationList(string SInumber, int type)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             var list =
-                repository.ReceiptAllocation.GetAllByTypeMerged(type).Where(
+                _receiptAllocationService.GetAllByTypeMerged(type).Where(
                     p => p.SINumber == SInumber && p.HubID == user.DefaultHub.HubID);
             //foreach (BLL.ReceiptAllocation receiptAllocation in list)
             //{
@@ -78,21 +93,21 @@ namespace DRMFSS.Web.Controllers.Allocations
                 sourceType = Convert.ToInt32(Request["type"]);
             }
 
-            List<BLL.ReceiptAllocation> list = repository.ReceiptAllocation.GetAllByTypeMerged(sourceType);
+            List<BLL.ReceiptAllocation> list = _receiptAllocationService.GetAllByTypeMerged(sourceType);
 
             ViewBag.CommoditySourceType = sourceType;
 
             if (BLL.CommoditySource.Constants.DONATION == sourceType)
             {
-                ViewBag.CommoditySourceTypeText = repository.CommoditySource.FindById(sourceType).Name;
+                ViewBag.CommoditySourceTypeText = _commoditySourceService.FindById(sourceType).Name;
             }
             //else if (BLL.CommoditySource.Constants.TRANSFER == sourceType)
             //{
-            //    ViewBag.CommoditySourceTypeText = repository.CommoditySource.FindById(sourceType).Name;
+            //    ViewBag.CommoditySourceTypeText = _commoditySourceService.FindById(sourceType).Name;
             //}
             else if (BLL.CommoditySource.Constants.LOCALPURCHASE == sourceType)
             {
-                ViewBag.CommoditySourceTypeText = repository.CommoditySource.FindById(sourceType).Name;
+                ViewBag.CommoditySourceTypeText = _commoditySourceService.FindById(sourceType).Name;
             }
             else if (BLL.CommoditySource.Constants.TRANSFER == sourceType ||
                     BLL.CommoditySource.Constants.REPAYMENT == sourceType ||
@@ -107,7 +122,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult Create(int? type)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             ReceiptAllocationViewModel viewModel = new DRMFSS.Web.Models.ReceiptAllocationViewModel(repository, user);
             viewModel.HubID = user.DefaultHub.HubID;
 
@@ -161,7 +176,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                     receiptAllocationViewModel.GiftCertificateDetailID == null
                     )
                 {
-                    var GC = repository.GiftCertificate.FindBySINumber(receiptAllocationViewModel.SINumber);
+                    var GC = _giftCertificateService.FindBySINumber(receiptAllocationViewModel.SINumber);
 
                     if (GC != null)
                     {
@@ -179,9 +194,9 @@ namespace DRMFSS.Web.Controllers.Allocations
                     }
                 }
                 int typeOfGridToReload = receiptAllocation.CommoditySourceID;
-                int commType = repository.Commodity.FindById(receiptAllocation.CommodityID).CommodityTypeID;
+                int commType = _commodityService.FindById(receiptAllocation.CommodityID).CommodityTypeID;
                 //override to default hub
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
                 receiptAllocation.HubID = user.DefaultHub.HubID;
 
                 if (typeOfGridToReload != DRMFSS.BLL.CommoditySource.Constants.DONATION &&
@@ -190,7 +205,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                     typeOfGridToReload = DRMFSS.BLL.CommoditySource.Constants.LOAN;
                 }
 
-                repository.ReceiptAllocation.Add(receiptAllocation);
+                _receiptAllocationService.AddReceiptAllocation(receiptAllocation);
 
                 return Json(new {gridId = typeOfGridToReload, CommodityTypeID = commType}, JsonRequestBehavior.AllowGet);
                 //return RedirectToAction("Index");
@@ -206,8 +221,8 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult Edit(String allocationId)
         {
 
-            var receiptAllocation = repository.ReceiptAllocation.FindById(Guid.Parse(allocationId));
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            var receiptAllocation = _receiptAllocationService.FindById(Guid.Parse(allocationId));
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             ReceiptAllocationViewModel receiptAllocationViewModel = new ReceiptAllocationViewModel(repository, user);
             if (receiptAllocation != null) // && receiptAllocation.IsCommited == false)
             {
@@ -240,7 +255,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                 receiptAllocationViewModel.Remark = receiptAllocation.Remark;
 
 
-                GiftCertificate GC = repository.GiftCertificate.FindBySINumber(receiptAllocationViewModel.SINumber);
+                GiftCertificate GC = _giftCertificateService.FindBySINumber(receiptAllocationViewModel.SINumber);
                 if (GC != null && receiptAllocation.CommoditySourceID == BLL.CommoditySource.Constants.DONATION)
                 {
                     receiptAllocationViewModel.Commodities.Clear();
@@ -258,7 +273,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                     receiptAllocationViewModel.ProgramID = GC.ProgramID;
                     receiptAllocationViewModel.CommoditySources.Clear();
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.DONATION));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.DONATION));
                     receiptAllocationViewModel.CommoditySourceID = BLL.CommoditySource.Constants.DONATION;
 
                 }
@@ -271,19 +286,19 @@ namespace DRMFSS.Web.Controllers.Allocations
                 {
                     receiptAllocationViewModel.CommoditySources.Clear();
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.DONATION));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.DONATION));
                 }
                 //else if (BLL.CommoditySource.Constants.TRANSFER == sourceType)
                 //{
                 //    receiptAllocationViewModel.CommoditySources.Clear();
                 //    receiptAllocationViewModel.CommoditySources.Add(
-                //        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.TRANSFER));
+                //        _commoditySourceService.FindById(BLL.CommoditySource.Constants.TRANSFER));
                 //}
                 else if (BLL.CommoditySource.Constants.LOCALPURCHASE == sourceType)
                 {
                     receiptAllocationViewModel.CommoditySources.Clear();
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.LOCALPURCHASE));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.LOCALPURCHASE));
                 }
                 else if (BLL.CommoditySource.Constants.TRANSFER == sourceType ||
                          BLL.CommoditySource.Constants.REPAYMENT == sourceType ||
@@ -292,13 +307,13 @@ namespace DRMFSS.Web.Controllers.Allocations
                 {
                     receiptAllocationViewModel.CommoditySources.Clear();
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.REPAYMENT));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.REPAYMENT));
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.LOAN));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.LOAN));
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.SWAP));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.SWAP));
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.TRANSFER));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.TRANSFER));
 
                 }
                 // }
@@ -318,7 +333,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         {
             if (CommoditySourceID.HasValue && CommoditySourceID.Value == BLL.CommoditySource.Constants.DONATION)
             {
-                var mustBeInGift = repository.GiftCertificate.FindBySINumber(SINUmber);
+                var mustBeInGift = _giftCertificateService.FindBySINumber(SINUmber);
                 return Json((mustBeInGift != null), JsonRequestBehavior.AllowGet);
             }
             return Json(true, JsonRequestBehavior.AllowGet);
@@ -327,9 +342,9 @@ namespace DRMFSS.Web.Controllers.Allocations
         private bool IsSIValid(string SINumber, int CommoditySourceID)
         {
             //check allocation and gc for the same record
-            var fromGc = repository.GiftCertificate.FindBySINumber(SINumber);
+            var fromGc = _giftCertificateService.FindBySINumber(SINumber);
             bool fromRall =
-                repository.ReceiptAllocation.IsSINSource(BLL.CommoditySource.Constants.DONATION, SINumber);
+                _receiptAllocationService.IsSINSource(BLL.CommoditySource.Constants.DONATION, SINumber);
 
             if (CommoditySourceID == BLL.CommoditySource.Constants.LOCALPURCHASE)
             {
@@ -341,11 +356,11 @@ namespace DRMFSS.Web.Controllers.Allocations
             }
             //just incase the user is bad
             bool fromRallt =
-                repository.ReceiptAllocation.IsSINSource(BLL.CommoditySource.Constants.LOCALPURCHASE, SINumber);
+                _receiptAllocationService.IsSINSource(BLL.CommoditySource.Constants.LOCALPURCHASE, SINumber);
 
             if (CommoditySourceID == BLL.CommoditySource.Constants.DONATION)
             {
-                //var mustBeInGift = repository.GiftCertificate.FindBySINumber(SINumber);
+                //var mustBeInGift = _giftCertificateService.FindBySINumber(SINumber);
                 if
                     (fromRallt)
                 {
@@ -389,16 +404,17 @@ namespace DRMFSS.Web.Controllers.Allocations
             {
                 BLL.ReceiptAllocation receiptAllocation = receiptAllocationViewModel.GenerateReceiptAllocation();
                 int typeOfGridToReload = receiptAllocation.CommoditySourceID;
-                int commType = repository.Commodity.FindById(receiptAllocation.CommodityID).CommodityTypeID;
+                int commType = _commodityService.FindById(receiptAllocation.CommodityID).CommodityTypeID;
                 //override to default hub
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
                 receiptAllocation.HubID = user.DefaultHub.HubID;
                 if (typeOfGridToReload != DRMFSS.BLL.CommoditySource.Constants.DONATION &&
                     typeOfGridToReload != DRMFSS.BLL.CommoditySource.Constants.LOCALPURCHASE)
                 {
                     typeOfGridToReload = DRMFSS.BLL.CommoditySource.Constants.LOAN;
                 }
-                repository.ReceiptAllocation.SaveChanges(receiptAllocation);
+                //TODO:Check savechanges -> EditRecieptAllocation
+                _receiptAllocationService.EditReceiptAllocation(receiptAllocation);
                 return Json(new {gridId = typeOfGridToReload, CommodityTypeID = commType}, JsonRequestBehavior.AllowGet);
                 //return RedirectToAction("Index");
             }
@@ -415,12 +431,12 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult LoadBySIPartial(string SInumber, int? type)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             ReceiptAllocationViewModel receiptAllocationViewModel = new ReceiptAllocationViewModel(repository, user);
             receiptAllocationViewModel.HubID = user.DefaultHub.HubID;
             if (SInumber != null)
             {
-                GiftCertificate GC = repository.GiftCertificate.FindBySINumber(SInumber);
+                GiftCertificate GC = _giftCertificateService.FindBySINumber(SInumber);
                 if (GC != null && type == BLL.CommoditySource.Constants.DONATION)
                 {
                     receiptAllocationViewModel.Commodities.Clear();
@@ -438,12 +454,12 @@ namespace DRMFSS.Web.Controllers.Allocations
                     receiptAllocationViewModel.ProgramID = GC.ProgramID;
                     receiptAllocationViewModel.CommoditySources.Clear();
                     receiptAllocationViewModel.CommoditySources.Add(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.DONATION));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.DONATION));
                     receiptAllocationViewModel.CommoditySourceID = BLL.CommoditySource.Constants.DONATION;
                     var hubs = new List<BLL.Hub>();
                     //foreach (var c in receiptAllocationViewModel.Hubs)
                     //{
-                    //    var bySI = repository.ReceiptAllocation.FindBySINumber(SInumber);
+                    //    var bySI = _receiptAllocationService.FindBySINumber(SInumber);
 
                     //    if(bySI.Find(p=>p.HubID == c.HubID) == null )
                     //    {
@@ -465,7 +481,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                 else
                 {
                     receiptAllocationViewModel.CommoditySources.Remove(
-                        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.DONATION));
+                        _commoditySourceService.FindById(BLL.CommoditySource.Constants.DONATION));
                     //remove the donor and add the 
                 }
             }
@@ -477,33 +493,33 @@ namespace DRMFSS.Web.Controllers.Allocations
                 sourceType = Convert.ToInt32(Request["type"]);
             }
 
-            //List<BLL.ReceiptAllocation> list = repository.ReceiptAllocation.GetAllByType(sourceType);
+            //List<BLL.ReceiptAllocation> list = _receiptAllocationService.GetAllByType(sourceType);
 
             ViewBag.CommoditySourceType = sourceType;
 
             if (BLL.CommoditySource.Constants.DONATION == sourceType)
             {
-                ViewBag.CommoditySourceTypeText = repository.CommoditySource.FindById(sourceType).Name;
+                ViewBag.CommoditySourceTypeText = _commoditySourceService.FindById(sourceType).Name;
                 receiptAllocationViewModel.CommoditySources.Clear();
                 receiptAllocationViewModel.CommoditySources.Add(
-                    repository.CommoditySource.FindById(BLL.CommoditySource.Constants.DONATION));
+                    _commoditySourceService.FindById(BLL.CommoditySource.Constants.DONATION));
                 receiptAllocationViewModel.CommoditySourceID = BLL.CommoditySource.Constants.DONATION;
 
             }
             //else if (BLL.CommoditySource.Constants.TRANSFER == sourceType)
             //{
-            //    ViewBag.CommoditySourceTypeText = repository.CommoditySource.FindById(sourceType).Name;
+            //    ViewBag.CommoditySourceTypeText = _commoditySourceService.FindById(sourceType).Name;
             //    receiptAllocationViewModel.CommoditySources.Clear();
             //    receiptAllocationViewModel.CommoditySources.Add(
-            //        repository.CommoditySource.FindById(BLL.CommoditySource.Constants.TRANSFER));
+            //        _commoditySourceService.FindById(BLL.CommoditySource.Constants.TRANSFER));
             //    receiptAllocationViewModel.CommoditySourceID = BLL.CommoditySource.Constants.TRANSFER;
             //}
             else if (BLL.CommoditySource.Constants.LOCALPURCHASE == sourceType)
             {
-                ViewBag.CommoditySourceTypeText = repository.CommoditySource.FindById(sourceType).Name;
+                ViewBag.CommoditySourceTypeText = _commoditySourceService.FindById(sourceType).Name;
                 receiptAllocationViewModel.CommoditySources.Clear();
                 receiptAllocationViewModel.CommoditySources.Add(
-                    repository.CommoditySource.FindById(BLL.CommoditySource.Constants.LOCALPURCHASE));
+                    _commoditySourceService.FindById(BLL.CommoditySource.Constants.LOCALPURCHASE));
                 receiptAllocationViewModel.CommoditySourceID = BLL.CommoditySource.Constants.LOCALPURCHASE;
             }
             else if (BLL.CommoditySource.Constants.TRANSFER == sourceType ||
@@ -514,13 +530,13 @@ namespace DRMFSS.Web.Controllers.Allocations
                 ViewBag.CommoditySourceTypeText = "Loan, Repayment, transfer and Swap";
                 receiptAllocationViewModel.CommoditySources.Clear();
                 receiptAllocationViewModel.CommoditySources.Add(
-                    repository.CommoditySource.FindById(BLL.CommoditySource.Constants.REPAYMENT));
+                    _commoditySourceService.FindById(BLL.CommoditySource.Constants.REPAYMENT));
                 receiptAllocationViewModel.CommoditySources.Add(
-                    repository.CommoditySource.FindById(BLL.CommoditySource.Constants.LOAN));
+                    _commoditySourceService.FindById(BLL.CommoditySource.Constants.LOAN));
                 receiptAllocationViewModel.CommoditySources.Add(
-                    repository.CommoditySource.FindById(BLL.CommoditySource.Constants.SWAP));
+                    _commoditySourceService.FindById(BLL.CommoditySource.Constants.SWAP));
                 receiptAllocationViewModel.CommoditySources.Add(
-                    repository.CommoditySource.FindById(BLL.CommoditySource.Constants.TRANSFER));
+                    _commoditySourceService.FindById(BLL.CommoditySource.Constants.TRANSFER));
             }
 
             receiptAllocationViewModel.SINumber = SInumber;
@@ -531,7 +547,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult GetAvailableSINumbers()
         {
 
-            var SINumbers = from item in repository.GiftCertificate.GetAll()
+            var SINumbers = from item in _giftCertificateService.GetAllGiftCertificate()
                             select new Models.SelectListItemModel()
                                        {
                                            Id = item.SINumber,
@@ -544,7 +560,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult GetAvailableSINumbersAsText(bool? AllSIs, int commoditySoureType)
             //we can accept null and defualt to donation
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             if (AllSIs != null && AllSIs == true)
             {
@@ -553,7 +569,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
                 if (commoditySoureType == DRMFSS.BLL.CommoditySource.Constants.DONATION)
                 {
-                    SINumbers = from item in repository.GiftCertificate.GetAll()
+                    SINumbers = from item in _giftCertificateService.GetAllGiftCertificate()
                                 select new Models.SelectListItemModel()
                                            {
                                                Id = item.SINumber,
@@ -564,7 +580,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                 else
                 {
                     SINumbersRA =
-                        from r in repository.ReceiptAllocation.GetSIsWithOutGiftCertificate(commoditySoureType)
+                        from r in _receiptAllocationService.GetSIsWithOutGiftCertificate(commoditySoureType)
                         select new Models.SelectListItemModel()
                                    {
                                        Id = r,
@@ -583,7 +599,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
                 if (commoditySoureType == DRMFSS.BLL.CommoditySource.Constants.DONATION)
                 {
-                    SINumbersGCD = from p in repository.GiftCertificateDetail.GetUncommitedSIs()
+                    SINumbersGCD = from p in _giftCertificateDetailService.GetUncommitedSIs()
                                    select new Models.SelectListItemModel()
                                               {
                                                   Id = p,
@@ -594,7 +610,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                 else
                 {
                     SINumbersRA =
-                        from r in repository.ReceiptAllocation.GetSIsWithOutGiftCertificate(commoditySoureType)
+                        from r in _receiptAllocationService.GetSIsWithOutGiftCertificate(commoditySoureType)
                         select new Models.SelectListItemModel()
                                    {
                                        Id = r,
@@ -612,7 +628,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult GetSIBalances()
         {
-            var list = repository.GiftCertificate.GetSIBalances();
+            var list = _giftCertificateService.GetSIBalances();
             return PartialView("SIBalance", list);
         }
 
@@ -620,10 +636,10 @@ namespace DRMFSS.Web.Controllers.Allocations
         [HttpPost]
         public ActionResult CommitAllocation(string[] checkedRecords, int? SINumber)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (checkedRecords != null)
             {
-                repository.ReceiptAllocation.CommitReceiveAllocation(checkedRecords, user);
+                _receiptAllocationService.CommitReceiveAllocation(checkedRecords, user);
             }
 
             //return AllocationList(SINumber.Value);
@@ -635,11 +651,11 @@ namespace DRMFSS.Web.Controllers.Allocations
 
             if (siNumber != null) // && commodityId.HasValue)
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
                 decimal GCbalance = 0;
                 decimal allocateBalance = 0;
                 string commodity = "";
-                var GC = repository.GiftCertificate.FindBySINumber(siNumber);
+                var GC = _giftCertificateService.FindBySINumber(siNumber);
                 if (GC != null)
                 {
 
@@ -649,7 +665,7 @@ namespace DRMFSS.Web.Controllers.Allocations
                         commodity = GCD.Commodity.Name;
                     }
 
-                    allocateBalance = repository.ReceiptAllocation.GetBalanceForSI(GC.SINumber); //, commodityId.Value);
+                    allocateBalance = _receiptAllocationService.GetBalanceForSI(GC.SINumber); //, commodityId.Value);
 
                 }
                 //else
@@ -667,7 +683,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult Delete(string id)
         {
-            var delAllocation = repository.ReceiptAllocation.FindById(Guid.Parse(id));
+            var delAllocation = _receiptAllocationService.FindById(Guid.Parse(id));
             return View("Delete", delAllocation);
         }
 
@@ -678,11 +694,11 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult DeleteConfirmed(string id)
         {
 
-            var delAllocation = repository.ReceiptAllocation.FindById(Guid.Parse(id));
+            var delAllocation = _receiptAllocationService.FindById(Guid.Parse(id));
             int typeOfallocation = delAllocation.CommoditySourceID;
             if (delAllocation != null)
             {
-                repository.ReceiptAllocation.DeleteByID(Guid.Parse(id));
+                _receiptAllocationService.DeleteByID(Guid.Parse(id));
                 return RedirectToAction("Index", "ReceiptAllocation", new {type = typeOfallocation});
             }
 
@@ -695,7 +711,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult Close(string id)
         {
-            var delAllocation = repository.ReceiptAllocation.FindById(Guid.Parse(id));
+            var delAllocation = _receiptAllocationService.FindById(Guid.Parse(id));
             return PartialView("Close", delAllocation);
         }
 
@@ -703,13 +719,13 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult CloseConfirmed(string id)
         {
 
-            var delAllocation = repository.ReceiptAllocation.FindById(Guid.Parse(id));
+            var delAllocation = _receiptAllocationService.FindById(Guid.Parse(id));
 
             if (delAllocation != null)
             {
                 int typeOfGridToReload = delAllocation.CommoditySourceID;
                 int commType = delAllocation.Commodity.CommodityTypeID;
-                repository.ReceiptAllocation.CloseById(Guid.Parse(id));
+                _receiptAllocationService.CloseById(Guid.Parse(id));
                 //return the type of the allocation closed so that we can reload that respective grid(i.e. not every grid)
                 if (typeOfGridToReload != DRMFSS.BLL.CommoditySource.Constants.DONATION &&
                     typeOfGridToReload != DRMFSS.BLL.CommoditySource.Constants.LOCALPURCHASE)
@@ -745,14 +761,14 @@ namespace DRMFSS.Web.Controllers.Allocations
             
             if (DonorID != null)
             {
-                Donor repositoryDonorFindById = repository.Donor.FindById(DonorID.Value);
+                Donor repositoryDonorFindById = _donorService.FindById(DonorID.Value);
                 if (repositoryDonorFindById != null && repositoryDonorFindById.DonorCode != null)
                     projectCode += repositoryDonorFindById.DonorCode.ToUpperInvariant();
             }
 
             if (CommodityID != null)
             {
-                Commodity repositoryCommodityFindById = repository.Commodity.FindById(CommodityID.Value);
+                Commodity repositoryCommodityFindById = _commodityService.FindById(CommodityID.Value);
                 if (repositoryCommodityFindById != null && repositoryCommodityFindById.CommodityCode != null)
                 {
                     projectCode += "-" + repositoryCommodityFindById.CommodityCode.ToUpperInvariant();
@@ -762,11 +778,11 @@ namespace DRMFSS.Web.Controllers.Allocations
 
             projectCode += "-" + ((QuantityInMT ?? 0).ToString()).ToUpperInvariant();
 
-                if (repository.GiftCertificate.FindBySINumber(SINumber) != null &&
-                    repository.GiftCertificate.FindBySINumber(SINumber).GiftCertificateDetails.Any(
+                if (_giftCertificateService.FindBySINumber(SINumber) != null &&
+                    _giftCertificateService.FindBySINumber(SINumber).GiftCertificateDetails.Any(
                         p => p.CommodityID == CommodityID))
                     projectCode += "/" +
-                                    repository.GiftCertificate.FindBySINumber(SINumber).GiftCertificateDetails.Where(
+                                    _giftCertificateService.FindBySINumber(SINumber).GiftCertificateDetails.Where(
                                         p => p.CommodityID == CommodityID).Sum(q => q.WeightInMT);
 
             return Json(projectCode , JsonRequestBehavior.AllowGet );
