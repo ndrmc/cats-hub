@@ -27,7 +27,6 @@ namespace DRMFSS.Web.Controllers
             _receiveService = receiveService;
             _unitService = unitService;
         }
-
         //
         // GET: /ReceiveDetail/
 
@@ -82,6 +81,7 @@ namespace DRMFSS.Web.Controllers
             ViewBag.CommodityGradeID = new SelectList(_commodityGradeService.GetAllCommodityGrade(), "CommodityGradeID", "Name");
             ViewBag.ReceiveID = new SelectList(_receiveService.GetAllReceive(), "ReceiveID", "SINumber", ReceiveDetail.ReceiveID);
             ViewBag.UnitID = new SelectList(_unitService.GetAllUnit(), "UnitID", "Name", ReceiveDetail.UnitID);
+            ViewBag.UnitID = new SelectList(_unitService.GetAllUnit().ToList(), "UnitID", "Name", ReceiveDetail.UnitID);
             return View(ReceiveDetail);
         }
 
@@ -101,6 +101,7 @@ namespace DRMFSS.Web.Controllers
             ViewBag.CommodityGradeID = new SelectList(_commodityGradeService.GetAllCommodityGrade(), "CommodityGradeID", "Name");
             ViewBag.ReceiveID = new SelectList(_receiveService.GetAllReceive(), "ReceiveID", "SINumber", ReceiveDetail.ReceiveID);
             ViewBag.UnitID = new SelectList(_unitService.GetAllUnit(), "UnitID", "Name", ReceiveDetail.UnitID);
+            ViewBag.UnitID = new SelectList(_unitService.GetAllUnit().ToList(), "UnitID", "Name", ReceiveDetail.UnitID);
             return View(ReceiveDetail);
         }
 

@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
-using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     public class DonorController : BaseController
     {
+        private readonly IDonorService _donorService;
+
+        public DonorController(IDonorService donorService)
+        {
+            _donorService = donorService;
+        }
         
         public  ViewResult Index()
         {
-            return View(repository.Donor.GetAll().OrderBy(o=>o.Name).ToList());
+            return View(_donorService.GetAllDonor().OrderBy(o=>o.Name).ToList());
         }
 
 
         public  ActionResult ListPartial()
         {
-            return PartialView(repository.Donor.GetAll().OrderBy(o => o.Name).ToList());
+            return PartialView(_donorService.GetAllDonor().OrderBy(o => o.Name).ToList());
         }
 
         //
@@ -30,7 +30,7 @@ namespace DRMFSS.Web.Controllers
 
         public  ViewResult Details(int id)
         {
-            Donor donor = repository.Donor.FindById(id);
+            var donor = _donorService.FindById(id);
             return View(donor);
         }
 
@@ -50,7 +50,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Donor.Add(donor);
+                _donorService.AddDonor(donor);
                 return Json(new { success = true });  
             }
 
@@ -62,7 +62,7 @@ namespace DRMFSS.Web.Controllers
 
         public  ActionResult Edit(int id)
         {
-            Donor donor = repository.Donor.FindById(id);
+            var donor = _donorService.FindById(id);
             return PartialView(donor);
         }
 
@@ -72,9 +72,9 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public  ActionResult Edit(Donor donor)
         {
-            if (ModelState.IsValid && repository.Donor.IsCodeValid(donor.DonorCode,donor.DonorID))
+            if (ModelState.IsValid && _donorService.IsCodeValid(donor.DonorCode,donor.DonorID))
             {
-                repository.Donor.SaveChanges(donor);
+                _donorService.EditDonor(donor);
                 return Json(new { success = true });  
             }
             return PartialView(donor);
@@ -85,7 +85,7 @@ namespace DRMFSS.Web.Controllers
 
         public  ActionResult Delete(int id)
         {
-            Donor donor = repository.Donor.FindById(id);
+            var donor = _donorService.FindById(id);
             return View(donor);
         }
 
@@ -95,18 +95,13 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public  ActionResult DeleteConfirmed(int id)
         {
-            repository.Donor.DeleteByID(id);
+            _donorService.DeleteById(id);
             return RedirectToAction("Index");
         }
 
-        public JsonResult IsCodeValid(string DonorCode, int? DonorID)
+        public JsonResult IsCodeValid(string donorCode, int? donorID)
         {
-            return Json(repository.Donor.IsCodeValid(DonorCode, DonorID), JsonRequestBehavior.AllowGet);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
+            return Json(_donorService.IsCodeValid(donorCode, donorID), JsonRequestBehavior.AllowGet);
         }
     }
 }

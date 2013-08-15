@@ -61,6 +61,10 @@ namespace DRMFSS.BLL.Services
         {
             return _unitOfWork.OtherDispatchAllocationRepository.FindById(id);
         }
+        public OtherDispatchAllocation FindById(Guid id)
+        {
+            return _unitOfWork.OtherDispatchAllocationRepository.FindBy(t => t.OtherDispatchAllocationID == id).FirstOrDefault();
+        }
         public List<OtherDispatchAllocation> FindBy(Expression<Func<OtherDispatchAllocation, bool>> predicate)
         {
             return _unitOfWork.OtherDispatchAllocationRepository.FindBy(predicate);
@@ -102,7 +106,8 @@ namespace DRMFSS.BLL.Services
                 oAllocation.QuantityInUnit = model.QuantityInUnit;
                 oAllocation.Remark = model.Remark;
                 //Modify Banty :From SaveChanges(oAllocation) to SaveChanges()
-                repository.OtherDispatchAllocation.SaveChanges(oAllocation);
+               // repository.OtherDispatchAllocation.SaveChanges(oAllocation);
+                _unitOfWork.Save();
 
             }
             else

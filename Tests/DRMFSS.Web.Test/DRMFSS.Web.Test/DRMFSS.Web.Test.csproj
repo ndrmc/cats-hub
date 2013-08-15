@@ -73,6 +73,7 @@
     <Compile Include="ContactControllerTests.cs" />
     <Compile Include="ProgramControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReceiveCommodityControllerTest.cs" />
     <Compile Include="UnitControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
