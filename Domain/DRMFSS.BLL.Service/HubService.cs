@@ -64,6 +64,18 @@ namespace DRMFSS.BLL.Services
         }
         #endregion
 
+        public List<ViewModels.Common.StoreViewModel> GetAllStoreByUser(UserProfile user)
+        {
+            if (user == null || user.DefaultHub == null)
+            {
+                return new List<StoreViewModel>();
+            }
+            //var stores = (from c in user.DefaultHub.Stores select new ViewModels.Common.StoreViewModel { StoreId = c.StoreID, StoreName = string.Format("{0} - {1} ", c.Name, c.StoreManName) }).OrderBy(c => c.StoreName).ToList();
+            var stores = (from c in _unitOfWork.StoreRepository.GetStoreByHub(user.DefaultHub.HubID) select new ViewModels.Common.StoreViewModel { StoreId = c.StoreID, StoreName = string.Format("{0} - {1} ", c.Name, c.StoreManName) }).OrderBy(c => c.StoreName).ToList();
+            //stores.Insert(0, new ViewModels.Common.StoreViewModel { StoreName = "Total Hub" });  //I need it for report only so I will modify it on report
+            return stores;
+        }
+
         public void Dispose()
         {
             _unitOfWork.Dispose();

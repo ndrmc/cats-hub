@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using DRMFSS.BLL.ViewModels;
 using DRMFSS.BLL;
 using Telerik.Web.Mvc;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
@@ -14,22 +15,42 @@ namespace DRMFSS.Web.Controllers
         //
         // GET: /StackEvent/
         IUnitOfWork repository;
+        private readonly IStackEventService _stackEventService;
+        private readonly IUserProfileService _userProfileService;
+        private readonly IStoreService _storeService;
+        private readonly IHubService _hubService;
+        private readonly IStackEventTypeService _StackEventTypeService; 
 
-        public StackEventController()
+        public StackEventController(IStackEventService stackeventService, 
+                                    IUserProfileService userProfileService,
+                                    IHubService hubService,
+                                    IStackEventTypeService stackEventTypeService)
         {
-            repository = new UnitOfWork();
+            _stackEventService = stackeventService;
+            _userProfileService = userProfileService;
+            _hubService = hubService;
+            _StackEventTypeService = stackEventTypeService;
+
         }
 
         public ActionResult Index()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            StackEventViewModel viewModel = new StackEventViewModel(repository, user);
+            List<StackEventType> stackEventType;
+            List<Store> hub;
+
+            UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            stackEventType = _StackEventTypeService.GetAllStackEventType();
+            store = _hubService.GetAllStoreByUser(user);
+
+            UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            StackEventViewModel viewModel = new StackEventViewModel(stackEventType, store, user);
             return View(viewModel );
         }
         
         public ActionResult EventLog()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             List<StackEventLogViewModel> viewModel = new List<StackEventLogViewModel>();
                 //repository.StackEvent.GetAllStackEvents(user);
             return PartialView(viewModel);
@@ -40,23 +61,31 @@ namespace DRMFSS.Web.Controllers
         {
             if (StackId.HasValue && StoreId.HasValue)
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-                return View(new GridModel(repository.StackEvent.GetAllStackEventsByStoreIdStackId(user,StackId.Value, StoreId.Value).OrderByDescending(o => o.EventDate)));
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+                return View(new GridModel(_stackEventService.GetAllStackEventsByStoreIdStackId(user,StackId.Value, StoreId.Value).OrderByDescending(o => o.EventDate)));
             }
             return View(new GridModel(new List<StackEventViewModel>()));
         }
 
         public ActionResult EditStackEvent()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            StackEventViewModel viewModel = new StackEventViewModel(repository, user);
+
+            List<StackEventType> stackEventType;
+            List<Store> hub;
+
+            UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            stackEventType = _StackEventTypeService.GetAllStackEventType();
+            store = _hubService.GetAllStoreByUser(user);
+
+            
+            StackEventViewModel viewModel = new StackEventViewModel(stackEventType,store, user);
             return PartialView(viewModel);
         }
         [HttpPost]
         public ActionResult EditStackEvent(StackEventViewModel viewModel)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            repository.StackEvent.Add(new StackEvent 
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            _stackEventService.AddStackEvent(new StackEvent 
             { 
                 EventDate = viewModel.EventDate,
                 StoreID = viewModel.StoreIdTwo,
@@ -73,25 +102,26 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult GetStacksFromStore(int? StoreId)
         {
-            return Json(new SelectList(repository.Store.GetStacksByStoreId(StoreId), JsonRequestBehavior.AllowGet));
+            return Json(new SelectList(_storeService.GetStacksByStoreId(StoreId), JsonRequestBehavior.AllowGet));
         }
 
         public ActionResult GetStacksFromStoreTwo(int? StoreIdTwo)
         {
-            return Json(new SelectList(repository.Store.GetStacksByStoreId(StoreIdTwo), JsonRequestBehavior.AllowGet));
+            return Json(new SelectList(_storeService.GetStacksByStoreId(StoreIdTwo), JsonRequestBehavior.AllowGet));
         }
 
         [HttpPost]
         public ActionResult GetStore()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            return new JsonResult { Data = new SelectList(repository.Hub.GetAllStoreByUser(user), "StoreId", "StoreName") };
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            return new JsonResult { Data = new SelectList(_hubService.GetAllStoreByUser(user), "StoreId", "StoreName") };
         }
 
         [HttpPost]
         public ActionResult GetEventType()
         {
-            return new JsonResult { Data = new SelectList(repository.StackEventType.GetAll(), "StackEventTypeID", "Name") };
+            return new JsonResult { Data = new SelectList(_StackEventTypeService.GetAll(), "StackEventTypeID", "Name") };
         }
 
         [HttpPost]
@@ -101,7 +131,7 @@ namespace DRMFSS.Web.Controllers
             if (selectedDate != null)
             {
                 followupDate = selectedDate;
-                var duration = repository.StackEventType.GetFollowUpDurationByStackEventTypeId(StackEventTypeId);
+                var duration = _StackEventTypeService.GetFollowUpDurationByStackEventTypeId(StackEventTypeId);
 
                 followupDate = followupDate.AddDays(duration);
             }

@@ -15,5 +15,6 @@ namespace DRMFSS.BLL.Services
         Hub FindById(int id);
         List<Hub> GetAllHub();
         List<Hub> FindBy(Expression<Func<Hub, bool>> predicate);
+        List<ViewModels.Common.StoreViewModel> GetAllStoreByUser(UserProfile user);
     }
 }
