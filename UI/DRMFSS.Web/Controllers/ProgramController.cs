@@ -7,41 +7,39 @@ using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
 using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     public partial class ProgramController : BaseController
     {
 
-        IUnitOfWork repository = new UnitOfWork();
+        private IProgramService _programService;
 
-        public ProgramController()
+        public ProgramController(IProgramService programService)
         {
-            
-        }
+            _programService = programService;
 
-        public ProgramController(IUnitOfWork repo)
-        {
-            repository = repo;
         }
 
         public virtual ViewResult Index()
         {
-            return View(repository.Program.GetAll());
+            var programs = _programService.GetAllProgram();
+            return View(programs);
         }
 
 
         public virtual ActionResult ListPartial()
         {
-            return PartialView(repository.Program.GetAll());
+            var programs = _programService.GetAllProgram();
+            return PartialView(programs);
         }
         //
         // GET: /Program/Details/5
 
         public virtual ViewResult Details(int id)
         {
-            Program program = repository.Program.FindById(id);
+            Program program = _programService.FindById(id);
             return View(program);
         }
 
@@ -61,7 +59,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Program.Add(program);
+                _programService.AddProgram(program);
                 return Json(new { success = true }); 
             }
 
@@ -73,7 +71,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(int id)
         {
-            Program program = repository.Program.FindById(id);
+            Program program = _programService.FindById(id);
             return PartialView(program);
         }
 
@@ -85,7 +83,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Program.SaveChanges(program);
+                _programService.AddProgram(program);
                 return Json(new { success = true });
                 //return RedirectToAction("Index");
             }
@@ -97,7 +95,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Delete(int id)
         {
-            Program program = repository.Program.FindById(id);
+            Program program = _programService.FindById(id);
             return View(program);
         }
 
@@ -107,7 +105,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            repository.Program.DeleteByID(id);
+            _programService.DeleteById(id);
             return RedirectToAction("Index");
         }
     }
