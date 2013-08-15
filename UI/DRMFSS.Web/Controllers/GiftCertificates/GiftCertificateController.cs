@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 using DRMFSS.Web.Models;
-using Newtonsoft.Json;
 using Telerik.Web.Mvc;
 
 namespace DRMFSS.Web.Controllers
@@ -11,14 +11,39 @@ namespace DRMFSS.Web.Controllers
      [Authorize]
     public class GiftCertificateController : BaseController
     {
-        IUnitOfWork repository = new UnitOfWork();
+         private readonly IGiftCertificateService _giftCertificateService;
+         private readonly ICommodityService _commodityService;
+         private readonly IUserProfileService _userProfileService;
+         private readonly IReceiptAllocationService _receiptAllocationService;
+         private readonly ICommodityTypeService _commodityTypeService;
+         private readonly IDetailService _detailService;
+         private readonly IDonorService _donorService;
+         private readonly IProgramService _programService;
+         private readonly IGiftCertificateDetailService _giftCertificateDetailService;
+
+         public GiftCertificateController(IGiftCertificateService giftCertificateService,ICommodityService commodityService,
+                                          IUserProfileService userProfileService,IReceiptAllocationService receiptAllocationService,
+                                          IDetailService detailService,ICommodityTypeService commodityTypeService,
+                                          IDonorService donorService,IProgramService programService,IGiftCertificateDetailService giftCertificateDetailService)
+         {
+             _giftCertificateService = giftCertificateService;
+             _commodityService = commodityService;
+             _userProfileService = userProfileService;
+             _receiptAllocationService = receiptAllocationService;
+             _detailService = detailService;
+             _commodityTypeService = commodityTypeService;
+             _donorService = donorService;
+             _programService = programService;
+             _giftCertificateDetailService = giftCertificateDetailService;
+
+         }
 
         public virtual ActionResult NotUnique(string SINumber, int GiftCertificateID)
         {
 
-            GiftCertificate gift = repository.GiftCertificate.FindBySINumber(SINumber);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            bool inReceiptAllocation = repository.ReceiptAllocation.FindBySINumber(SINumber).Any(p=>p.CommoditySourceID == 
+            GiftCertificate gift = _giftCertificateService.FindBySINumber(SINumber);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            bool inReceiptAllocation = _receiptAllocationService.FindBySINumber(SINumber).Any(p=>p.CommoditySourceID == 
                 BLL.CommoditySource.Constants.LOCALPURCHASE);
 
             if ((gift == null || (gift.GiftCertificateID == GiftCertificateID)) && !(inReceiptAllocation))// new one or edit no problem 
@@ -35,7 +60,7 @@ namespace DRMFSS.Web.Controllers
 
         public  ViewResult Index()
         {
-            return View(repository.GiftCertificate.GetAll().OrderByDescending(o => o.GiftCertificateID));
+            return View(_giftCertificateService.GetAllGiftCertificate().OrderByDescending(o => o.GiftCertificateID));
         }
 
         public ActionResult Print(int id)
@@ -52,7 +77,7 @@ namespace DRMFSS.Web.Controllers
             }
             else
             {
-                var gc = repository.GiftCertificate.FindById(id.Value);
+                var gc = _giftCertificateService.FindById(id.Value);
                 if (gc != null)
                 {
                     var gC = (from g in gc.GiftCertificateDetails
@@ -88,7 +113,7 @@ namespace DRMFSS.Web.Controllers
 
         public  ViewResult Details(int id)
         {
-            return View(repository.GiftCertificate.FindById(id));
+            return View(_giftCertificateService.FindById(id));
         }
 
         //
@@ -97,14 +122,14 @@ namespace DRMFSS.Web.Controllers
         public  ActionResult Create()
         {
             
-            ViewBag.Commodities =  repository.Commodity.GetAll().OrderBy(o=>o.Name);
-            ViewBag.CommodityTypes = new SelectList(repository.CommodityType.GetAll().OrderBy(o => o.Name), "CommodityTypeID", "Name");
-            ViewBag.DCurrencies = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
-            ViewBag.DFundSources = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
-            ViewBag.DBudgetTypes = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
-            ViewBag.Donors = new SelectList(repository.Donor.GetAll().OrderBy(o => o.Name), "DonorID", "Name");
-            ViewBag.Programs = new SelectList(repository.Program.GetAll(), "ProgramID", "Name");
-            ViewBag.DModeOfTransports = new SelectList(repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder),"DetailID", "Name");
+            ViewBag.Commodities =  _commodityService.GetAllCommodity().OrderBy(o=>o.Name);
+            ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name");
+            ViewBag.DCurrencies = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
+            ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
+            ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
+            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o => o.Name), "DonorID", "Name");
+            ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
+            ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder),"DetailID", "Name");
 
             List<Models.GiftCertificateDetailsViewModel> GiftCertificateDetails = new List<Models.GiftCertificateDetailsViewModel>();
             ViewBag.GiftCertificateDetails = GiftCertificateDetails;
@@ -127,15 +152,15 @@ namespace DRMFSS.Web.Controllers
                 return RedirectToAction("Index");  
             }
 
-            ViewBag.Commodities = repository.Commodity.GetAll().OrderBy(o => o.Name);
-            ViewBag.CommodityTypes = repository.CommodityType.GetAll().OrderBy(o => o.Name);
+            ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
+            ViewBag.CommodityTypes = _commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name);
 
-            ViewBag.DCurrencies= repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
-            ViewBag.DFundSources = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
-            ViewBag.DBudgetTypes = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
-            ViewBag.Donors = new SelectList(repository.Donor.GetAll().OrderBy(o => o.Name), "DonorID", "Name");
-            ViewBag.Programs = new SelectList(repository.Program.GetAll(), "ProgramID", "Name");
-            ViewBag.DModeOfTransports = new SelectList(repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name");
+            ViewBag.DCurrencies= _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
+            ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
+            ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
+            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o => o.Name), "DonorID", "Name");
+            ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
+            ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name");
 
             //return the model with the values pre-populated
             return Create(); //GiftCertificateViewModel.GiftCertificateModel(giftcertificate));
@@ -149,7 +174,7 @@ namespace DRMFSS.Web.Controllers
             {
                 giftCertificateModel.GiftCertificateDetails.Add(giftDetail);
             }
-            repository.GiftCertificate.Add(giftCertificateModel);
+            _giftCertificateService.AddGiftCertificate(giftCertificateModel);
         }
 
         //generate view models from the respective json array of GiftCertificateDetails json elements
@@ -196,17 +221,17 @@ namespace DRMFSS.Web.Controllers
 
         public  ActionResult Edit(int id)
         {
-            GiftCertificate giftcertificate = repository.GiftCertificate.FindById(id);
-            ViewBag.Commodities = repository.Commodity.GetAll().OrderBy(o => o.Name);
+            GiftCertificate giftcertificate = _giftCertificateService.FindById(id);
+            ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
 
-            ViewBag.DCurrencies= repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
-            ViewBag.DFundSources = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
-            ViewBag.DBudgetTypes = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
+            ViewBag.DCurrencies = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
+            ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
+            ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
 
-            ViewBag.CommodityTypes = new SelectList(repository.CommodityType.GetAll().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftcertificate.GiftCertificateDetails.FirstOrDefault().Commodity.CommodityTypeID);
-            ViewBag.Donors = new SelectList(repository.Donor.GetAll().OrderBy( o => o.Name), "DonorID", "Name", giftcertificate.DonorID);
-            ViewBag.Programs = new SelectList(repository.Program.GetAll(), "ProgramID", "Name");
-            ViewBag.DModeOfTransports = new SelectList(repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name");
+            ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftcertificate.GiftCertificateDetails.FirstOrDefault().Commodity.CommodityTypeID);
+            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy( o => o.Name), "DonorID", "Name", giftcertificate.DonorID);
+            ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
+            ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name");
 
             return View(GiftCertificateViewModel.GiftCertificateModel(giftcertificate));
         }
@@ -215,7 +240,7 @@ namespace DRMFSS.Web.Controllers
         public  ActionResult Edit(GiftCertificateViewModel giftcertificate)
         {
             //just incase the user meses with the the hidden GiftCertificateID field
-            GiftCertificate giftcert = repository.GiftCertificate.FindById(giftcertificate.GiftCertificateID);
+            GiftCertificate giftcert = _giftCertificateService.FindById(giftcertificate.GiftCertificateID);
 
             if (ModelState.IsValid && giftcert != null)
             {
@@ -226,29 +251,29 @@ namespace DRMFSS.Web.Controllers
                 List<Models.GiftCertificateDetailsViewModel> deletedCommodities = GetSelectedGiftCertificateDetails(giftcertificate.JSONDeletedGiftCertificateDetails);
                 List<Models.GiftCertificateDetailsViewModel> updateCommodities = GetSelectedGiftCertificateDetails(giftcertificate.JSONUpdatedGiftCertificateDetails);
 
-                repository.GiftCertificate.Update(giftCertificateModel, GenerateGiftCertificate(insertCommodities),
+               _giftCertificateService.Update(giftCertificateModel, GenerateGiftCertificate(insertCommodities),
                     GenerateGiftCertificate(updateCommodities),
                     GenerateGiftCertificate(deletedCommodities));
 
                 return RedirectToAction("Index");
             }
-            ViewBag.Commodities = repository.Commodity.GetAll().OrderBy(o => o.Name);
+            ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
             
 
-            ViewBag.DCurrencies = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
-            ViewBag.DFundSources = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
-            ViewBag.DBudgetTypes = repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
+            ViewBag.DCurrencies = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
+            ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
+            ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
 
-            ViewBag.CommodityTypes = new SelectList(repository.CommodityType.GetAll().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftcert.GiftCertificateDetails.FirstOrDefault().Commodity.CommodityTypeID);
-            ViewBag.Donors = new SelectList(repository.Donor.GetAll().OrderBy(o=>o.Name), "DonorID", "Name", giftcertificate.DonorID);
-            ViewBag.Programs = new SelectList(repository.Program.GetAll(), "ProgramID", "Name",giftcertificate.ProgramID);
-            ViewBag.DModeOfTransports = new SelectList(repository.Detail.GetAll().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name",giftcertificate.DModeOfTransport);
+            ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftcert.GiftCertificateDetails.FirstOrDefault().Commodity.CommodityTypeID);
+            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o=>o.Name), "DonorID", "Name", giftcertificate.DonorID);
+            ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name",giftcertificate.ProgramID);
+            ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name", giftcertificate.DModeOfTransport);
             return View(giftcertificate);
         }
 
         public  ActionResult Delete(int id)
         {
-            GiftCertificate giftcertificate = repository.GiftCertificate.FindById(id);
+            GiftCertificate giftcertificate = _giftCertificateService.FindById(id);
             return View(giftcertificate);
         }
 
@@ -256,28 +281,28 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public  ActionResult DeleteConfirmed(int id)
         {
-            repository.GiftCertificate.DeleteByID(id);
+            _giftCertificateService.DeleteById(id);
             return RedirectToAction("Index");
         }
 
 
         public  ActionResult MonthlySummary()
         {
-            ViewBag.MonthlySummary = repository.GiftCertificate.GetMonthlySummary().ToList();
-            ViewBag.MonthlySummaryETA = repository.GiftCertificate.GetMonthlySummaryETA().ToList();
+            ViewBag.MonthlySummary = _giftCertificateService.GetMonthlySummary().ToList();
+            ViewBag.MonthlySummaryETA = _giftCertificateService.GetMonthlySummaryETA().ToList();
             return View();
         }
 
         public ActionResult ChartView()
         {
-            ViewBag.MonthlySummary = repository.GiftCertificate.GetMonthlySummary().ToList();
-            ViewBag.MonthlySummaryETA = repository.GiftCertificate.GetMonthlySummaryETA().ToList();
+            ViewBag.MonthlySummary = _giftCertificateService.GetMonthlySummary().ToList();
+            ViewBag.MonthlySummaryETA = _giftCertificateService.GetMonthlySummaryETA().ToList();
             return View();
         }
 
         public ActionResult IsBillOfLoadingDuplicate(string BillOfLoading)
          {
-             return Json(repository.GiftCertificateDetail.IsBillOfLoadingDuplicate(BillOfLoading), JsonRequestBehavior.AllowGet);
+             return Json(_giftCertificateDetailService.IsBillOfLoadingDuplicate(BillOfLoading), JsonRequestBehavior.AllowGet);
          }
     }
 }
