@@ -73,6 +73,7 @@
     <Compile Include="ContactControllerTests.cs" />
     <Compile Include="DispatchAllocationControllerTest.cs" />
     <Compile Include="CurrentHubControllerTests.cs" />
+    <Compile Include="DispatchPlanControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitControllerTests.cs" />
   </ItemGroup>
