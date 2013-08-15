@@ -21,7 +21,6 @@ namespace DRMFSS.BLL.Services
         List<Receive> FindBy(Expression<Func<Receive, bool>> predicate);
         List<Receive> ByHubId(int hubId);
          List<PortViewModel> GetALlPorts();
-         Receive FindById(System.Guid id);
    
 
 
