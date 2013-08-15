@@ -157,6 +157,13 @@ namespace DRMFSS.BLL.Services
         List<SIBalance> GetSIBalanceForCommodity(int hubID, int commodityId);
 
         List<SIBalance> GetSIBalanceForCommodityInUnit(int hubID, int commodityId);
+
+
+
+        bool DeleteByID(Guid id);
+
+        ReceiptAllocation FindById(Guid id);
+   
     }
 }
 

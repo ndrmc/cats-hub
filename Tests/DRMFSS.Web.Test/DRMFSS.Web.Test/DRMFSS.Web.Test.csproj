@@ -75,6 +75,7 @@
     <Compile Include="CurrentHubControllerTests.cs" />
     <Compile Include="DispatchPlanControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReceiptAllocationControllerTest.cs" />
     <Compile Include="UnitControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
