@@ -6,25 +6,33 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
      [Authorize]
     public partial class TransporterController : BaseController
     {
-      
 
+         private readonly ITransporterService _transporterService;
+         public  TransporterController(ITransporterService transporterService)
+         {
+             _transporterService = transporterService;
+         }
         //
         // GET: /Transporter/
 
         public virtual ViewResult Index()
         {
-            return View(repository.Transporter.GetAll().OrderBy(t => t.Name).ToList());
+            return View(_transporterService.GetAllTransporter().OrderBy(n=>n.Name).ToList());
+
+            //return View(repository.Transporter.GetAll().OrderBy(t => t.Name).ToList());
         }
 
         public virtual ActionResult Update()
         {
-            return PartialView(repository.Transporter.GetAll().OrderBy(t => t.Name).ToList());
+            return PartialView(_transporterService.GetAllTransporter().OrderBy(n=>n.Name).ToList());
+            //return PartialView(repository.Transporter.GetAll().OrderBy(t => t.Name).ToList());
         }
 
         //
@@ -32,7 +40,8 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ViewResult Details(int id)
         {
-            Transporter transporter = repository.Transporter.FindById(id);
+            Transporter transporter = _transporterService.FindById(id);
+           // Transporter transporter = repository.Transporter.FindById(id);
             return View(transporter);
         }
 
@@ -50,17 +59,28 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public virtual ActionResult Create(Transporter transporter)
         {
-            if (!repository.Transporter.IsNameValid(transporter.TransporterID, transporter.Name))
+            if (_transporterService.IsNameValid(transporter.TransporterID,transporter.Name))
             {
-                ModelState.AddModelError("Name", "Transporter Name should be Unique");
+                 ModelState.AddModelError("Name", "Transporter Name should be Unique");
             }
             if (ModelState.IsValid)
             {
-                repository.Transporter.Add(transporter);
-                return Json(new { success = true });   
+                _transporterService.AddTransporter(transporter);
+                return Json(new {sucess=true});
             }
-
             return PartialView(transporter);
+
+            //if (!repository.Transporter.IsNameValid(transporter.TransporterID, transporter.Name))
+            //{
+            //    ModelState.AddModelError("Name", "Transporter Name should be Unique");
+            //}
+            //if (ModelState.IsValid)
+            //{
+            //    repository.Transporter.Add(transporter);
+            //    return Json(new { success = true });   
+            //}
+
+            //return PartialView(transporter);
         }
         
         //
@@ -68,8 +88,10 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(int id)
         {
-            Transporter transporter = repository.Transporter.FindById(id);
+            Transporter transporter = _transporterService.FindById(id);
             return PartialView(transporter);
+            //Transporter transporter = repository.Transporter.FindById(id);
+            //return PartialView(transporter);
         }
 
         //
@@ -78,16 +100,30 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public virtual ActionResult Edit(Transporter transporter)
         {
-            if(!repository.Transporter.IsNameValid(transporter.TransporterID,transporter.Name))
+
+            if (_transporterService.IsNameValid(transporter.TransporterID,transporter.Name))
             {
-                ModelState.AddModelError("Name","Transporter Name should be Unique");
+                 ModelState.AddModelError("Name", "Transporter Name should be Unique");
             }
             if (ModelState.IsValid)
             {
-                repository.Transporter.SaveChanges(transporter);
-                return Json(new { success = true }); 
+                _transporterService.EditTransporter(transporter);
+                return Json(new {sucess=true});
             }
-            return View(transporter);
+            return PartialView(transporter);
+
+
+
+            //if(!repository.Transporter.IsNameValid(transporter.TransporterID,transporter.Name))
+            //{
+            //    ModelState.AddModelError("Name","Transporter Name should be Unique");
+            //}
+            //if (ModelState.IsValid)
+            //{
+            //    repository.Transporter.SaveChanges(transporter);
+            //    return Json(new { success = true }); 
+            //}
+            //return View(transporter);
         }
 
         //
@@ -95,8 +131,11 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Delete(int id)
         {
-            Transporter transporter = repository.Transporter.FindById(id);
-            return View(transporter);
+            Transporter transporter = _transporterService.FindById(id);
+            return PartialView(transporter);
+
+            //Transporter transporter = repository.Transporter.FindById(id);
+            //return View(transporter);
         }
 
         //
@@ -105,13 +144,17 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            repository.Transporter.DeleteByID(id);
-            return RedirectToAction("Index");
+            Transporter transporter = _transporterService.DeleteById(id);
+            return  RedirectToAction("Index");
+
+            //repository.Transporter.DeleteByID(id);
+            //return RedirectToAction("Index");
         }
 
          public JsonResult IsNameValid(int? TransporterID, string Name)
          {
-             return Json(repository.Transporter.IsNameValid(TransporterID, Name), JsonRequestBehavior.AllowGet);
+             return Json(_transporterService.IsNameValid(TransporterID,Name),JsonRequestBehavior.AllowGet);
+             //return Json(repository.Transporter.IsNameValid(TransporterID, Name), JsonRequestBehavior.AllowGet);
          }
     }
 }

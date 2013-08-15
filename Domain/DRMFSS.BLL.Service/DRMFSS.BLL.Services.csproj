@@ -48,6 +48,7 @@
     <Compile Include="CommodityService.cs" />
     <Compile Include="CommoditySourceService.cs" />
     <Compile Include="CommodityTypeService.cs" />
+    <Compile Include="CommonService.cs" />
     <Compile Include="ContactService.cs" />
     <Compile Include="DetailService.cs" />
     <Compile Include="DispatchAllocationService.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Interfaces\ICommodityService.cs" />
     <Compile Include="Interfaces\ICommoditySourceService.cs" />
     <Compile Include="Interfaces\ICommodityTypeService.cs" />
+    <Compile Include="Interfaces\ICommonService.cs" />
     <Compile Include="Interfaces\IContactService.cs" />
     <Compile Include="Interfaces\IDetailService.cs" />
     <Compile Include="Interfaces\IDispatchAllocationService.cs" />
