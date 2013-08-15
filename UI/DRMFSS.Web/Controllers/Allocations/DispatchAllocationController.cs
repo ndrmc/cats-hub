@@ -21,11 +21,30 @@ namespace DRMFSS.Web.Controllers.Allocations
         private readonly IShippingInstructionService _shippingInstructionService;
         private readonly IProjectCodeService _projectCodeService;
         private readonly IOtherDispatchAllocationService _otherDispatchAllocationService;
+        private readonly ITransporterService _transporterService;
+        private readonly ICommonService _commonService;
+        private readonly IAdminUnitService _adminUnitService;
+        private readonly IFDPService _fdpService;
 
-        public DispatchAllocationController(IDispatchAllocationService dispatchAllocationService,IUserProfileService userProfileService)
+        public DispatchAllocationController(IDispatchAllocationService dispatchAllocationService,
+                                            IUserProfileService userProfileService,
+                                            IOtherDispatchAllocationService otherDispatchAllocationService,
+                                            IShippingInstructionService shippingInstructionService,
+                                            IProjectCodeService projectCodeService,
+                                            ITransporterService transporterService,
+                                            ICommonService commonService,
+                                            IAdminUnitService adminUnitService,
+                                            IFDPService fdpService)
         {
             this._dispatchAllocationService = dispatchAllocationService;
             this._userProfileService = userProfileService;
+            this._otherDispatchAllocationService = otherDispatchAllocationService;
+            this._projectCodeService = projectCodeService;
+            this._shippingInstructionService = shippingInstructionService;
+            this._transporterService = transporterService;
+            this._adminUnitService = adminUnitService;
+            this._fdpService = fdpService;
+            this._commonService = commonService;
         }
         public ActionResult Index()
         {
@@ -280,18 +299,18 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult Create()
         {
-            ViewBag.CommodityTypes = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name");
-            ViewBag.Commodities = new SelectList(repository.Commodity.GetAllParents(), "CommodityID", "Name");
-            ViewBag.Donors = new SelectList(repository.Donor.GetAll(), "DonorID", "Name");
-            ViewBag.Regions = new SelectList(repository.AdminUnit.GetRegions(), "AdminUnitID", "Name");
+            ViewBag.CommodityTypes = new SelectList(_commonService.GetAllCommodityType(), "CommodityTypeID", "Name");
+            ViewBag.Commodities = new SelectList(_commonService.GetAllParents(), "CommodityID", "Name");
+            ViewBag.Donors = new SelectList(_commonService.GetAllDonors(), "DonorID", "Name");
+            ViewBag.Regions = new SelectList(_commonService.GetRegions(), "AdminUnitID", "Name");
             ViewBag.Zones = new SelectList(Enumerable.Empty<SelectListItem>(), "AdminUnitID", "Name");
             ViewBag.Woredas = new SelectList(Enumerable.Empty<SelectListItem>(), "AdminUnitID", "Name");
             ViewBag.FDPS = new SelectList(Enumerable.Empty<SelectListItem>(), "FDPID", "Name");
-            ViewBag.Years = new SelectList(repository.Period.GetYears().Select(y => new { Name = y, Id = y }), "Id", "Name");
+            ViewBag.Years = new SelectList(_commonService.GetYears().Select(y => new { Name = y, Id = y }), "Id", "Name");
             ViewBag.Months = new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name");
-            ViewBag.Transporters = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name");
-            ViewBag.Programs = new SelectList(repository.Program.GetAll(), "ProgramID", "Name");
-            ViewBag.Units = new SelectList(repository.Unit.GetAll(), "UnitID", "Name");
+            ViewBag.Transporters = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name");
+            ViewBag.Programs = new SelectList(_commonService.GetAllProgram(), "ProgramID", "Name");
+            ViewBag.Units = new SelectList(_commonService.GetAllUnit(), "UnitID", "Name");
             return PartialView("Create", new BLL.ViewModels.DispatchAllocationViewModel());
         }
 
@@ -300,10 +319,10 @@ namespace DRMFSS.Web.Controllers.Allocations
         {
             if (ModelState.IsValid)
             {
-                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-                BLL.DispatchAllocation alloc = GetAllocationModel(allocation);
+                var user = _userProfileService.GetUser(User.Identity.Name);
+                var alloc = GetAllocationModel(allocation);
                 alloc.HubID = user.DefaultHub.HubID;
-                _dispatchAllocationService.Add(alloc);
+                _dispatchAllocationService.AddDispatchAllocation(alloc);
                 if (this.Request.UrlReferrer != null) return Redirect(Request.UrlReferrer.PathAndQuery);
                 else return RedirectToAction("Index");
             }
@@ -314,8 +333,8 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult Edit(string id)
         {
-            BLL.DispatchAllocation allocation = _dispatchAllocationService.FindById(Guid.Parse(id));
-            BLL.ViewModels.DispatchAllocationViewModel alloc = GetAllocationModel(allocation);
+            DispatchAllocation allocation = _dispatchAllocationService.FindById(Guid.Parse(id));
+           DispatchAllocationViewModel alloc = GetAllocationModel(allocation);
             alloc.CommodityTypeID = allocation.Commodity.CommodityTypeID;
             PrepareEdit(alloc);
             return PartialView("Edit", alloc);
@@ -325,18 +344,18 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         private void PrepareCreate()
         {
-            ViewBag.CommodityTypes = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name");
-            ViewBag.Commodities = new SelectList(repository.Commodity.GetAllParents(), "CommodityID", "Name");
-            ViewBag.Donors = new SelectList(repository.Donor.GetAll(), "DonorID", "Name");
-            ViewBag.Regions = new SelectList(repository.AdminUnit.GetRegions(), "AdminUnitID", "Name");
+            ViewBag.CommodityTypes = new SelectList(_commonService.GetAllCommodityType(), "CommodityTypeID", "Name");
+            ViewBag.Commodities = new SelectList(_commonService.GetAllParents(), "CommodityID", "Name");
+            ViewBag.Donors = new SelectList(_commonService.GetAllDonors(), "DonorID", "Name");
+            ViewBag.Regions = new SelectList(_commonService.GetRegions(), "AdminUnitID", "Name");
             ViewBag.Zones = new SelectList(Enumerable.Empty<SelectListItem>(), "AdminUnitID", "Name");
             ViewBag.Woredas = new SelectList(Enumerable.Empty<SelectListItem>(), "AdminUnitID", "Name");
             ViewBag.FDPS = new SelectList(Enumerable.Empty<SelectListItem>(), "FDPID", "Name");
-            ViewBag.Years = new SelectList(repository.Period.GetYears().Select(y => new { Name = y, Id = y }), "Id", "Name");
+            ViewBag.Years = new SelectList(_commonService.GetYears().Select(y => new { Name = y, Id = y }), "Id", "Name");
             ViewBag.Months = new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name");
-            ViewBag.Transporters = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name");
-            ViewBag.Programs = new SelectList(repository.Program.GetAll(), "ProgramID", "Name");
-            ViewBag.Units = new SelectList(repository.Unit.GetAll(), "UnitID", "Name");
+            ViewBag.Transporters = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name");
+            ViewBag.Programs = new SelectList(_commonService.GetAllProgram(), "ProgramID", "Name");
+            ViewBag.Units = new SelectList(_commonService.GetAllUnit(), "UnitID", "Name");
         }
 
         [HttpPost]
@@ -345,7 +364,7 @@ namespace DRMFSS.Web.Controllers.Allocations
             if (ModelState.IsValid)
             {
                 BLL.DispatchAllocation alloc = GetAllocationModel(allocation);
-                _dispatchAllocationService.SaveChanges(alloc);
+                _dispatchAllocationService.EditDispatchAllocation(alloc);
                 if (this.Request.UrlReferrer != null) return Redirect(Request.UrlReferrer.PathAndQuery);
                 else return RedirectToAction("Index");
                 //return Json(true, JsonRequestBehavior.AllowGet);
@@ -357,24 +376,24 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         private void PrepareEdit(BLL.ViewModels.DispatchAllocationViewModel allocation)
         {
-            ViewBag.Commodities = new SelectList(repository.Commodity.GetAllParents(), "CommodityID", "Name", allocation.CommodityID);
+            ViewBag.Commodities = new SelectList(_commonService.GetAllParents(), "CommodityID", "Name", allocation.CommodityID);
 
-            ViewBag.CommodityTypes = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name",allocation.CommodityTypeID);
+            ViewBag.CommodityTypes = new SelectList(_commonService.GetAllCommodityType(), "CommodityTypeID", "Name",allocation.CommodityTypeID);
 
-            ViewBag.Donors = new SelectList(repository.Donor.GetAll(), "DonorID", "Name", allocation.DonorID);
+            ViewBag.Donors = new SelectList(_commonService.GetAllDonors(), "DonorID", "Name", allocation.DonorID);
             
-            ViewBag.Years = new SelectList(repository.Period.GetYears().Select(y => new { Name = y, Id = y }), "Id", "Name", allocation.Year);
+            ViewBag.Years = new SelectList(_commonService.GetYears().Select(y => new { Name = y, Id = y }), "Id", "Name", allocation.Year);
             if (allocation.Year.HasValue)
             {
-                ViewBag.Months = new SelectList(repository.Period.GetMonths(allocation.Year.Value).Select(p => new{Id = p, Name = p }), "Id", "Name", allocation.Month);
+                ViewBag.Months = new SelectList(_commonService.GetMonths(allocation.Year.Value).Select(p => new{Id = p, Name = p }), "Id", "Name", allocation.Month);
             }
             else
             {
                 ViewBag.Months = new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name");
             }
-            ViewBag.Transporters = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name",allocation.TransporterID);
-            ViewBag.Programs = new SelectList(repository.Program.GetAll(), "ProgramID", "Name",allocation.ProgramID);
-            ViewBag.Units = new SelectList(repository.Unit.GetAll(), "UnitID", "Name",allocation.Unit);
+            ViewBag.Transporters = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name",allocation.TransporterID);
+            ViewBag.Programs = new SelectList(_commonService.GetAllProgram(), "ProgramID", "Name",allocation.ProgramID);
+            ViewBag.Units = new SelectList(_commonService.GetAllUnit(), "UnitID", "Name",allocation.Unit);
 
            // TODO we can use the line below for debugging and server side validation
             PrepareFDPForEdit(allocation.FDPID);
@@ -387,7 +406,7 @@ namespace DRMFSS.Web.Controllers.Allocations
             Models.AdminUnitModel unitModel = new Models.AdminUnitModel();
             BLL.FDP fdp;
             if (fdpid != null)
-                fdp = repository.FDP.FindById(fdpid.Value);
+                fdp = _fdpService.FindById(fdpid.Value);
             else
                 fdp = null;
             if (fdp != null)
@@ -395,10 +414,10 @@ namespace DRMFSS.Web.Controllers.Allocations
                 unitModel.SelectedWoredaId = fdp.AdminUnitID;
                 if (fdp.AdminUnit.ParentID != null) unitModel.SelectedZoneId = fdp.AdminUnit.ParentID.Value;
 
-                unitModel.SelectedRegionId = repository.AdminUnit.GetRegionByZoneId(unitModel.SelectedZoneId);
+                unitModel.SelectedRegionId = _adminUnitService.GetRegionByZoneId(unitModel.SelectedZoneId);
                 ViewBag.Regions =
                     new SelectList(
-                        repository.AdminUnit.GetRegions().Select(p => new {Id = p.AdminUnitID, Name = p.Name}).OrderBy(
+                        _adminUnitService.GetRegions().Select(p => new {Id = p.AdminUnitID, Name = p.Name}).OrderBy(
                             o => o.Name), "Id", "Name", unitModel.SelectedRegionId);
                 ViewBag.Zones =
                     new SelectList(this.GetChildren(unitModel.SelectedRegionId).OrderBy(o => o.Name), "Id", "Name",
@@ -421,14 +440,14 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public List<Models.AdminUnitItem> GetFdps(int woredaId)
         {
-            var fdps = from p in repository.FDP.GetFDPsByWoreda(woredaId)
+            var fdps = from p in _fdpService.GetFDPsByWoreda(woredaId)
                        select new Models.AdminUnitItem() { Id = p.FDPID, Name = p.Name };
             return fdps.ToList();
         }
 
         public List<Models.AdminUnitItem> GetChildren(int parentId)
         {
-            var units = from item in repository.AdminUnit.GetChildren(parentId)
+            var units = from item in _adminUnitService.GetChildren(parentId)
                         select new Models.AdminUnitItem
                         {
                             Id = item.AdminUnitID,
@@ -509,7 +528,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         /// <returns></returns>
         public ActionResult ToOtherOwners()
         {
-            var model = repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(_userProfileService.GetUser(User.Identity.Name));
+            var model = _otherDispatchAllocationService.GetAllToOtherOwnerHubs(_userProfileService.GetUser(User.Identity.Name));
             return View(model);
             
         }
@@ -520,7 +539,7 @@ namespace DRMFSS.Web.Controllers.Allocations
         /// <returns></returns>
         public ActionResult ToHubs()
         {
-            var model = repository.OtherDispatchAllocation.GetAllToCurrentOwnerHubs(_userProfileService.GetUser(User.Identity.Name));
+            var model = _otherDispatchAllocationService.GetAllToCurrentOwnerHubs(_userProfileService.GetUser(User.Identity.Name));
             return View(model);
         }
 
@@ -533,7 +552,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult EditTransfer(string id)
         {
-            var model = repository.OtherDispatchAllocation.GetViewModelByID( Guid.Parse(id));
+            var model = _otherDispatchAllocationService.GetViewModelByID( Guid.Parse(id));
             model.InitTransfer(_userProfileService.GetUser(User.Identity.Name), repository);
             return PartialView("EditTransfer", model);
         }
@@ -546,7 +565,7 @@ namespace DRMFSS.Web.Controllers.Allocations
             model.FromHubID = user.DefaultHub.HubID;
             if (ModelState.IsValid)
             {
-                repository.OtherDispatchAllocation.Save(model);
+                _otherDispatchAllocationService.Save(model);
                 if (this.Request.UrlReferrer != null) return Redirect(Request.UrlReferrer.PathAndQuery);
                 else return RedirectToAction("ToHubs");
                 //return RedirectToAction("ToHubs");
@@ -568,7 +587,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult EditLoan(string id)
         {
-            var model = repository.OtherDispatchAllocation.GetViewModelByID( Guid.Parse(id));
+            var model = _otherDispatchAllocationService.GetViewModelByID( Guid.Parse(id));
             model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
             return PartialView("EditLoans", model);
         }
@@ -581,7 +600,7 @@ namespace DRMFSS.Web.Controllers.Allocations
             model.FromHubID = user.DefaultHub.HubID;
             if (ModelState.IsValid)
             {
-                repository.OtherDispatchAllocation.Save(model);
+                _otherDispatchAllocationService.Save(model);
                 if (this.Request.UrlReferrer != null) return Redirect(Request.UrlReferrer.PathAndQuery);
                 else return RedirectToAction("ToOtherOwners");
                 //return RedirectToAction("ToOtherOwners");
@@ -630,18 +649,18 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult OtherClose(string id)
         {
-            var closeAllocation = repository.OtherDispatchAllocation.FindById(Guid.Parse(id));
+            var closeAllocation = _otherDispatchAllocationService.FindById(Guid.Parse(id));
             return PartialView("CloseOther", closeAllocation);
         }
 
         [HttpPost, ActionName("OtherClose")]
         public ActionResult OtherCloseConfirmed(string id)
         {
-            var closeAllocation = repository.OtherDispatchAllocation.FindById(Guid.Parse(id));
+            var closeAllocation = _otherDispatchAllocationService.FindById(Guid.Parse(id));
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (closeAllocation != null)
             {
-                repository.OtherDispatchAllocation.CloseById(Guid.Parse(id));
+               _otherDispatchAllocationService.CloseById(Guid.Parse(id));
                 int? gridNum = null;
                 if (closeAllocation.Hub1.HubOwnerID == user.DefaultHub.HubOwnerID)
                 {
@@ -660,6 +679,31 @@ namespace DRMFSS.Web.Controllers.Allocations
         }
 
 
+        private bool _disposed = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this._disposed)
+            {
+                if (disposing)
+                {
+                    _userProfileService.Dispose();
+                    _dispatchAllocationService.Dispose();
+                    _shippingInstructionService.Dispose();
+                    _projectCodeService.Dispose();
+                    _otherDispatchAllocationService.Dispose();
+                    _transporterService.Dispose();
+                    _commonService.Dispose();
+                    _adminUnitService.Dispose();
+                    _fdpService.Dispose();
+                }
+            }
+            this._disposed = true;
+        }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
