@@ -5,7 +5,4 @@ using System.Text;
 
 namespace DRMFSS.BLL.ViewModels.Dispatch
 {
-    class IDispatchAllocationService
-    {
-    }
 }
