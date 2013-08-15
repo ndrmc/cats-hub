@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using DRMFSS.BLL;
 using DRMFSS.BLL.ViewModels;
 using Telerik.Web.Mvc;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
@@ -16,10 +17,29 @@ namespace DRMFSS.Web.Controllers
         //
         // GET: /StartingBalance/
        private IUnitOfWork repository;
+       private IUserProfileService _userProfileService;
+       private ITransactionService _transactionService;
+       private ICommodityService _commodityService;
+       private IStoreService _storeService;
+       private IDonorService _donorSerivce;
+       private IProgramService _programService;
+       private IUnitService _unitService;
 
-       public StartingBalanceController()
+       public StartingBalanceController(IUserProfileService userProfileService,
+                                        ITransactionService transactionService,
+                                        ICommodityService commoditySerivce,
+                                        IStoreService storeService,
+                                        IDonorService donorService,
+                                        IProgramService programService,
+                                        IUnitService unitService)
         {
-            repository = new UnitOfWork();
+            _userProfileService = userProfileService;
+            _transactionService = transactionService;
+            _commodityService = commoditySerivce;
+            _storeService = storeService;
+            _donorSerivce = donorService;
+            _programService = programService;
+            _unitService = unitService;
         }
 
 
@@ -31,9 +51,11 @@ namespace DRMFSS.Web.Controllers
         [GridAction]
         public ActionResult GetListOfStartingBalances()
         {
-           BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-           List<StartingBalanceViewModelDto> startBalnceDto = repository.Transaction.GetListOfStartingBalances(user.DefaultHub.HubID);
-           return View(new GridModel(startBalnceDto)); 
+            var userProfile = _userProfileService.GetUser(User.Identity.Name);
+            List<StartingBalanceViewModelDto> startBalanceDto = _transactionService.GetListOfStartingBalances(user.DefaultHub.HubID);
+            return View(new GridModel(startBalnceDto)); 
+
+           
         }
 
         //
@@ -49,9 +71,25 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Create()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            StartingBalanceViewModel startingBalanceViewModel = new StartingBalanceViewModel(repository, user);
+
+            List<Commodity> Commodities;
+            List<Program> Programs;
+            List<Store> Stores;
+            List<Unit> Units;
+            List<Donor> Donors;
+
+            Commodities = _commodityService.GetAllCommodity().ToList();
+            Programs = _programService.GetAllProgram().ToList();
+            Stores =_storeService.GetAllByHUbs().Where(h=>h.HubID == user.DefaultHub.HubID).ToList();
+            Units = _unitService.GetAllUnit().ToList();
+            Donors = _donorSerivce.GetAllDonor().ToList();
+
+            var user = _userProfileService.GetUser(User.Identity.Name);
+
+            StartingBalanceViewModel startingBalanceViewModel = new StartingBalanceViewModel(Commodities,Stores,Units,Programs,Donors, user);
             return PartialView(startingBalanceViewModel);
+
+          
         } 
 
         //
@@ -60,18 +98,21 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public ActionResult Create(StartingBalanceViewModel startingBalance)
         {
-            //try
-            //if(ModelState.IsValid)
+            try
             {
-                // TODO: Add insert logic here
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-                repository.Transaction.SaveStartingBalanceTransaction(startingBalance, user);
-                return Json(true,JsonRequestBehavior.AllowGet);
+                if (ModelState.IsValid)
+                {
+                    // TODO: Add insert logic here
+                    var user = _userProfileService.GetUser(User.Identity.Name);
+                    _transactionService.SaveStartingBalanceTransaction(startingBalance, user);
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                   
+                }
             }
-            //catch
-            //{
-            //    return View();
-            //}
+            catch
+            {
+                return View();
+            }
         }
         
         //
