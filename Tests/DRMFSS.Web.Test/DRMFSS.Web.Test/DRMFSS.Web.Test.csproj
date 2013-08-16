@@ -85,6 +85,7 @@
     <Compile Include="ReceiveCommodityControllerTest.cs" />
     <Compile Include="ReportControllerTests.cs" />
     <Compile Include="SettingControllerTests.cs" />
+    <Compile Include="TranlationControllerTest.cs" />
     <Compile Include="TransactionControllerTests.cs" />
     <Compile Include="TransportationReportControllerTests.cs" />
     <Compile Include="UnitControllerTests.cs" />
