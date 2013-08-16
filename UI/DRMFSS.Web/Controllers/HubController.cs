@@ -1,40 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
-using DRMFSS.BLL.Interfaces;
-using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
-    public partial class HubController : BaseController
+    public class HubController : BaseController
     {
-       
-        IUnitOfWork repository = new UnitOfWork();
-     
-        public HubController()
-        {
-            
-        }
+        private readonly IHubOwnerService _hubOwnerService;
+        private readonly IHubService _hubService;
 
-        // constructor to make testing easy
-        public HubController(IUnitOfWork hubRepo)
+        public HubController(IHubOwnerService hubOwnerService, IHubService hubService)
         {
-            repository = hubRepo;
+            _hubOwnerService = hubOwnerService;
+            _hubService = hubService;
         }
 
         public virtual ActionResult Index()
         {
-            return View(repository.Hub.GetAll().OrderBy(o => o.HubOwner.Name).ThenBy(o => o.Name));
+            return View(_hubService.GetAllHub().OrderBy(o => o.HubOwner.Name).ThenBy(o => o.Name));
         }
 
         public virtual ActionResult ListPartial()
         {
-            return PartialView(repository.Hub.GetAll().OrderBy(o => o.HubOwner.Name).ThenBy(o => o.Name));
+            return PartialView(_hubService.GetAllHub().OrderBy(o => o.HubOwner.Name).ThenBy(o => o.Name));
         }
 
         //
@@ -42,7 +31,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ViewResult Details(int id)
         {
-            return View(repository.Hub.FindById(id));
+            return View(_hubService.FindById(id));
         }
 
         //
@@ -50,7 +39,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Create()
         {
-            ViewBag.HubOwnerID = new SelectList(repository.HubOwner.GetAll().OrderBy(o => o.Name), "HubOwnerID", "Name");
+            ViewBag.HubOwnerID = new SelectList(_hubOwnerService.GetAllHubOwner().OrderBy(o => o.Name), "HubOwnerID", "Name");
             return PartialView();
         } 
 
@@ -62,11 +51,11 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Hub.Add(warehouse);
+                _hubService.AddHub(warehouse);
                 return Json(new { success = true }); 
             }
 
-            ViewBag.HubOwnerID = new SelectList(repository.HubOwner.GetAll().OrderBy(o => o.Name), "HubOwnerID", "Name", warehouse.HubOwnerID);
+            ViewBag.HubOwnerID = new SelectList(_hubOwnerService.GetAllHubOwner().OrderBy(o => o.Name), "HubOwnerID", "Name", warehouse.HubOwnerID);
             return PartialView(warehouse);
         }
         
@@ -75,9 +64,9 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(int id)
         {
-            Hub Hub = repository.Hub.FindById(id);
-            ViewBag.HubOwnerID = new SelectList(repository.HubOwner.GetAll().OrderBy(o => o.Name), "HubOwnerID", "Name", Hub.HubOwnerID);
-            return PartialView(Hub);
+            var hub = _hubService.FindById(id);
+            ViewBag.HubOwnerID = new SelectList(_hubOwnerService.GetAllHubOwner().OrderBy(o => o.Name), "HubOwnerID", "Name", hub.HubOwnerID);
+            return PartialView(hub);
         }
 
         //
@@ -88,11 +77,11 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Hub.SaveChanges(warehouse);
+                _hubService.EditHub(warehouse);
                 //return RedirectToAction("Index");
                 return Json(new { success = true }); 
             }
-            ViewBag.HubOwnerID = new SelectList(repository.HubOwner.GetAll().OrderBy(o => o.Name), "HubOwnerID", "Name", warehouse.HubOwnerID);
+            ViewBag.HubOwnerID = new SelectList(_hubOwnerService.GetAllHubOwner().OrderBy(o => o.Name), "HubOwnerID", "Name", warehouse.HubOwnerID);
             return PartialView(warehouse);
         }
 
@@ -101,7 +90,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Delete(int id)
         {
-            return View(repository.Hub.FindById(id));
+            return View(_hubService.FindById(id));
         }
 
         //
@@ -110,7 +99,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            repository.Hub.DeleteByID(id);
+            _hubService.DeleteById(id);
             return RedirectToAction("Index");
         }
     }

@@ -102,11 +102,11 @@ namespace DRMFSS.BLL.ViewModels
         }
 
         public LossesAndAdjustmentsViewModel(List<Commodity> commodity,
-                                                List<Store> stores,
+                                                List<StoreViewModel> stores,
                                                 List<AdjustmentReason> adjustmentReasonMinus,
                                                 List<AdjustmentReason> adjustmentReasonPlus,
                                                 List<Unit> units,
-                                                List <Program> programs,
+                                                List <ProgramViewModel> programs,
                                                 UserProfile user, int type)
         {
             if (type == 1)

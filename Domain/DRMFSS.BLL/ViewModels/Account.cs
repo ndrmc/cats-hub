@@ -46,16 +46,16 @@ namespace DRMFSS.BLL
                    switch (this.EntityType)
                    {
                        case Constants.DONOR:
-                           return unitOfWork.Donor.FindById(this.EntityID).Name;
+                           return unitOfWork.DonorRepository.FindById(this.EntityID).Name;
                            break;
                        case Constants.FDP:
-                           return unitOfWork.FDP.FindById(EntityID).Name;
+                           return unitOfWork.FDPRepository.FindById(EntityID).Name;
                            break;
                        case Constants.HUBOWNER:
-                           return unitOfWork.HubOwner.FindById(EntityID).Name;
+                           return unitOfWork.HubOwnerRepository.FindById(EntityID).Name;
                            break;
                        case Constants.HUB:
-                           return unitOfWork.Hub.FindById(EntityID).Name;
+                           return unitOfWork.HubRepository.FindById(EntityID).Name;
                            break;
                    }
                }

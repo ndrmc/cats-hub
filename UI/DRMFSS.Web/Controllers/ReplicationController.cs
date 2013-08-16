@@ -11,14 +11,7 @@ namespace DRMFSS.Web.Controllers
 {
     public class ReplicationController : BaseController
     {
-        private IUnitOfWork repository;
-
-        public ReplicationController()
-        {
-            repository = new UnitOfWork();
-        }
-
-        
+      
         public ActionResult Index()
         {
             return View();
