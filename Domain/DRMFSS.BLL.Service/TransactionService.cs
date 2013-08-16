@@ -1377,6 +1377,12 @@ namespace DRMFSS.BLL.Services
 
 
 
-        
+
+
+
+        public IEnumerable<Transaction> Get(System.Linq.Expressions.Expression<Func<Transaction, bool>> filter = null, Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>> orderBy = null, string includeProperties = "")
+        {
+            return _unitOfWork.TransactionRepository.Get(filter, orderBy, includeProperties);
+        }
     }
 }

@@ -4,12 +4,23 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
      [Authorize]
     public class TransactionController : BaseController
-    {
+     {
+         private readonly ITransactionService _transactionService;
+         private readonly ILedgerService _ledgerService;
+         private readonly ICommodityService _commodityService;
+
+         public TransactionController(ITransactionService transactionService,ILedgerService ledgerService,ICommodityService commodityService)
+         {
+             this._transactionService = transactionService;
+             this._ledgerService = ledgerService;
+             this._commodityService = commodityService;
+         }
         //
         // GET: /Transaction/
         IUnitOfWork repository = new UnitOfWork();
@@ -22,13 +33,13 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Journal()
         {
             
-            return View(repository.Transaction.GetAll().OrderByDescending(o=>o.TransactionDate).ThenByDescending(o=> o.TransactionGroupID).ToList());
+            return View(_transactionService.Get().OrderByDescending(o=>o.TransactionDate).ThenByDescending(o=> o.TransactionGroupID).ToList());
         }
 
         public ActionResult Ledger()
         {
-            ViewBag.Ledgers = repository.Ledger.GetAll();
-            ViewBag.Commodities = repository.Commodity.GetAllParents();
+            ViewBag.Ledgers =_ledgerService.GetAllLedger();
+            ViewBag.Commodities = _commodityService.GetAllParents();
 
             return View();
         }
@@ -39,14 +50,14 @@ namespace DRMFSS.Web.Controllers
             int commodity = Convert.ToInt32(Request["commodity"]);
             int ledger = Convert.ToInt32(Request["ledger"]);
 
-            var transactions = (repository.Transaction.GetTransactionsForLedger(ledger,account,commodity).OrderByDescending(o => o.TransactionID).ToList());
+            var transactions = (_transactionService.GetTransactionsForLedger(ledger,account,commodity).OrderByDescending(o => o.TransactionID).ToList());
             return PartialView(transactions);
         }
 
 
         public ActionResult GetAccounts(int LedgerID)
         {
-            List<Account> accounts = repository.Transaction.GetActiveAccountsForLedger(LedgerID);
+            List<Account> accounts = _transactionService.GetActiveAccountsForLedger(LedgerID);
 
             return Json(new SelectList( accounts, "AccountID", "EntityName"), JsonRequestBehavior.AllowGet);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using DRMFSS.BLL.ViewModels;
 using DRMFSS.BLL.ViewModels.Report;
@@ -148,5 +149,12 @@ namespace DRMFSS.BLL.Services
         List<ViewModels.Report.Data.DistributionRows> GetDistributionReport(int hubID, DistributionViewModel distributionViewModel);
         bool DeleteById(System.Guid id);
         Transaction FindById(System.Guid id);
-   }
+
+       IEnumerable<Transaction> Get(
+           Expression<Func<Transaction, bool>> filter = null,
+           Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>> orderBy = null,
+           string includeProperties = "");
+
+
+    }
 }
