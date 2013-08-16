@@ -16,91 +16,129 @@ namespace DRMFSS.Web.Controllers
     [Authorize]
     public class DispatchController : BaseController
     {
-        private IDispatchAllocationService _dispatchAllocationService;
+        private readonly IDispatchAllocationService _dispatchAllocationService;
+        private readonly IDispatchService _dispatchService;
+        private readonly IUserProfileService _userProfileService;
+        private readonly IOtherDispatchAllocationService _otherDispatchAllocationService;
+        private readonly IDispatchDetailService _dispatchDetailService;
+        private readonly IUnitService _unitService;
+        private readonly ICommodityTypeService _commodityTypeService;
+        private readonly IProgramService _programService;
+        private readonly ITransporterService _transporterService;
+        private readonly IPeriodService _periodService;
+        private readonly ICommodityService _commodityService;
+        private readonly ITransactionService _transactionService;
+        private readonly IStoreService _storeService;
+        private readonly IAdminUnitService _adminUnitService;
+        private readonly IHubService _hubService;
+        private readonly IFDPService _fdpService;
+        private readonly IProjectCodeService _projectCodeService;
+        private readonly IShippingInstructionService _shippingInstructionService;
 
-       
-
-        public DispatchController(IDispatchAllocationService dispatchAllocationService)
+        public DispatchController(IDispatchAllocationService dispatchAllocationService, IDispatchService dispatchService,
+            IUserProfileService userProfileService, IOtherDispatchAllocationService otherDispatchAllocationService,
+            IDispatchDetailService dispatchDetailService, IUnitService unitService, ICommodityTypeService commodityTypeService,
+            IProgramService programService, ITransporterService transporterService, IPeriodService periodService, 
+            ICommodityService commodityService, ITransactionService transactionService, IStoreService storeService,
+            IAdminUnitService adminUnitService, IHubService hubService, IFDPService fdpService, 
+            IProjectCodeService projectCodeService, IShippingInstructionService shippingInstructionService)
         {
-            this._dispatchAllocationService = dispatchAllocationService;
+            _dispatchAllocationService = dispatchAllocationService;
+            _dispatchService = dispatchService;
+            _userProfileService = userProfileService;
+            _otherDispatchAllocationService = otherDispatchAllocationService;
+            _dispatchDetailService = dispatchDetailService;
+            _unitService = unitService;
+            _commodityTypeService = commodityTypeService;
+            _programService = programService;
+            _transporterService = transporterService;
+            _periodService = periodService;
+            _commodityService = commodityService;
+            _transactionService = transactionService;
+            _storeService = storeService;
+            _adminUnitService = adminUnitService;
+            _hubService = hubService;
+            _fdpService = fdpService;
+            _projectCodeService = projectCodeService;
+            _shippingInstructionService = shippingInstructionService;
         }
 
 
         public ViewResult Index()
         {
-            var model = new DispatchHomeViewModel(repository, repository.UserProfile.GetUser(User.Identity.Name));
+            var model = new DispatchHomeViewModel(repository, _userProfileService.GetUser(User.Identity.Name));
             return View(model);
         }
 
         [GridAction]
-        public ActionResult GetFdpAllocations(bool? closed, int? AdminUnitID, int? CommodityType)
+        public ActionResult GetFdpAllocations(bool? closed, int? adminUnitID, int? commodityType)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            var FDPAllocations = repository.DispatchAllocation.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment, closed, AdminUnitID, CommodityType);
-            return View(new GridModel(FDPAllocations));
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            var fdpAllocations = _dispatchAllocationService.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment, closed, adminUnitID, commodityType);
+            return View(new GridModel(fdpAllocations));
         }
 
         [GridAction]
-        public ActionResult GetLoanAllocations(bool? closed, int? CommodityType)
+        public ActionResult GetLoanAllocations(bool? closed, int? commodityType)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            var LoanAllocations = repository.OtherDispatchAllocation.GetCommitedLoanAllocationsDetached(user, closed, CommodityType);
-            return View(new GridModel(LoanAllocations));
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            var loanAllocations = _otherDispatchAllocationService.GetCommitedLoanAllocationsDetached(user, closed, commodityType);
+            return View(new GridModel(loanAllocations));
         }
 
         [GridAction]
-        public ActionResult GetTransferAllocations(bool? closed, int? CommodityType)
+        public ActionResult GetTransferAllocations(bool? closed, int? commodityType)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            var TransferAllocations = repository.OtherDispatchAllocation.GetCommitedTransferAllocationsDetached(user, closed, CommodityType);
-            return View(new GridModel(TransferAllocations));
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            var transferAllocations = _otherDispatchAllocationService.GetCommitedTransferAllocationsDetached(user, closed, commodityType);
+            return View(new GridModel(transferAllocations));
         }
 
         [GridAction]
-        public ActionResult DispatchListGrid(string DispatchAllocationID)
+        public ActionResult DispatchListGrid(string dispatchAllocationID)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            var user = _userProfileService.GetUser(User.Identity.Name);
             //TODO cascade using allocation id
-            List<DispatchModelModelDto> dispatchs = repository.Dispatch.ByHubIdAndAllocationIDetached(user.DefaultHub.HubID, Guid.Parse(DispatchAllocationID));
+            var dispatchs = _dispatchService.ByHubIdAndAllocationIDetached(user.DefaultHub.HubID, Guid.Parse(dispatchAllocationID));
             return View(new GridModel(dispatchs));
         }
 
         [GridAction]
-        public ActionResult DispatchOtherListGrid(string OtherDispatchAllocationID)
+        public ActionResult DispatchOtherListGrid(string otherDispatchAllocationID)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             //TODO cascade using allocation id
-            List<DispatchModelModelDto> OtherDispatchs = repository.Dispatch.ByHubIdAndOtherAllocationIDetached(user.DefaultHub.HubID, Guid.Parse(OtherDispatchAllocationID));
-            return View(new GridModel(OtherDispatchs));
+            List<DispatchModelModelDto> otherDispatchs = _dispatchService.ByHubIdAndOtherAllocationIDetached(user.DefaultHub.HubID, Guid.Parse(otherDispatchAllocationID));
+            return View(new GridModel(otherDispatchs));
         }
         
         [GridAction]
-        public ActionResult DispatchListGridListGrid(string DispatchID)
+        public ActionResult DispatchListGridListGrid(string dispatchID)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            var user = _userProfileService.GetUser(User.Identity.Name);
             //(user.DefaultHub.HubID)
-            List<DispatchDetailModelDto> receiveDetails = repository.DispatchDetail.ByDispatchIDetached(Guid.Parse(DispatchID), user.PreferedWeightMeasurment);
+            var receiveDetails = _dispatchDetailService.ByDispatchIDetached(Guid.Parse(dispatchID), user.PreferedWeightMeasurment);
             return View(new GridModel(receiveDetails));
         }
         public ViewResult Log()
         {
-            var dispatches = repository.Dispatch.GetAll();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            var dispatches = _dispatchService.GetAllDispatch();
+            var user = _userProfileService.GetUser(User.Identity.Name);
             return View(dispatches.Where(p => p.HubID == user.DefaultHub.HubID).ToList());
         }
 
         //GIN unique validation
 
-        public virtual ActionResult NotUnique(string GIN, string DispatchID)
+        public virtual ActionResult NotUnique(string gin, string dispatchID)
         {
 
-            BLL.Dispatch dispatch = repository.Dispatch.GetDispatchByGIN(GIN);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            var dispatch = _dispatchService.GetDispatchByGIN(gin);
+            var user = _userProfileService.GetUser(User.Identity.Name);
             
-            Guid guidParse = Guid.Empty;
-            if (Guid.TryParse(DispatchID, out guidParse))
+            Guid guidParse;
+            if (Guid.TryParse(dispatchID, out guidParse))
             {
-                guidParse = Guid.Parse(DispatchID);
+                guidParse = Guid.Parse(dispatchID);
             }
 
             if (dispatch == null || ((dispatch.DispatchID != Guid.Empty) && (dispatch.DispatchID == guidParse)))// new one or edit no problem 
@@ -112,12 +150,12 @@ namespace DRMFSS.Web.Controllers
 
                 if (dispatch.HubID == user.DefaultHub.HubID)
                 {
-                    return Json(string.Format("{0} is invalid, there is an existing record with the same GIN", GIN),
+                    return Json(string.Format("{0} is invalid, there is an existing record with the same GIN", gin),
                         JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    return Json(string.Format("{0} is invalid, there is an existing record with the same GIN at another Warehouse", GIN),
+                    return Json(string.Format("{0} is invalid, there is an existing record with the same GIN at another Warehouse", gin),
                     JsonRequestBehavior.AllowGet);
                 }
             }
@@ -128,10 +166,10 @@ namespace DRMFSS.Web.Controllers
         public   ActionResult Create(string ginNo, int type)
         {
 
-            ViewBag.Units = repository.Unit.GetAll();
+            ViewBag.Units = _unitService.GetAllUnit();
 
-            BLL.Dispatch dispatch = repository.Dispatch.GetDispatchByGIN(ginNo);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.Dispatch dispatch = _dispatchService.GetDispatchByGIN(ginNo);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (dispatch != null)
             {
                 if (user.DefaultHub != null && user.DefaultHub.HubID == dispatch.HubID)
@@ -168,7 +206,7 @@ namespace DRMFSS.Web.Controllers
 
                     if(allocationTypeId == 1)//to FDP
                     {
-                        DispatchAllocation toFDPDispatchAllocation = repository.DispatchAllocation.FindById(allocationId);
+                        DispatchAllocation toFDPDispatchAllocation = _dispatchAllocationService.FindById(allocationId);
                         
                         theViewModel.FDPID = toFDPDispatchAllocation.FDPID;
                         PrepareFDPForEdit(toFDPDispatchAllocation.FDPID);
@@ -179,25 +217,25 @@ namespace DRMFSS.Web.Controllers
                         theViewModel.ProjectNumber = toFDPDispatchAllocation.ProjectCode.Value;
 
                         theViewModel.CommodityTypeID = toFDPDispatchAllocation.Commodity.CommodityTypeID;
-                        ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name",toFDPDispatchAllocation.Commodity.CommodityTypeID);
+                        ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name",toFDPDispatchAllocation.Commodity.CommodityTypeID);
                        
                         if (toFDPDispatchAllocation.ProgramID.HasValue)
                         {
                             theViewModel.ProgramID = toFDPDispatchAllocation.ProgramID.Value;
-                            ViewBag.ProgramID = new SelectList(repository.Program.GetAll(), "ProgramID", "Name", theViewModel.ProgramID);
+                            ViewBag.ProgramID = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name", theViewModel.ProgramID);
                         }
                         if (toFDPDispatchAllocation.TransporterID.HasValue)
                             theViewModel.TransporterID = toFDPDispatchAllocation.TransporterID.Value;
-                            ViewBag.TransporterID = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name", theViewModel.TransporterID);
+                            ViewBag.TransporterID = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name", theViewModel.TransporterID);
                         if (toFDPDispatchAllocation.Year.HasValue)
                             theViewModel.Year = toFDPDispatchAllocation.Year.Value;
-                                    var years = (from y in repository.Period.GetYears()
+                                    var years = (from y in _periodService.GetYears()
                          select new { Name = y, Id = y }).ToList();
                             ViewBag.Year = new SelectList(years, "Id", "Name"); 
                             ViewBag.Year = new SelectList(years, "Id", "Name",theViewModel.Year);            
                         if (toFDPDispatchAllocation.Month.HasValue)
                             theViewModel.Month = toFDPDispatchAllocation.Month.Value;
-                        var months = (from y in repository.Period.GetMonths(theViewModel.Year)
+                        var months = (from y in _periodService.GetMonths(theViewModel.Year)
                                       select new { Name = y, Id = y }).ToList();
                         ViewBag.Month = new SelectList(months, "Id", "Name", theViewModel.Month);
                         if (toFDPDispatchAllocation.Round.HasValue)
@@ -207,16 +245,16 @@ namespace DRMFSS.Web.Controllers
                     }
                     else //allocationTypeId == 2
                     {
-                        var otherDispatchAllocation = repository.OtherDispatchAllocation.FindById(allocationId);
+                        var otherDispatchAllocation = _otherDispatchAllocationService.FindById(allocationId);
                         theViewModel.ToHubID = otherDispatchAllocation.ToHubID;
                         theViewModel.SINumber = otherDispatchAllocation.ShippingInstruction.Value;
                         theViewModel.ProjectNumber = otherDispatchAllocation.ProjectCode.Value;
                         theViewModel.ProgramID = otherDispatchAllocation.ProgramID;
 
                         theViewModel.CommodityTypeID = otherDispatchAllocation.Commodity.CommodityTypeID;
-                        ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name", otherDispatchAllocation.Commodity.CommodityTypeID);
+                        ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name", otherDispatchAllocation.Commodity.CommodityTypeID);
 
-                        ViewBag.ProgramID = new SelectList(repository.Program.GetAll(), "ProgramID", "Name", theViewModel.ProgramID);
+                        ViewBag.ProgramID = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name", theViewModel.ProgramID);
                         theViewModel.OtherDispatchAllocationID = otherDispatchAllocation.OtherDispatchAllocationID;
                     }
 
@@ -235,8 +273,8 @@ namespace DRMFSS.Web.Controllers
             var commodities = new List<Models.DispatchDetailModel>();
             if (dispatchId != null)
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-                commodities = DispatchDetailModel.GenerateDispatchDetailModels(repository.Dispatch.FindById(Guid.Parse(dispatchId)).DispatchDetails);
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+                commodities = DispatchDetailModel.GenerateDispatchDetailModels(_dispatchService.FindById(Guid.Parse(dispatchId)).DispatchDetails);
                 //commodities = (from c in repository.DispatchDetail.GetDispatchDetail(Guid.Parse(dispatchId))
                 //              select new Models.DispatchDetailModel()
                 //              {
@@ -304,7 +342,7 @@ namespace DRMFSS.Web.Controllers
                 }
             }
                 
-            ViewBag.Commodities = repository.Commodity.GetAllParents().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
+            ViewBag.Commodities = _commodityService.GetAllParents().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
             //TODO do we really need the line below 
             //PrepareCreate(1);
             return View(new GridModel(commodities));
@@ -312,28 +350,28 @@ namespace DRMFSS.Web.Controllers
 
         private void PrepareCreate(int type)
         {
-            var years = (from y in repository.Period.GetYears()
+            var years = (from y in _periodService.GetYears()
                          select new { Name = y, Id = y }).ToList();
             ViewBag.Year = new SelectList(years, "Id", "Name"); 
             ViewBag.Month = new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name");
-            ViewBag.TransporterID = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name");
+            ViewBag.TransporterID = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name");
 
 
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
-            ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name");
-            ViewBag.StoreID = new SelectList(repository.Store.GetStoreByHub(user.DefaultHub.HubID), "StoreID", "Name");
-            ViewBag.ProgramID = new SelectList(repository.Program.GetAll(), "ProgramID", "Name");
+            ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name");
+            ViewBag.StoreID = new SelectList(_storeService.GetStoreByHub(user.DefaultHub.HubID), "StoreID", "Name");
+            ViewBag.ProgramID = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
 
-            ViewData["Commodities"] = repository.Commodity.GetAllParents().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
-            ViewBag.Units = repository.Unit.GetAll();
+            ViewData["Commodities"] = _commodityService.GetAllParents().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
+            ViewBag.Units = _unitService.GetAllUnit();
             if (type == 1)
             {
                 PrepareFDPCreate();
             }
             else if (type == 2)
             {
-                List<BLL.Hub> hub = repository.Hub.GetAll();
+                List<BLL.Hub> hub = _hubService.GetAllHub();
                 hub.Remove(user.DefaultHub);
                 ViewBag.ToHUBs = new SelectList(hub.Select(p => new { Name = string.Format("{0} - {1}", p.Name, p.HubOwner.Name), HubID = p.HubID }), "HubID", "Name");
             }
@@ -346,7 +384,7 @@ namespace DRMFSS.Web.Controllers
         private void PrepareFDPCreate()
         {
             Models.AdminUnitModel unitModel = new AdminUnitModel();
-            ViewBag.SelectedRegionId = new SelectList(repository.AdminUnit.GetRegions().Select(p => new{Id = p.AdminUnitID, Name = p.Name}), "Id", "Name");
+            ViewBag.SelectedRegionId = new SelectList(_adminUnitService.GetRegions().Select(p => new{Id = p.AdminUnitID, Name = p.Name}), "Id", "Name");
             ViewBag.SelectedWoredaId = new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name");
             ViewBag.FDPID = new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name");
             ViewBag.SelectedZoneId = new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name");
@@ -357,7 +395,7 @@ namespace DRMFSS.Web.Controllers
         {
             
             MembershipProvider membership = new MembershipProvider();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             List<Models.DispatchDetailModel> insertCommodities = new List<Models.DispatchDetailModel>();
             List<Models.DispatchDetailModel> updateCommodities = new List<Models.DispatchDetailModel>();
@@ -401,8 +439,8 @@ namespace DRMFSS.Web.Controllers
                     {
                         errorMessage = string.Format("{0}, {1}", errorMessage, v.ErrorMessage);
                     }
-                    Commodity comms = repository.Commodity.FindById(dispatchDetailViewModel.CommodityID);
-                    CommodityType commType = repository.CommodityType.FindById(dispatchModel.CommodityTypeID);
+                    Commodity comms = _commodityService.FindById(dispatchDetailViewModel.CommodityID);
+                    CommodityType commType = _commodityTypeService.FindById(dispatchModel.CommodityTypeID);
                     if (dispatchModel.CommodityTypeID != comms.CommodityTypeID)
                         ModelState.AddModelError("DispatchDetails", comms.Name + " is not of type " + commType.Name);
                 }
@@ -436,7 +474,7 @@ namespace DRMFSS.Web.Controllers
 
                 if (dispatchModel.ChangeStoreManPermanently != null && dispatchModel.ChangeStoreManPermanently == true)
                 {
-                    BLL.Store storeTobeChanged = repository.Store.FindById(dispatchModel.StoreID);
+                    BLL.Store storeTobeChanged = _storeService.FindById(dispatchModel.StoreID);
                     if (storeTobeChanged != null && dispatchModel.ChangeStoreManPermanently == true)
                         storeTobeChanged.StoreManName = dispatchModel.DispatchedByStoreMan;
                 }
@@ -456,7 +494,7 @@ namespace DRMFSS.Web.Controllers
                         }
                     }
                     //InsertDispatch(dispatchModel, user);
-                    repository.Transaction.SaveDispatchTransaction(dispatchModel, user);
+                    _transactionService.SaveDispatchTransaction(dispatchModel, user);
                 }
                 else
                 {
@@ -484,7 +522,7 @@ namespace DRMFSS.Web.Controllers
                if (dispatchModel.FDPID != null)
                {
                    PrepareFDPForEdit(dispatchModel.FDPID);
-                   dispatchModel.WoredaID = repository.FDP.FindById(dispatchModel.FDPID.Value).AdminUnitID;
+                   dispatchModel.WoredaID = _fdpService.FindById(dispatchModel.FDPID.Value).AdminUnitID;
                } //PrepareEdit(dispatchModel.GenerateDipatch(), user,dispatchModel.Type);
                 return View(dispatchModel);
             
@@ -494,7 +532,7 @@ namespace DRMFSS.Web.Controllers
         {
             List<Models.DispatchDetailModel> commodities = GetSelectedCommodities(dispatchModel.JSONInsertedCommodities);
             dispatchModel.DispatchDetails = commodities;
-            repository.Transaction.SaveDispatchTransaction(dispatchModel,user);
+            _transactionService.SaveDispatchTransaction(dispatchModel,user);
         }
 
        
@@ -526,7 +564,7 @@ namespace DRMFSS.Web.Controllers
 
         public   ActionResult Months(int Year)
         {
-            var months = from s in repository.Period.GetMonths(Year)
+            var months = from s in _periodService.GetMonths(Year)
                          select new { Name = s, Id = s };
             return Json(new SelectList(months,"Id","Name"), JsonRequestBehavior.AllowGet);
         }
@@ -534,7 +572,7 @@ namespace DRMFSS.Web.Controllers
 
         public   ActionResult JsonDispatch(string ginNo)
         {
-            BLL.Dispatch dispatch = repository.Dispatch.GetDispatchByGIN(ginNo);
+            BLL.Dispatch dispatch = _dispatchService.GetDispatchByGIN(ginNo);
             if (dispatch != null)
             {
                 return Json(true, JsonRequestBehavior.AllowGet);
@@ -547,10 +585,10 @@ namespace DRMFSS.Web.Controllers
 
         public   ActionResult _DispatchPartial(string ginNo, int type)
         {
-            ViewBag.Units = repository.Unit.GetAll();
+            ViewBag.Units = _unitService.GetAllUnit();
             
-            BLL.Dispatch dispatch = repository.Dispatch.GetDispatchByGIN(ginNo);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.Dispatch dispatch = _dispatchService.GetDispatchByGIN(ginNo);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (dispatch != null)
             {
                 type = dispatch.Type;//override the type by the data type coming from the DB(i.e. load the DB data by overriding the type)
@@ -575,27 +613,27 @@ namespace DRMFSS.Web.Controllers
 
         private void PrepareEdit(BLL.Dispatch dispatch, BLL.UserProfile user, int type)
         {
-            var years = (from y in repository.Period.GetYears()
+            var years = (from y in _periodService.GetYears()
                          select new { Name = y, Id = y }).ToList();
-            var months = (from y in repository.Period.GetMonths(dispatch.PeriodYear)
+            var months = (from y in _periodService.GetMonths(dispatch.PeriodYear)
                          select new { Name = y, Id = y }).ToList();
             ViewBag.Year = new SelectList(years, "Id", "Name", dispatch.PeriodYear);
             ViewBag.Month = new SelectList(months, "Id", "Name", dispatch.PeriodMonth);
-            ViewData["Units"] = repository.Unit.GetAll().Select(p => new { Id = p.UnitID, Name = p.Name}).ToList();
-            BLL.Transaction transaction = repository.Dispatch.GetDispatchTransaction(dispatch.DispatchID);
+            ViewData["Units"] = _unitService.GetAllUnit().Select(p => new { Id = p.UnitID, Name = p.Name}).ToList();
+            BLL.Transaction transaction = _dispatchService.GetDispatchTransaction(dispatch.DispatchID);
             
 
-            ViewBag.TransporterID = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name", dispatch.TransporterID);
+            ViewBag.TransporterID = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name", dispatch.TransporterID);
             if (type == 1)
             {
                 PrepareFDPForEdit(dispatch.FDPID);
             }
             else if (type == 2)
             {
-                BLL.Transaction tran = repository.Dispatch.GetDispatchTransaction(dispatch.DispatchID);
+                BLL.Transaction tran = _dispatchService.GetDispatchTransaction(dispatch.DispatchID);
                 //TODO I think there need's to be a check for this one 
                 if(tran != null)
-                    ViewBag.ToHUBs = new SelectList(repository.Hub.GetAll().Select(p => new {Name = string.Format("{0} - {1}",p.Name,p.HubOwner.Name), HubID = p.HubID}), "HubID", "Name", tran.Account.EntityID);
+                    ViewBag.ToHUBs = new SelectList(_hubService.GetAllHub().Select(p => new {Name = string.Format("{0} - {1}",p.Name,p.HubOwner.Name), HubID = p.HubID}), "HubID", "Name", tran.Account.EntityID);
                 else//this is deliberete change it later
                     ViewBag.ToHUBs = null;
                 
@@ -603,26 +641,26 @@ namespace DRMFSS.Web.Controllers
 
             if (transaction != null)
             {
-                ViewBag.StoreID = new SelectList(repository.Store.GetStoreByHub(user.DefaultHub.HubID), "StoreID", "Name", transaction.StoreID);
-                ViewBag.ProgramID = new SelectList(repository.Program.GetAll(), "ProgramID", "Name", transaction.ProgramID);
+                ViewBag.StoreID = new SelectList(_storeService.GetStoreByHub(user.DefaultHub.HubID), "StoreID", "Name", transaction.StoreID);
+                ViewBag.ProgramID = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name", transaction.ProgramID);
                 ViewBag.StackNumbers = new SelectList(transaction.Store.Stacks.Select(p => new { Name = p, Id = p }), "Id", "Name", transaction.Stack.Value);
-                ViewData["Commodities"] = repository.Commodity.GetAllParents().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
-                ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name",transaction.Commodity.CommodityTypeID);
+                ViewData["Commodities"] = _commodityService.GetAllParents().Select(c => new Models.CommodityModel() { Id = c.CommodityID, Name = c.Name }).ToList();
+                ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name",transaction.Commodity.CommodityTypeID);
             }
             else
             {
-                ViewBag.StoreID = new SelectList(repository.Store.GetStoreByHub(user.DefaultHub.HubID), "StoreID",
+                ViewBag.StoreID = new SelectList(_storeService.GetStoreByHub(user.DefaultHub.HubID), "StoreID",
                                                  "Name"); //, transaction.StoreID);
-                ViewBag.ProgramID = new SelectList(repository.Program.GetAll(), "ProgramID", "Name");
+                ViewBag.ProgramID = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
                     //, transaction.ProgramID);
                 //TODO i'm not so sure about the next line
                 ViewBag.StackNumbers =
-                    new SelectList(repository.Store.GetAll().FirstOrDefault().Stacks.Select(p => new {Name = p, Id = p}), "Id",
+                    new SelectList(_storeService.GetAllStore().FirstOrDefault().Stacks.Select(p => new {Name = p, Id = p}), "Id",
                         "Name"); //, transaction.Stack.Value); )//transaction.Store.Stacks
                 ViewData["Commodities"] =
-                    repository.Commodity.GetAllParents().Select(
+                    _commodityService.GetAllParents().Select(
                         c => new Models.CommodityModel() {Id = c.CommodityID, Name = c.Name}).ToList();
-                ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name");
+                ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name");
             }
             List<Models.DispatchDetailModel> comms = new List<Models.DispatchDetailModel>();
             ViewBag.SelectedCommodities = comms;
@@ -633,7 +671,7 @@ namespace DRMFSS.Web.Controllers
             Models.AdminUnitModel unitModel = new Models.AdminUnitModel();
             BLL.FDP fdp;
             if(fdpid != null)
-                fdp = repository.FDP.FindById(fdpid.Value);
+                fdp = _fdpService.FindById(fdpid.Value);
             else
                 fdp = null;
             if (fdp != null)
@@ -641,8 +679,8 @@ namespace DRMFSS.Web.Controllers
                 unitModel.SelectedWoredaId = fdp.AdminUnitID;
                 if (fdp.AdminUnit.ParentID != null) unitModel.SelectedZoneId = fdp.AdminUnit.ParentID.Value;
 
-                unitModel.SelectedRegionId = repository.AdminUnit.GetRegionByZoneId(unitModel.SelectedZoneId);
-                ViewBag.SelectedRegionId = new SelectList(repository.AdminUnit.GetRegions().Select(p => new { Id = p.AdminUnitID, Name = p.Name}).OrderBy(o => o.Name), "Id", "Name", unitModel.SelectedRegionId);
+                unitModel.SelectedRegionId = _adminUnitService.GetRegionByZoneId(unitModel.SelectedZoneId);
+                ViewBag.SelectedRegionId = new SelectList(_adminUnitService.GetRegions().Select(p => new { Id = p.AdminUnitID, Name = p.Name}).OrderBy(o => o.Name), "Id", "Name", unitModel.SelectedRegionId);
                 ViewBag.SelectedZoneId = new SelectList(this.GetChildren(unitModel.SelectedRegionId).OrderBy(o => o.Name), "Id", "Name", unitModel.SelectedZoneId);
                 ViewBag.SelectedWoredaId = new SelectList(this.GetChildren(unitModel.SelectedZoneId).OrderBy(o => o.Name), "Id", "Name", unitModel.SelectedWoredaId);
                 ViewBag.FDPID = new SelectList(this.GetFdps(unitModel.SelectedWoredaId).OrderBy(o => o.Name), "Id", "Name", fdp.FDPID);
@@ -661,11 +699,11 @@ namespace DRMFSS.Web.Controllers
 
         public   ActionResult Edit(string id)
         {
-            Dispatch dispatch = repository.Dispatch.FindById(Guid.Parse(id));
+            Dispatch dispatch = _dispatchService.FindById(Guid.Parse(id));
             //ViewBag.PeriodID = new SelectList(db.Periods, "PeriodID", "PeriodID", dispatch.PeriodID);
-            ViewBag.StoreID = new SelectList(repository.Store.GetAll(), "StoreID", "Name");
-            ViewBag.TransporterID = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name", dispatch.TransporterID);
-            ViewBag.HubID = new SelectList(repository.Hub.GetAll(), "WarehouseID", "Name", dispatch.HubID);
+            ViewBag.StoreID = new SelectList(_storeService.GetAllStore(), "StoreID", "Name");
+            ViewBag.TransporterID = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name", dispatch.TransporterID);
+            ViewBag.HubID = new SelectList(_hubService.GetAllHub(), "WarehouseID", "Name", dispatch.HubID);
             return View("Edit", dispatch);
         }
 
@@ -677,15 +715,15 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Dispatch.SaveChanges(dispatch);
+                _dispatchService.EditDispatch(dispatch);
                 return RedirectToAction("Index");
             }
-            ViewBag.PeriodID = new SelectList(repository.Period.GetAll(), "PeriodID", "PeriodID", repository.Period.GetPeriod(dispatch.PeriodYear, dispatch.PeriodMonth).PeriodID);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            ViewBag.StoreID = new SelectList(repository.Store.GetStoreByHub(user.DefaultHub.HubID), "StoreID", "Name");
-            ViewBag.TransporterID = new SelectList(repository.Transporter.GetAll(), "TransporterID", "Name", dispatch.TransporterID);
+            ViewBag.PeriodID = new SelectList(_periodService.GetAllPeriod(), "PeriodID", "PeriodID", _periodService.GetPeriod(dispatch.PeriodYear, dispatch.PeriodMonth).PeriodID);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            ViewBag.StoreID = new SelectList(_storeService.GetStoreByHub(user.DefaultHub.HubID), "StoreID", "Name");
+            ViewBag.TransporterID = new SelectList(_transporterService.GetAllTransporter(), "TransporterID", "Name", dispatch.TransporterID);
             ViewBag.HubID = new SelectList(user.UserHubs, "HubID", "Name", dispatch.HubID);
-            ViewBag.CommodityTypeID = new SelectList(repository.CommodityType.GetAll(), "CommodityTypeID", "Name");
+            ViewBag.CommodityTypeID = new SelectList(_commodityTypeService.GetAllCommodityType(), "CommodityTypeID", "Name");
             return View(dispatch);
         }
 
@@ -694,7 +732,7 @@ namespace DRMFSS.Web.Controllers
         
         public List<Models.AdminUnitItem> GetChildren(int parentId)
         {
-            var units = from item in repository.AdminUnit.GetChildren(parentId)
+            var units = from item in _adminUnitService.GetChildren(parentId)
                         select new Models.AdminUnitItem
                         {
                             Id = item.AdminUnitID,
@@ -705,7 +743,7 @@ namespace DRMFSS.Web.Controllers
 
         public List<Models.AdminUnitItem> GetFdps(int woredaId)
         {
-            var fdps = from p in repository.FDP.GetFDPsByWoreda(woredaId)
+            var fdps = from p in _fdpService.GetFDPsByWoreda(woredaId)
                        select new Models.AdminUnitItem() { Id = p.FDPID, Name = p.Name };
             return fdps.ToList();
         }
@@ -722,7 +760,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult IsProjectValid(string ProjectNumber)
         {
-            var count = repository.ProjectCode.GetProjectCodeId(ProjectNumber);
+            var count = _projectCodeService.GetProjectCodeId(ProjectNumber);
             var result = (count > 0);
             return (Json(result, JsonRequestBehavior.AllowGet));
         }
@@ -732,10 +770,10 @@ namespace DRMFSS.Web.Controllers
             bool result = false;
             if(FDPID != null)
             {
-                result=  repository.ShippingInstruction.HasBalance(SINumber, FDPID.Value);
+                result=  _shippingInstructionService.HasBalance(SINumber, FDPID.Value);
             }else
             {
-                result = repository.ShippingInstruction.GetShipingInstructionId(SINumber) > 0;
+                result = _shippingInstructionService.GetShipingInstructionId(SINumber) > 0;
             }
              
             return (Json(result, JsonRequestBehavior.AllowGet));
@@ -774,13 +812,13 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult AvailbaleCommodities(string SINumber)
         {
-            return Json(repository.Dispatch.GetAvailableCommodities(SINumber, repository.UserProfile.GetUser(User.Identity.Name).DefaultHub.HubID).Select(p => new { Value = p.CommodityID, Text = p.Name })
+            return Json(_dispatchService.GetAvailableCommodities(SINumber, _userProfileService.GetUser(User.Identity.Name).DefaultHub.HubID).Select(p => new { Value = p.CommodityID, Text = p.Name })
                 , JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult JsonRegionZones(string requisitionNumber)
         {
-            List<DispatchAllocation> allocations = repository.DispatchAllocation.GetAllocations(requisitionNumber);
+            List<DispatchAllocation> allocations = _dispatchAllocationService.GetAllocations(requisitionNumber);
             if(allocations.Count > 0)
             {
                 var region = allocations.FirstOrDefault().FDP.AdminUnit.AdminUnit2.AdminUnit2.AdminUnitID;
