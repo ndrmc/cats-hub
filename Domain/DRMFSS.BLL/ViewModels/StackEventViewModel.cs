@@ -52,12 +52,12 @@ namespace DRMFSS.BLL.ViewModels
         {
         }
 
-        public StackEventViewModel(IUnitOfWork repository, UserProfile user)
+        public StackEventViewModel(List<StackEvent> stackEvent,List<Store> stores, UserProfile user)
         {
             this.EventDate = DateTime.Now;
             this.Stores = repository.Hub.GetAllStoreByUser(user);
             this.Stacks = new List<int>();
-            this.StackEventTypes = repository.StackEventType.GetAll();
+            this.StackEventTypes = stackEvent;
         }
     }
 }

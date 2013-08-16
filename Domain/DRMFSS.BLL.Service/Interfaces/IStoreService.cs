@@ -27,7 +27,7 @@ namespace DRMFSS.BLL.Services
        List<int> GetStacksByToStoreIdFromStoreIdFromStack(int ToStoreId, int FromStoreId, int FromStackId);
        List<Store> GetAllByHUbs(List<Hub> HubIds);
        IEnumerable<BinCardViewModel> GetBinCard(int hubID, int? StoreID, int? CommodityID, string ProjectID);
-     
+       List<Store> GetStoreByHub(int hubId);
     }
 }
 
