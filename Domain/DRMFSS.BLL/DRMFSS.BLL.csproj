@@ -419,7 +419,6 @@
     <Compile Include="Repository\viewModel.cs" />
     <Compile Include="UnitOfWork\UnitOfWork.cs" />
     <Compile Include="ViewModels\Common\BidRefViewModel.cs" />
-    <Compile Include="ViewModels\Dispatch\IDispatchAllocationService.cs" />
     <Compile Include="ViewModels\Report\Data\DeliveryReport.cs" />
     <Compile Include="ViewModels\Report\Data\DistributionReport.cs" />
     <Compile Include="ViewModels\Report\Data\ReceiveReport.cs" />
