@@ -33,15 +33,15 @@ namespace DRMFSS.BLL.ViewModels.Report
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        public DispatchesViewModel(IUnitOfWork Repository, UserProfile user)
+        public DispatchesViewModel(IUnitOfWork Repository, List<CodesViewModel> codes, List<Commodity> commodities, List<CommodityTypeViewModel> commodityTypes, List<ProgramViewModel> programs, List<StoreViewModel> stores, List<AreaViewModel> areas, List<BidRefViewModel> bidRefs)
         {
             this.Periods = GetAllPeriod();
-            this.Cods = ConstantsRepository.GetAllCodes();
-            this.CommodityTypes = Repository.CommodityType.GetAllCommodityTypeForReprot();
-            this.Programs = Repository.Program.GetAllProgramsForReport();
-            this.Stores = Repository.Hub.GetAllStoreByUser(user);
-            this.Areas = Repository.AdminUnit.GetAllAreasForReport();
-            this.BidRefs = Repository.DispatchAllocation.GetAllBidRefsForReport();
+            this.Cods = codes;// ConstantsRepository.GetAllCodes();
+            this.CommodityTypes = commodityTypes;// Repository.CommodityType.GetAllCommodityTypeForReprot();
+            this.Programs = programs; //Repository.Program.GetAllProgramsForReport();
+            this.Stores = stores; //Repository.Hub.GetAllStoreByUser(user);
+            this.Areas = areas;// Repository.AdminUnit.GetAllAreasForReport();
+            this.BidRefs = bidRefs;// Repository.DispatchAllocation.GetAllBidRefsForReport();
         }
 
         public List<PeriodViewModel> GetAllPeriod()
