@@ -72,6 +72,7 @@
     <Compile Include="CommoditySourceTests.cs" />
     <Compile Include="CommodityTypeControllerTests.cs" />
     <Compile Include="ContactControllerTests.cs" />
+    <Compile Include="StoreControllerTests.cs" />
     <Compile Include="ErrorControllerTests.cs" />
     <Compile Include="FDPControllerTests.cs" />
     <Compile Include="HubOwnerControllerTests.cs" />
