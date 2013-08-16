@@ -82,25 +82,25 @@ namespace DRMFSS.BLL.Services
         {
             var commodity = _unitOfWork.CommodityRepository.FindById(commodityID);
             if (commodity != null && commodity.CommodityTypeID == 1)
-                return db.RPT_StockStatus(hubID, commodityID);
+                return _unitOfWork.ReportRepository.RPT_StockStatus(hubID, commodityID);
             else
-                return db.RPT_StockStatusNonFood(hubID, commodityID);
+                return _unitOfWork.ReportRepository.RPT_StockStatusNonFood(hubID, commodityID);
         }
 
         public IEnumerable<StatusReportBySI_Result> GetStatusReportBySI(int hubID)
         {
-            return db.GetStatusReportBySI(hubID).AsEnumerable();
+            return _unitOfWork.ReportRepository.GetStatusReportBySI(hubID).AsEnumerable();
         }
 
         public IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID)
         {
-            return db.GetDispatchFulfillmentStatus(hubID);
+            return _unitOfWork.ReportRepository.GetDispatchFulfillmentStatus(hubID);
         }
 
 
         public List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel)
         {
-            var dbGetStatusReportBySI = db.GetStatusReportBySI(HuBID).ToList();
+            var dbGetStatusReportBySI = _unitOfWork.ReportRepository.GetStatusReportBySI(HuBID).ToList();
             if (freeStockFilterViewModel.ProgramId.HasValue && freeStockFilterViewModel.ProgramId != 0)
             {
                 dbGetStatusReportBySI = dbGetStatusReportBySI.Where(p => p.ProgramID == freeStockFilterViewModel.ProgramId).ToList();
