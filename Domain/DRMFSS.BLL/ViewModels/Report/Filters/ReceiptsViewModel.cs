@@ -38,15 +38,16 @@ namespace DRMFSS.BLL.ViewModels.Report
         {
         }
 
-        public ReceiptsViewModel(IUnitOfWork Repository, UserProfile user)
+        public ReceiptsViewModel(List<CodesViewModel> codes, List<CommodityTypeViewModel> commodityTypes, List<ProgramViewModel> programs, List<StoreViewModel> stores,
+            List<CommoditySourceViewModel> commoditySources,List<PortViewModel> ports )
         {
             this.Periods = GetAllPeriod();
-            this.CommoditySources = Repository.CommoditySource.GetAllCommoditySourceForReport();
-            this.Ports = Repository.Receive.GetALlPorts();
-            this.Cods = ConstantsRepository.GetAllCodes();
-            this.CommodityTypes = Repository.CommodityType.GetAllCommodityTypeForReprot();
-            this.Programs = Repository.Program.GetAllProgramsForReport();
-            this.Stores = Repository.Hub.GetAllStoreByUser(user);
+            this.CommoditySources = commoditySources;// Repository.CommoditySource.GetAllCommoditySourceForReport();
+            this.Ports = ports;// Repository.Receive.GetALlPorts();
+            this.Cods = codes;// ConstantsRepository.GetAllCodes();
+            this.CommodityTypes = commodityTypes;// Repository.CommodityType.GetAllCommodityTypeForReprot();
+            this.Programs = programs;//Repository.Program.GetAllProgramsForReport();
+            this.Stores = stores;//Repository.Hub.GetAllStoreByUser(user);
         }
 
 
