@@ -49,6 +49,8 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IInternalMovementService>().To<InternalMovementService>();
             kernel.Bind<IStoreService>().To<StoreService>();
             kernel.Bind<IProjectCodeService>().To<ProjectCodeService>();
+            kernel.Bind<IProgramService>().To<ProgramService>();
+
         }
     }
 }

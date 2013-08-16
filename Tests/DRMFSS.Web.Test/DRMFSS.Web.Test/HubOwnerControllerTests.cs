@@ -52,7 +52,7 @@ namespace DRMFSS.Web.Test
         public void CanViewIndex()
         {
             //ACT
-            var viewResult = _hubOwnerController.Index();
+            var viewResult = _hubOwnerController.Index() as ViewResult;
 
             //ASSERT
             Assert.NotNull(viewResult);
@@ -81,7 +81,7 @@ namespace DRMFSS.Web.Test
         public void CanViewCreate()
         {
             //ACT
-            var viewResult = _hubOwnerController.Create(1) as ViewResult;
+            var viewResult = _hubOwnerController.Create() as ViewResult;
 
             //ASSERT
             Assert.NotNull(viewResult);
