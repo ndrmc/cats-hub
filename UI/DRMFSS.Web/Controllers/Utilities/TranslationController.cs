@@ -35,7 +35,7 @@ namespace DRMFSS.Web.Controllers.Utilities
             Translation translation = _translationService.FindById(model.TranslationID);
             translation.Phrase = translation.Phrase.Trim();
             translation.TranslatedText = model.TranslatedText.Trim();
-            repository.Translation.SaveChanges(translation);
+            _translationService.AddTranslation(translation);
             return RedirectToAction("Index");
         }
     }
