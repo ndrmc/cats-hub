@@ -165,7 +165,7 @@ namespace DRMFSS.Web.Controllers
                         _userHubService.AddUserHub(model.HubID,userID);
                     }else
                     {
-                        hub.RemoveUser(model.HubID,userID);
+                        _userHubService.RemoveUserHub(model.HubID, userID);
                     }
                 }
             }

@@ -115,20 +115,28 @@ namespace DRMFSS.BLL.ViewModels
         }
 
 
-        public InternalMovementViewModel(IUnitOfWork repository, UserProfile user)
+        public InternalMovementViewModel(List<StoreViewModel> fromStore,
+                                        
+                                       List<Commodity> commodities,
+                                       List<ProgramViewModel> programs,
+            List<Unit> units,
+            List<StoreViewModel> toStore,
+            List<ReasonViewModel> reasons 
+                                                                     
+            )
         {
-            this.FromStore = repository.Hub.GetAllStoreByUser(user);
+            this.FromStore = fromStore;//repository.Hub.GetAllStoreByUser(user);
             this.FromStack = new List<int>();
             this.SelectedDate = DateTime.Now;
             //this.ReferenceNumber = "dude";
-            this.Commodities = repository.Commodity.GetAllParents();
-            this.Programs = repository.Program.GetAllProgramsForReport();
+            this.Commodities = commodities;// repository.Commodity.GetAllParents();
+            this.Programs = programs;//repository.Program.GetAllProgramsForReport();
             this.ProjectCodes = new List<ProjectCodeViewModel>();
             this.ShippingInstructions = new List<ShippingInstructionViewModel>();
-            this.Units = repository.Unit.GetAll();
-            this.ToStore = repository.Hub.GetAllStoreByUser(user);
+            this.Units = units;//repository.Unit.GetAll();
+            this.ToStore = toStore;// repository.Hub.GetAllStoreByUser(user);
             this.ToStack = new List<int>();
-            this.Reason = repository.Detail.GetReasonByMaster(Master.Constants.REASON_FOR_INTERNAL_MOVMENT);
+            this.Reason = reasons;// repository.Detail.GetReasonByMaster(Master.Constants.REASON_FOR_INTERNAL_MOVMENT);
             //this.Note
             //this.ApprovedBy = 
             
