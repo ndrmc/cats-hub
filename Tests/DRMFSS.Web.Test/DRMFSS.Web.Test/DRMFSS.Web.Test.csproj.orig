@@ -66,25 +66,19 @@
   <ItemGroup>
     <Compile Include="AdminControllerTests.cs" />
     <Compile Include="AdminUnitControllerTest.cs" />
-    <Compile Include="AuditControllerTests.cs" />
     <Compile Include="CommodityControllerTests.cs" />
     <Compile Include="CommodityGradeTests.cs" />
     <Compile Include="CommoditySourceTests.cs" />
     <Compile Include="CommodityTypeControllerTests.cs" />
     <Compile Include="ContactControllerTests.cs" />
+
     <Compile Include="FDPControllerTests.cs" />
-    <Compile Include="ProgramControllerTest.cs" />
+
     <Compile Include="DispatchAllocationControllerTest.cs" />
     <Compile Include="CurrentHubControllerTests.cs" />
-    <Compile Include="DispatchPlanControllerTest.cs" />
+
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReceiptAllocationControllerTest.cs" />
-    <Compile Include="ReceiveCommodityControllerTest.cs" />
-    <Compile Include="ReportControllerTests.cs" />
-    <Compile Include="SettingControllerTests.cs" />
-    <Compile Include="TransactionControllerTests.cs" />
     <Compile Include="UnitControllerTests.cs" />
-    <Compile Include="UserWarehouseControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

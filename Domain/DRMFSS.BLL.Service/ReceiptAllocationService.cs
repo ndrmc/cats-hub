@@ -76,7 +76,10 @@ namespace DRMFSS.BLL.Services
 
         }
 
-
+        public ReceiptAllocation FindById(Guid id)
+        {
+            return _unitOfWork.ReceiptAllocationRepository.FindBy(t => t.ReceiptAllocationID == id).FirstOrDefault();
+        }
 
         public List<ReceiptAllocation> FindBySINumber(string SINumber)
         {
@@ -553,7 +556,21 @@ namespace DRMFSS.BLL.Services
             return list;
             //return null;
         }
+        public bool DeleteByID(Guid id)
+        {
+            var origin = FindById(id);
+            if (origin == null) return false;
+            _unitOfWork.ReceiptAllocationRepository.Delete(origin);
+            _unitOfWork.Save();
+            return true;
+        }
 
+       
+
+        public ReceiptAllocation FindById(Guid id)
+        {
+            return _unitOfWork.ReceiptAllocationRepository.FindBy(t => t.ReceiptAllocationID == id).FirstOrDefault();
+        }
 
         public List<SIBalance> GetSIBalanceForCommodityInUnit(int hubId, int CommodityId)
         {

@@ -46,6 +46,10 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<ICommodityGradeService>().To<CommodityGradeService>();
             kernel.Bind<ICommoditySourceService>().To<CommoditySourceService>();
             kernel.Bind<IContactService>().To<ContactService>();
+            kernel.Bind<IInternalMovementService>().To<InternalMovementService>();
+            kernel.Bind<IStoreService>().To<StoreService>();
+            kernel.Bind<IProjectCodeService>().To<ProjectCodeService>();
         }
     }
 }
+
