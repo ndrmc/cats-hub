@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers.Utilities
 {
@@ -12,21 +13,26 @@ namespace DRMFSS.Web.Controllers.Utilities
         //
         // GET: /Translation/
 
+        private readonly ITranslationService _translationService;
+        public TranslationController(ITranslationService translationService)
+        {
+            _translationService = translationService;
+        }
         public ActionResult Index()
         {
            
-            return View(repository.Translation.GetAll("am"));
+            return View(_translationService.GetAll("am"));
         }
 
         public ActionResult Edit(int id)
         {
-            return PartialView(repository.Translation.FindById(id));
+            return PartialView(_translationService.FindById(id));
         }
 
         [HttpPost]
         public ActionResult Save( Translation model)
         {
-            Translation translation = repository.Translation.FindById(model.TranslationID);
+            Translation translation = _translationService.FindById(model.TranslationID);
             translation.Phrase = translation.Phrase.Trim();
             translation.TranslatedText = model.TranslatedText.Trim();
             repository.Translation.SaveChanges(translation);
