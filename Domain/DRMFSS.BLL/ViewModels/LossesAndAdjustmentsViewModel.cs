@@ -101,41 +101,47 @@ namespace DRMFSS.BLL.ViewModels
         {
         }
 
-        public LossesAndAdjustmentsViewModel(IUnitOfWork repository, UserProfile user, int type)
+        public LossesAndAdjustmentsViewModel(List<Commodity> commodity,
+                                                List<Store> stores,
+                                                List<AdjustmentReason> adjustmentReasonMinus,
+                                                List<AdjustmentReason> adjustmentReasonPlus,
+                                                List<Unit> units,
+                                                List <Program> programs,
+                                                UserProfile user, int type)
         {
             if (type == 1)
             {
-                this.Commodities = repository.Commodity.GetAllParents();
+                this.Commodities = commodity;
                 this.SelectedDate = DateTime.Now;
                 this.ProjectCodes = new List<ProjectCodeViewModel>();
                 //this.MemoNumber = 
                 this.ShippingInstructions = new List<ShippingInstructionViewModel>();
-                this.Stores = repository.Hub.GetAllStoreByUser(user);
+                this.Stores = stores;
                 //this.StoreMan = ;
-                this.Reasons = repository.AdjustmentReason.GetAll().Where(c => c.Direction == "-").ToList();
+                this.Reasons =adjustmentReasonMinus;
                 //this.Description =
-                this.Units = repository.Unit.GetAll();
+                this.Units = units;
                 //this.QuantityInMt = 
                 //this.QuantityInUint
                 //this.ApprovedBy
-                this.Programes = repository.Program.GetAllProgramsForReport();
+                this.Programes = programs;
             }
             else
             {
-                this.Commodities = repository.Commodity.GetAllParents();
+                this.Commodities = commodity;
                 this.SelectedDate = DateTime.Now;
                 this.ProjectCodes = new List<ProjectCodeViewModel>();
                 //this.MemoNumber = 
                 this.ShippingInstructions = new List<ShippingInstructionViewModel>();
-                this.Stores = repository.Hub.GetAllStoreByUser(user);
+                this.Stores = stores;
                 //this.StoreMan = ;
-                this.Reasons = repository.AdjustmentReason.GetAll().Where(c => c.Direction == "+").ToList();
+                this.Reasons = adjustmentReasonPlus;
                 //this.Description =
-                this.Units = repository.Unit.GetAll();
+                this.Units = units;
                 //this.QuantityInMt = 
                 //this.QuantityInUint
                 //this.ApprovedBy
-                this.Programes = repository.Program.GetAllProgramsForReport();
+                this.Programes =programs;
             }
         }
     }

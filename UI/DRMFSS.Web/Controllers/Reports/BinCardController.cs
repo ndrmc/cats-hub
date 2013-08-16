@@ -6,21 +6,32 @@ using System.Web.Mvc;
 using DRMFSS.BLL;
 using DRMFSS.Web.Models;
 using Telerik.Web.Mvc;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers.Reports
 {
      [Authorize]
     public class BinCardController : BaseController
     {
-        
+
+         private readonly ICommodityService _commodityService;
+         private readonly IProjectCodeService _projectCodeService;
+         private readonly IStoreService _storeService;
+
+         public BinCardController(ICommodityService commodityService, IProjectCodeService projectCodeService, IStoreService storeService)
+         {
+             _commodityService = commodityService;
+             _projectCodeService = projectCodeService;
+             _storeService = storeService;
+         }
 
         public ActionResult Index(int? StoreID, int? CommodityID, string ProjectID )
         {
             ViewBag.StoreID = new SelectList(GetCurrentUserProfile().DefaultHub.Stores,"StoreID","Name",StoreID);
-            ViewBag.CommodityID = new SelectList(repository.Commodity.GetAllParents(), "CommodityID", "Name",CommodityID);
+            ViewBag.CommodityID = new SelectList(_commodityService.GetAllParents(), "CommodityID", "Name",CommodityID);
             ViewBag.ProjectID =
                 new SelectList(
-                    repository.ProjectCode.GetProjectCodesForCommodity(GetCurrentUserProfile().DefaultHub.HubID,
+                    _projectCodeService.GetProjectCodesForCommodity(GetCurrentUserProfile().DefaultHub.HubID,
                                                                        (CommodityID.HasValue) ? CommodityID.Value : 1),"ProjectCodeId","ProjectName");
             //BLL.UserProfile user = BLL.UserProfile.GetUser(User.Identity.Name);
             //var projectInputReceives = db.Receives.FirstOrDefault(p => p.ProjectNumber == ProjectID);
@@ -35,7 +46,7 @@ namespace DRMFSS.Web.Controllers.Reports
             //    projectSelected = projectInputDispatches.ProjectNumber;
             //}
 
-            ViewBag.BinCards = repository.Store.GetBinCard(UserProfile.DefaultHub.HubID, StoreID, CommodityID, ProjectID).ToList();
+            ViewBag.BinCards = _storeService.GetBinCard(UserProfile.DefaultHub.HubID, StoreID, CommodityID, ProjectID).ToList();
             //ViewBag.StoreID = new SelectList(db.Stores.Where(s => s.HubID == user.DefaultWarehouse.HubID), "StoreID", "Name");
             //ViewBag.CommodityID = new SelectList(db.Commodities, "CommodityID", "Name");
 
