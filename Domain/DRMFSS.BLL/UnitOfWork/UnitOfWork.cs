@@ -658,6 +658,20 @@ namespace DRMFSS.BLL
        {
            get { return this._reportRepository ?? (this._reportRepository = new ReportRepository(_context)); }
        }
+
+
+       private IGenericRepository<ErrorLog> errorLogRepository;
+
+       public IGenericRepository<ErrorLog> ErrorLogRepository
+       {
+
+           get { return this.errorLogRepository ?? (this.errorLogRepository = new GenericRepository<ErrorLog>(_context)); }
+
+       }
+
+
+        
+      
     }
 }
 

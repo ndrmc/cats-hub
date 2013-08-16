@@ -62,6 +62,7 @@
     <Compile Include="DispatchDetailService.cs" />
     <Compile Include="DispatchService.cs" />
     <Compile Include="DonorService.cs" />
+    <Compile Include="ErrorLogService.cs" />
     <Compile Include="FDPService.cs" />
     <Compile Include="ForgetPasswordRequestService.cs" />
     <Compile Include="GiftCertificateDetailService.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Interfaces\IDispatchDetailService.cs" />
     <Compile Include="Interfaces\IDispatchService.cs" />
     <Compile Include="Interfaces\IDonorService.cs" />
+    <Compile Include="Interfaces\IErrorService.cs" />
     <Compile Include="Interfaces\IFDPService.cs" />
     <Compile Include="Interfaces\IForgetPasswordRequestService.cs" />
     <Compile Include="Interfaces\IGiftCertificateDetailService.cs" />
