@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="AdminControllerTests.cs" />
     <Compile Include="AdminUnitControllerTest.cs" />
+    <Compile Include="AuditControllerTests.cs" />
     <Compile Include="CommodityControllerTests.cs" />
     <Compile Include="CommodityGradeTests.cs" />
     <Compile Include="CommoditySourceTests.cs" />
