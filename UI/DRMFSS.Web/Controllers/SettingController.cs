@@ -5,13 +5,21 @@ using System.Web;
 using System.Web.Mvc;
 using DRMFSS.Web.Models;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
      [Authorize]
     public class SettingController : BaseController
     {
-         CTSContext context = new CTSContext();
+        // CTSContext context = new CTSContext();
+         private readonly ISettingService _settingService;
+
+         public SettingController(ISettingService settingService)
+         {
+             this._settingService = settingService;
+         }
+
         Setting syssetting = new Setting();
         //
         // GET: /Setting/
@@ -122,7 +130,7 @@ namespace DRMFSS.Web.Controllers
 
             BLL.Setting setting = new BLL.Setting();
 
-            if (context.Settings.FirstOrDefault(m => m.Key == "SMTPServer") != null)
+            if (_settingService.FindBy(m => m.Key == "SMTPServer").FirstOrDefault() != null)
             {
 
                 setting.Key = "SMTPServer";

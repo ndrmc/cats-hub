@@ -162,7 +162,7 @@ namespace DRMFSS.Web.Controllers
                     var hub = new Hub();
                     if (model.Selected)
                     {
-                        hub.AddUser(model.HubID,userID);
+                        _userHubService.AddUserHub(model.HubID,userID);
                     }else
                     {
                         hub.RemoveUser(model.HubID,userID);

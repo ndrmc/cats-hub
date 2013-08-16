@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DRMFSS.BLL.ViewModels.Common;
+using DRMFSS.BLL.ViewModels.Report;
+using DRMFSS.BLL.ViewModels.Report.Data;
 
 namespace DRMFSS.BLL.Services
 {
@@ -93,6 +95,59 @@ namespace DRMFSS.BLL.Services
         public IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID)
         {
             return db.GetDispatchFulfillmentStatus(hubID);
+        }
+
+
+        public List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel)
+        {
+            var dbGetStatusReportBySI = db.GetStatusReportBySI(HuBID).ToList();
+            if (freeStockFilterViewModel.ProgramId.HasValue && freeStockFilterViewModel.ProgramId != 0)
+            {
+                dbGetStatusReportBySI = dbGetStatusReportBySI.Where(p => p.ProgramID == freeStockFilterViewModel.ProgramId).ToList();
+            }
+
+            if (freeStockFilterViewModel.CommodityId.HasValue && freeStockFilterViewModel.CommodityId != 0)
+            {
+                dbGetStatusReportBySI = dbGetStatusReportBySI.Where(p => p.CommodityID == freeStockFilterViewModel.CommodityId).ToList();
+            }
+
+            if (freeStockFilterViewModel.ShippingInstructionId.HasValue && freeStockFilterViewModel.ShippingInstructionId != 0)
+            {
+                dbGetStatusReportBySI = dbGetStatusReportBySI.Where(p => p.ShippingInstructionID == freeStockFilterViewModel.ShippingInstructionId).ToList();
+            }
+            if (freeStockFilterViewModel.ProjectCodeId.HasValue && freeStockFilterViewModel.ProjectCodeId != 0)
+            {
+                dbGetStatusReportBySI = dbGetStatusReportBySI.Where(p => p.ProjectCodeID == freeStockFilterViewModel.ProjectCodeId).ToList();
+            }
+
+            return (from t in dbGetStatusReportBySI
+                    group t by new { t.ProgramID, t.ProgramName }
+                        into b
+                        select new FreeStockProgram()
+                        {
+                            Name = b.Key.ProgramName,
+                            Details = b.Select(t1 => new FreeStockStatusRow()
+                            {
+                                SINumber = t1.SINumber,
+                                Vessel = t1.Vessel,
+                                Allocation = t1.AllocatedToHub ?? 0,
+                                Dispatched =
+                                    t1.dispatchedBalance ?? 0,
+                                Transported =
+                                    t1.fullyCommitedBalance ?? 0,
+                                Donor = t1.Donor,
+                                FreeStock = t1.UncommitedStock ?? 0,
+                                PhysicalStock =
+                                    t1.TotalStockOnHand ?? 0,
+                                Product = t1.CommodityName,
+                                Program = t1.ProgramName,
+                                Project = t1.ProjectCode,
+                                ReceivedAmount =
+                                    t1.ReceivedBalance ?? 0,
+                                Remark = ""
+                            }).OrderBy(c => c.Product).ToList()
+                        }).ToList();
+
         }
 
         public void Dispose()

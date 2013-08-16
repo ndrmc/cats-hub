@@ -15,5 +15,9 @@ namespace DRMFSS.BLL.Services
         Audit FindById(int id);
         List<Audit> GetAllAudit();
         List<Audit> FindBy(Expression<Func<Audit, bool>> predicate);
+
+        List<FieldChange> GetChanges(string table, string property, string foreignTable, string foreignFeildName,
+                                     string foreignFeildKey, string key);
+
     }
 }

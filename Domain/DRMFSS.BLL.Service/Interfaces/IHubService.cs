@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using DRMFSS.BLL.ViewModels.Report;
+using DRMFSS.BLL.ViewModels.Report.Data;
 
 namespace DRMFSS.BLL.Services
 {

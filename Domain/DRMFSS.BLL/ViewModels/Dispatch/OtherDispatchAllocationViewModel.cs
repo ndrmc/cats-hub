@@ -256,15 +256,15 @@ namespace DRMFSS.BLL.ViewModels.Dispatch
        /// </summary>
        /// <param name="user">The user.</param>
        /// <param name="repository">The repository.</param>
-       public void InitTransfer(UserProfile user, IUnitOfWork repository)
+       public void InitTransfer(UserProfile user, List<Hub> hubs ,List<Commodity> commodities,List<CommodityType> commodityTypes  ,List<Program> programs,List<Unit> units )
        {
            FromHubID = user.DefaultHub.HubID;
-           ToHubs = repository.Hub.GetOthersHavingSameOwner(user.DefaultHub);
+           ToHubs = hubs;// repository.Hub.GetOthersHavingSameOwner(user.DefaultHub);
            FromHubs = user.UserAllowedHubs;
-           Commodities = repository.Commodity.GetAllParents();
-           CommodityTypes = repository.CommodityType.GetAll();
-           Programs = repository.Program.GetAll();
-           Units = repository.Unit.GetAll();
+           Commodities = commodities;// repository.Commodity.GetAllParents();
+           CommodityTypes = commodityTypes;// repository.CommodityType.GetAll();
+           Programs = programs;// repository.Program.GetAll();
+           Units = units;// repository.Unit.GetAll();
            Reasons = new List<LookupViewModel>()
            {
                new LookupViewModel(){ID =1 ,Name = "Transfer"},
@@ -278,15 +278,15 @@ namespace DRMFSS.BLL.ViewModels.Dispatch
        /// </summary>
        /// <param name="user">The user.</param>
        /// <param name="repository">The repository.</param>
-       public void InitLoan(UserProfile user, IUnitOfWork repository)
+       public void InitLoan(UserProfile user, List<Hub> hubs, List<Commodity> commodities, List<CommodityType> commodityTypes, List<Program> programs, List<Unit> units)
        {
            FromHubID = user.DefaultHub.HubID;
-           ToHubs = repository.Hub.GetOthersWithDifferentOwner(user.DefaultHub);
+           ToHubs = hubs;// repository.Hub.GetOthersWithDifferentOwner(user.DefaultHub);
            FromHubs = user.UserAllowedHubs;
-           Commodities = repository.Commodity.GetAllParents();
-           CommodityTypes = repository.CommodityType.GetAll();
-           Programs = repository.Program.GetAll();
-           Units = repository.Unit.GetAll();
+           Commodities = commodities;// repository.Commodity.GetAllParents();
+           CommodityTypes = commodityTypes;// repository.CommodityType.GetAll();
+           Programs = programs;// repository.Program.GetAll();
+           Units = units;// repository.Unit.GetAll();
            Reasons = new List<LookupViewModel>()
            {
                new LookupViewModel(){ID = 3 ,Name = "Loan Out"},
