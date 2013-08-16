@@ -33,10 +33,6 @@ namespace DRMFSS.BLL.ViewModels.Report
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        public DispatchesViewModel()
-        {
-        }
-
         public DispatchesViewModel(IUnitOfWork Repository, UserProfile user)
         {
             this.Periods = GetAllPeriod();
