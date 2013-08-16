@@ -436,7 +436,6 @@
     <Compile Include="Library\FormsAuthenticationWrapper.cs" />
     <Compile Include="Library\MembershipWrapper.cs" />
     <Compile Include="Library\UrlHelperWrapper.cs" />
-    <Compile Include="ModelMapper\DispatchAllocationMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

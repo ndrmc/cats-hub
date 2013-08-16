@@ -7,30 +7,101 @@ using DRMFSS.BLL;
 using DRMFSS.BLL.ViewModels;
 using Telerik.Web.Mvc;
 using DRMFSS.BLL.ViewModels.Common;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
+   
     [Authorize]
     public class LossesAndAdjustmentsController : BaseController
     {
+        private readonly IUserProfileService _userProfileService;
+        private readonly ICommodityService _commodityService;
+        private readonly IStoreService _storeService;
+        private readonly IProgramService _programService;
+        private readonly IHubService _hubService;
+        private readonly IUnitService _unitService;
+        private readonly IAdjustmentReasonService _adjustmentReasonService;
+        private readonly IAdjustmentService _adjustmentService;
+        private readonly ITransactionService _TransactionService;
+        private readonly IProjectCodeService _projectCodeService;
+        private readonly IShippingInstructionService _shippingInstructionService;
+
+        public LossesAndAdjustmentsController(IUserProfileService userProfileSerice,
+                                                ICommodityService commodityService,
+                                                IStoreService storeService,
+                                                IProgramService programService,
+                                                IHubService hubService,
+                                                IUnitService unitService,
+                                                IAdjustmentReasonService adjustmentReasonService,
+                                                IAdjustmentService adjustmentService,
+                                                ITransactionService transactionService,
+                                                IProjectCodeService projectCodeService,
+                                                IShippingInstructionService shippingInstructionService)
+        {
+            _userProfileService = userProfileSerice;
+            _commodityService = commodityService;
+            _storeService = storeService;
+            _programService = programService;
+            _hubService = hubService;
+            _unitService = unitService;
+            _adjustmentReasonService = adjustmentReasonService;
+            _adjustmentService = adjustmentService;
+            _TransactionService = transactionService;
+            _projectCodeService = projectCodeService;
+            _shippingInstructionService = shippingInstructionService;
+
+        }
+                
         [Authorize]
         public ActionResult Index()
         {
-            return View(repository.Adjustment.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).OrderByDescending(c => c.Date));
+
+            return View(_adjustmentService.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).OrderByDescending(c => c.Date));
         }
 
         public ActionResult CreateLoss()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(repository, user, 1);
+            List<Commodity> commodity;
+            List<Store> stores;
+            List<AdjustmentReason> adjustmentReasonMinus;
+            List<AdjustmentReason> adjustmentReasonPlus;
+            List<uint> units;
+            List<Program> programs;
+
+            commodity = _commodityService.GetAllParents();
+            stores = _hubService.GetAllStoreByUser(user);
+            adjustmentReasonMinus = _adjustmentReasonService.GetAllAdjustmentReason().Where(c => c.Direction == "-").ToList();
+            adjustmentReasonPlus = _adjustmentReasonService.GetAllAdjustmentReason().Where(c => c.Direction == "+").ToList();
+            units = _unitService.GetAllUnit().ToList();
+            programs = _programService.GetAllProgramsForReport();
+
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(commodity, stores, adjustmentReasonMinus, adjustmentReasonPlus,units, programs, user, 1);
 
             return View(viewModel);
         }
 
         public ActionResult CreateAdjustment()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(repository, user, 2);
+            List<Commodity> commodity;
+            List<Store> stores;
+            List<AdjustmentReason> adjustmentReasonMinus;
+            List<AdjustmentReason> adjustmentReasonPlus;
+            List<uint> units;
+            List<Program> programs;
+
+            commodity = _commodityService.GetAllParents();
+            stores = _hubService.GetAllStoreByUser(user);
+            adjustmentReasonMinus = _adjustmentReasonService.GetAllAdjustmentReason().Where(c => c.Direction == "-").ToList();
+            adjustmentReasonPlus = _adjustmentReasonService.GetAllAdjustmentReason().Where(c => c.Direction == "+").ToList();
+            units = _unitService.GetAllUnit().ToList();
+            programs = _programService.GetAllProgramsForReport();
+
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(commodity, stores, adjustmentReasonMinus, adjustmentReasonPlus, units, programs, user, 2);
 
             return View(viewModel);
         }
@@ -38,11 +109,28 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public ActionResult CreateLoss(LossesAndAdjustmentsViewModel viewModel)
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-            LossesAndAdjustmentsViewModel newViewModel = new LossesAndAdjustmentsViewModel(repository, user, 1);
+            List<Commodity> commodity;
+            List<Store> stores;
+            List<AdjustmentReason> adjustmentReasonMinus;
+            List<AdjustmentReason> adjustmentReasonPlus;
+            List<uint> units;
+            List<Program> programs;
+
+            commodity = _commodityService.GetAllParents();
+            stores = _hubService.GetAllStoreByUser(user);
+            adjustmentReasonMinus = _adjustmentReasonService.GetAllAdjustmentReason().Where(c => c.Direction == "-").ToList();
+            adjustmentReasonPlus = _adjustmentReasonService.GetAllAdjustmentReason().Where(c => c.Direction == "+").ToList();
+            units = _unitService.GetAllUnit().ToList();
+            programs = _programService.GetAllProgramsForReport();
+
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(commodity, stores, adjustmentReasonMinus, adjustmentReasonPlus, units, programs, user, 1);
+
+           
             
                            
-            if (viewModel.QuantityInMt > repository.Transaction.GetCommodityBalanceForStore(viewModel.StoreId, viewModel.CommodityId, viewModel.ShippingInstructionId, viewModel.ProjectCodeId))
+            if (viewModel.QuantityInMt > _TransactionService.GetCommodityBalanceForStore(viewModel.StoreId, viewModel.CommodityId, viewModel.ShippingInstructionId, viewModel.ProjectCodeId))
             {
                 ModelState.AddModelError("QuantityInMT", "You have nothing to loss");
                 return View(newViewModel);
@@ -55,7 +143,7 @@ namespace DRMFSS.Web.Controllers
                 return View(newViewModel);
             }
             viewModel.IsLoss = true;
-            repository.Adjustment.AddNewLossAndAdjustment(viewModel, user);
+            _adjustmentService.AddNewLossAndAdjustment(viewModel, user);
             return RedirectToAction("Index");
         }
 
@@ -63,10 +151,10 @@ namespace DRMFSS.Web.Controllers
         public ActionResult CreateAdjustment(LossesAndAdjustmentsViewModel viewModel)
         {
             LossesAndAdjustmentsViewModel newViewModel = new LossesAndAdjustmentsViewModel();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             viewModel.IsLoss = false;
-            repository.Adjustment.AddNewLossAndAdjustment(viewModel, user);
+            _adjustmentService.AddNewLossAndAdjustment(viewModel, user);
             return RedirectToAction("Index");
         }
 
@@ -77,7 +165,7 @@ namespace DRMFSS.Web.Controllers
             string storeMan = String.Empty;
             if (storeId != null)
             {
-                storeMan = repository.Store.FindById(storeId.Value).StoreManName;
+                storeMan = _storeService.FindById(storeId.Value).StoreManName;
             }
             return Json(storeMan, JsonRequestBehavior.AllowGet);
         }
@@ -86,7 +174,7 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Log()
         {
 
-            return View(repository.Adjustment.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID));
+            return View(_adjustmentService.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID));
         }
 
         public ActionResult Filter()
@@ -98,12 +186,12 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult GetStacksForToStore(int? ToStoreId)
         {
-            return Json(new SelectList(repository.Store.GetStacksByStoreId(ToStoreId), JsonRequestBehavior.AllowGet));
+            return Json(new SelectList(_storeService.GetStacksByStoreId(ToStoreId), JsonRequestBehavior.AllowGet));
         }
 
         public ActionResult GetProjecCodetForCommodity(int? CommodityId)
         {
-            var projectCodes = repository.ProjectCode.GetProjectCodesForCommodity(UserProfile.DefaultHub.HubID, CommodityId.Value);
+            var projectCodes = _projectCodeService.GetProjectCodesForCommodity(UserProfile.DefaultHub.HubID, CommodityId.Value);
             return Json(new SelectList(projectCodes, "ProjectCodeId", "ProjectName"), JsonRequestBehavior.AllowGet);
         }
 
@@ -111,8 +199,8 @@ namespace DRMFSS.Web.Controllers
         {
             if (ProjectCodeId.HasValue)
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-                return Json(new SelectList(repository.ShippingInstruction.GetShippingInstructionsForProjectCode(user.DefaultHub.HubID, ProjectCodeId.Value), "ShippingInstructionId", "ShippingInstructionName"), JsonRequestBehavior.AllowGet);
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+                return Json(new SelectList(_shippingInstructionService.GetShippingInstructionsForProjectCode(user.DefaultHub.HubID, ProjectCodeId.Value), "ShippingInstructionId", "ShippingInstructionName"), JsonRequestBehavior.AllowGet);
             }
             else
             {
@@ -122,7 +210,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult ViewDetial(string TransactionId)
         {
-            var lossAndAdjustment = repository.Adjustment.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).FirstOrDefault(c => c.TransactionId == Guid.Parse(TransactionId));
+            var lossAndAdjustment = _adjustmentService.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).FirstOrDefault(c => c.TransactionId == Guid.Parse(TransactionId));
             return PartialView(lossAndAdjustment);
         }
         [HttpPost]
@@ -139,10 +227,10 @@ namespace DRMFSS.Web.Controllers
             
             if (filterId != null && filterId != string.Empty)
             {
-                var lossAndAdjustmentLogViewModel = repository.Adjustment.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).Where(c => c.Type == filterId).OrderByDescending(c => c.Date);
+                var lossAndAdjustmentLogViewModel = _adjustmentService.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).Where(c => c.Type == filterId).OrderByDescending(c => c.Date);
                 return View(new GridModel(lossAndAdjustmentLogViewModel));
             }
-            return View(new GridModel(repository.Adjustment.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).OrderByDescending(c => c.Date)));
+            return View(new GridModel(_adjustmentService.GetAllLossAndAdjustmentLog(UserProfile.DefaultHub.HubID).OrderByDescending(c => c.Date)));
         }
 
         
@@ -150,8 +238,8 @@ namespace DRMFSS.Web.Controllers
         {
             if (commodityParentId.HasValue && SINumber.HasValue)
             {
-                BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-                return Json(new SelectList(ConvertStoreToStoreViewModel(repository.Store.GetStoresWithBalanceOfCommodityAndSINumber(commodityParentId.Value, SINumber.Value, user.DefaultHub.HubID)), "StoreId", "StoreName"));
+                BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+                return Json(new SelectList(ConvertStoreToStoreViewModel(_storeService.GetStoresWithBalanceOfCommodityAndSINumber(commodityParentId.Value, SINumber.Value, user.DefaultHub.HubID)), "StoreId", "StoreName"));
             }
             else
             {
@@ -166,28 +254,28 @@ namespace DRMFSS.Web.Controllers
             BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
             if (!StoreId.HasValue && !StackId.HasValue && parentCommodityId.HasValue && projectcode.HasValue && SINumber.HasValue)
             {
-                viewModel.ParentCommodityNameB = repository.Commodity.FindById(parentCommodityId.Value).Name;
-                viewModel.ProjectCodeNameB = repository.ProjectCode.FindById(projectcode.Value).Value;
-                viewModel.ShppingInstructionNumberB = repository.ShippingInstruction.FindById(SINumber.Value).Value;
-                viewModel.QtBalance = repository.Transaction.GetCommodityBalanceForHub(user.DefaultHub.HubID, parentCommodityId.Value, SINumber.Value, projectcode.Value);
+                viewModel.ParentCommodityNameB = _commodityService.FindById(parentCommodityId.Value).Name;
+                viewModel.ProjectCodeNameB =_projectCodeService.FindById(projectcode.Value).Value;
+                viewModel.ShppingInstructionNumberB = _shippingInstructionService.FindById(SINumber.Value).Value;
+                viewModel.QtBalance = _TransactionService.GetCommodityBalanceForHub(user.DefaultHub.HubID, parentCommodityId.Value, SINumber.Value, projectcode.Value);
             }
             else if (StoreId.HasValue && !StackId.HasValue && parentCommodityId.HasValue && projectcode.HasValue && SINumber.HasValue)
             {
-                viewModel.ParentCommodityNameB = repository.Commodity.FindById(parentCommodityId.Value).Name;
-                viewModel.ProjectCodeNameB = repository.ProjectCode.FindById(projectcode.Value).Value;
-                viewModel.ShppingInstructionNumberB = repository.ShippingInstruction.FindById(SINumber.Value).Value;
-                viewModel.QtBalance = repository.Transaction.GetCommodityBalanceForStore(StoreId.Value, parentCommodityId.Value, SINumber.Value, projectcode.Value);
-                var store = repository.Store.FindById(StoreId.Value);
+                viewModel.ParentCommodityNameB = _commodityService.FindById(parentCommodityId.Value).Name;
+                viewModel.ProjectCodeNameB = _projectCodeService.FindById(projectcode.Value).Value;
+                viewModel.ShppingInstructionNumberB = _shippingInstructionService.FindById(SINumber.Value).Value;
+                viewModel.QtBalance = _TransactionService.GetCommodityBalanceForStore(StoreId.Value, parentCommodityId.Value, SINumber.Value, projectcode.Value);
+                var store = _storeService.FindById(StoreId.Value);
                 viewModel.StoreNameB = string.Format("{0} - {1}", store.Name, store.StoreManName);
             }
 
             else if (StoreId.HasValue && StackId.HasValue && parentCommodityId.HasValue && projectcode.HasValue && SINumber.HasValue)
             {
-                viewModel.ParentCommodityNameB = repository.Commodity.FindById(parentCommodityId.Value).Name;
-                viewModel.ProjectCodeNameB = repository.ProjectCode.FindById(projectcode.Value).Value;
-                viewModel.ShppingInstructionNumberB = repository.ShippingInstruction.FindById(SINumber.Value).Value;
-                viewModel.QtBalance = repository.Transaction.GetCommodityBalanceForStack(StoreId.Value, StackId.Value, parentCommodityId.Value, SINumber.Value, projectcode.Value);
-                var store = repository.Store.FindById(StoreId.Value);
+                viewModel.ParentCommodityNameB = _commodityService.FindById(parentCommodityId.Value).Name;
+                viewModel.ProjectCodeNameB = _projectCodeService.FindById(projectcode.Value).Value;
+                viewModel.ShppingInstructionNumberB = _shippingInstructionService.FindById(SINumber.Value).Value;
+                viewModel.QtBalance = _TransactionService.GetCommodityBalanceForStack(StoreId.Value, StackId.Value, parentCommodityId.Value, SINumber.Value, projectcode.Value);
+                var store = _storeService.FindById(StoreId.Value);
                 viewModel.StoreNameB = string.Format("{0} - {1}", store.Name, store.StoreManName);
                 viewModel.StackNumberB = StackId.Value.ToString();
             }

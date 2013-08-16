@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 
@@ -68,6 +69,30 @@ namespace DRMFSS.BLL.Services
 
         }
 
+       
+           
+
+       
+
+        public void AddUserHub(int warehouseID, int userID)
+        {
+            UserProfile uProfile = _unitOfWork.UserProfileRepository.Get(t=>t.UserProfileID==userID,null,"UserHubs").FirstOrDefault();
+            if (uProfile != null)
+            {
+                var associations = from v in uProfile.UserHubs
+                                   where v.HubID == warehouseID
+                                   select v;
+                if (!associations.Any())
+                {
+                    var userHub = new UserHub
+                                      {
+                                          UserProfileID = uProfile.UserProfileID,
+                                          HubID = warehouseID
+                                      };
+                    AddUserHub(userHub);
+                }
+            }
+        }
     }
 }
 
