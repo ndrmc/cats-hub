@@ -83,6 +83,7 @@
     <Compile Include="ReportControllerTests.cs" />
     <Compile Include="SettingControllerTests.cs" />
     <Compile Include="TransactionControllerTests.cs" />
+    <Compile Include="TransportationReportControllerTests.cs" />
     <Compile Include="UnitControllerTests.cs" />
     <Compile Include="UserWarehouseControllerTests.cs" />
   </ItemGroup>
