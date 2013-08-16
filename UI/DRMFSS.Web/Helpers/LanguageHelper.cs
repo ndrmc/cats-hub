@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Helpers
 {
@@ -8,13 +9,15 @@ namespace DRMFSS.Web.Helpers
         public static string Translate(this HtmlHelper helper, string text)
         {
             text = text.Trim();
-            IUnitOfWork repository = new UnitOfWork();
+           // IUnitOfWork repository = new UnitOfWork();
+            UnitOfWork unitOfWork = new UnitOfWork();
+            TranslationService translationService = new TranslationService(unitOfWork);
             if (helper.GetCurrentUser() != null)
             {
                 var langauge = helper.GetCurrentUser().LanguageCode;
-                return repository.Translation.GetForText(text, langauge);
+                return translationService.GetForText(text, langauge);
             }
-            return repository.Translation.GetForText(text, "en");
+            return translationService.GetForText(text, "en");
         }
 
         public static string Translate(this string str)
