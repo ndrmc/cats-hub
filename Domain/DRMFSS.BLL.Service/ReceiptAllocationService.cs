@@ -76,7 +76,7 @@ namespace DRMFSS.BLL.Services
 
         }
 
-        public ReceiptAllocation FindById(Guid id)
+        public ReceiptAllocation FindByID(Guid id)
         {
             return _unitOfWork.ReceiptAllocationRepository.FindBy(t => t.ReceiptAllocationID == id).FirstOrDefault();
         }
@@ -332,7 +332,8 @@ namespace DRMFSS.BLL.Services
                     receiptAllocation.ReceivedQuantityInMT *= 10;
                 }
                 //modified Banty:24_5_2013 from db.Detach to ((IObjectContextAdapter)db).ObjectContext.Detach
-                ((IObjectContextAdapter)db).ObjectContext.Detach(receiptAllocation);
+             //   ((IObjectContextAdapter)db).ObjectContext.Detach(receiptAllocation);
+                //Commented out by banty 16/8/2013
                 GetDetachecedList.Add(receiptAllocation);
             }
 

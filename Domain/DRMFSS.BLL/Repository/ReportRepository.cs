@@ -44,7 +44,7 @@ namespace DRMFSS.BLL.Repository
 
        public System.Data.Objects.ObjectResult<BinCardReport> RPT_BinCardNonFood(int hubID, int? StoreID, int? CommodityID, string ProjectID)
        {
-           _context.RPT_BinCardNonFood(hubID, StoreID, CommodityID, ProjectID);
+         return   _context.RPT_BinCardNonFood(hubID, StoreID, CommodityID, ProjectID);
        }
 
        public System.Data.Objects.ObjectResult<BinCardReport> RPT_BinCard(int hubID, int? StoreID, int? CommodityID, string ProjectID)

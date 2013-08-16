@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 
@@ -74,7 +75,7 @@ namespace DRMFSS.BLL.Services
         {
             List<ViewModels.LossAndAdjustmentLogViewModel> lossAndAdjustmentsViewModel = new List<ViewModels.LossAndAdjustmentLogViewModel>();
 
-            var lossAndAdjustments = (from c in db.Adjustments
+            var lossAndAdjustments = (from c in _unitOfWork.AdjustmentRepository.GetAll()
                                       where c.HubID == hubId
                                       select c);
 
@@ -87,7 +88,7 @@ namespace DRMFSS.BLL.Services
                                                      {
                                                          TransactionId = transaction.TransactionID,
                                                          Type = lossAndAdjustment.AdjustmentDirection,
-                                                         CommodityName = repository.Commodity.FindById(transaction.CommodityID).Name,
+                                                         CommodityName = _unitOfWork.CommodityRepository.FindById(transaction.CommodityID).Name,
                                                          ProjectCodeName = transaction.ProjectCode.Value,
                                                          MemoNumber = lossAndAdjustment.ReferenceNumber,
                                                          ShippingInstructionName = transaction.ShippingInstruction.Value,

@@ -93,6 +93,19 @@ namespace DRMFSS.BLL.Services
                 }
             }
         }
+        public void RemoveUserHub(int warehouseID, int userID)
+        {
+          
+            UserProfile uProfile = _unitOfWork.UserProfileRepository.FindById(userID);
+            var associations = from v in uProfile.UserHubs
+                               where v.HubID == warehouseID
+                               select v;
+            if (associations.Any())
+            {
+                UserHub userHub = associations.FirstOrDefault();
+                if (userHub != null) DeleteById(userHub.UserHubID);
+            }
+        }
     }
 }
 

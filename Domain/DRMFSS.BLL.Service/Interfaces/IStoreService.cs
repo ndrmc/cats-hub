@@ -19,7 +19,6 @@ namespace DRMFSS.BLL.Services
         List<Store> GetAllStore();
         List<Store> FindBy(Expression<Func<Store, bool>> predicate);
 
-       List<Store> GetStoreByHub(int hubId);
        List<int> GetStacksByStoreId(int? StoreId);
        List<Store> GetStoresWithBalanceOfCommodityAndSINumber(int parentCommodityId, int SINumber, int hubId);
        List<Store> GetStoresWithBalanceOfCommodity(int parentCommodityId, int hubId);

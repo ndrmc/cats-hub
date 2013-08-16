@@ -168,36 +168,37 @@ namespace DRMFSS.Web.Models
         /// </summary>
         /// <param name="unitOfWork">The unit of work.</param>
         /// <param name="userProfile">The user profile.</param>
-        public ReceiptAllocationViewModel(IUnitOfWork unitOfWork, UserProfile userProfile)
+        public ReceiptAllocationViewModel(List<Commodity> commodities,List<Donor> donors ,List<Hub> allHubs,List<Program> programs  ,List<CommoditySource> commoditySources,List<CommodityType> commodityTypes ,UserProfile user )
         {
-            _Repository = unitOfWork;
-            _UserProfile = userProfile;
-            InitalizeViewModel();
+            //_Repository = unitOfWork;
+            _UserProfile = user;
+            InitalizeViewModel(  commodities,  donors ,  allHubs,  programs  , commoditySources,  commodityTypes  );
         }
 
         /// <summary>
         /// Initalizes the view model.
         /// </summary>
-        public void InitalizeViewModel()
+        public void InitalizeViewModel(List<Commodity> commodities,List<Donor> donors ,List<Hub> allHubs,List<Program> programs  ,List<CommoditySource> commoditySources,List<CommodityType> commodityTypes  )
         {
-            Commodities = _Repository.Commodity.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            Donors = _Repository.Donor.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            if (_UserProfile != null)
-            {
-                Hubs = new List<Hub>() { _UserProfile.DefaultHub };
-                AllHubs =
-                    _Repository.Hub.GetAllWithoutId(_UserProfile.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name)
-                        .ToList();
-            }
-            else
-            {
-                Hubs = new List<Hub>();
-                AllHubs =
-                    _Repository.Hub.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            }
-            Programs = _Repository.Program.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            CommoditySources = _Repository.CommoditySource.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            CommodityTypes = _Repository.CommodityType.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            Commodities = commodities;//_Repository.Commodity.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            Donors = donors;// _Repository.Donor.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            AllHubs = allHubs;
+            //if (_UserProfile != null)
+            //{
+            //    Hubs = new List<Hub>() { _UserProfile.DefaultHub };
+            //    AllHubs = allHubs;
+            //        _Repository.Hub.GetAllWithoutId(_UserProfile.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name)
+            //            .ToList();
+            //}
+            //else
+            //{
+            //    Hubs = new List<Hub>();
+            //    AllHubs =
+            //        _Repository.Hub.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            //}
+            Programs = programs;// _Repository.Program.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            CommoditySources = commoditySources;// _Repository.CommoditySource.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            CommodityTypes = commodityTypes;// _Repository.CommodityType.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
         }
 
 
@@ -355,15 +356,17 @@ namespace DRMFSS.Web.Models
         [Required]
         public int CommodityTypeID { get; set; }
 
+        public string CommodityTypeText { get; set; }
+        public string CommodityText { get; set; }
 
-        public string CommodityTypeText
-        {
-            get { return _Repository.CommodityType.FindById(CommodityTypeID).Name; }
-        }
+        //public string CommodityTypeText
+        //{
+        //    get { return _Repository.CommodityType.FindById(CommodityTypeID).Name; }
+        //}
 
-        public string CommodityText
-        {
-            get { return _Repository.Commodity.FindById(CommodityID).Name; }
-        }
+        //public string CommodityText
+        //{
+        //    get { return _Repository.Commodity.FindById(CommodityID).Name; }
+        //}
     }
 }

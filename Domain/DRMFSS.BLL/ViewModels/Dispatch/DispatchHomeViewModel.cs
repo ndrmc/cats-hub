@@ -9,18 +9,19 @@ namespace DRMFSS.BLL.ViewModels.Dispatch
    public class DispatchHomeViewModel
     {
        //TODO:Generated IDispatchAllocationService
-       public DispatchHomeViewModel(IDispatchAllocationService dispatchAllocationService, UserProfile user)
+       public DispatchHomeViewModel(List<DispatchAllocationViewModelDto> toFdps,List<OtherDispatchAllocation> loans
+           , List<OtherDispatchAllocation> transfers,List<CommodityType> commodityTypes,List<AdminUnit> adminUnits,UserProfile user)
        {
 
-           ToFDPs = dispatchAllocationService.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment.ToUpperInvariant(), null, null, null);
+           ToFDPs = toFdps;// dispatchAllocationService.GetCommitedAllocationsByHubDetached(user.DefaultHub.HubID, user.PreferedWeightMeasurment.ToUpperInvariant(), null, null, null);
 
-           Loans = repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(user);
+           Loans = loans;// repository.OtherDispatchAllocation.GetAllToOtherOwnerHubs(user);
 
-           Transfers = repository.OtherDispatchAllocation.GetAllToCurrentOwnerHubs(user);
+           Transfers = transfers;// repository.OtherDispatchAllocation.GetAllToCurrentOwnerHubs(user);
 
-           AdminUnits = new List<AdminUnit>() { repository.AdminUnit.FindById(1) };
+           AdminUnits = adminUnits;// new List<AdminUnit>() { repository.AdminUnit.FindById(1) };
 
-           CommodityTypes = repository.CommodityType.GetAll();
+           CommodityTypes = commodityTypes;// repository.CommodityType.GetAll();
 
            CommodityTypeID = 1; //food is the default
        }

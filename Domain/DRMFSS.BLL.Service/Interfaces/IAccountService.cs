@@ -6,19 +6,27 @@ using System.Text;
 
 namespace DRMFSS.BLL.Services
 {
-   public  interface IAccountService
+   public interface  IAccountService:IDisposable
    {
-       
+
        bool AddAccount(Account entity);
+       bool EditAccount(Account entity);
        bool DeleteAccount(Account account);
+
        bool DeleteById(int id);
-       bool EditAccount(Account account);
-       Account FindById(int id);
-       int GetAccountId(string entityType, int entityId);
-       int GetAccountIdWithCreate(string entityType, int entityId);
+
        List<Account> GetAllAccount();
+
+        Account FindById(int id);
+
        List<Account> FindBy(Expression<Func<Account, bool>> predicate);
 
 
+
+
+       int GetAccountId(string entityType, int entityId);
+
+       int GetAccountIdWithCreate(string entityType, int entityId);
+  
    }
 }

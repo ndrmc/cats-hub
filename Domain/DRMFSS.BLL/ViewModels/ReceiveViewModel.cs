@@ -12,7 +12,8 @@ namespace DRMFSS.Web.Models
 {
 
 
-    public class ReceiveViewModelDto {
+    public class ReceiveViewModelDto
+    {
         public Guid? ReceiveID { get; set; }
         public string GRN { get; set; }
         [UIHint("DateTime")]
@@ -27,12 +28,12 @@ namespace DRMFSS.Web.Models
     public class ReceiveViewModel
     {
 
-     
 
 
-    #region List of Things used in the recieve view model
 
-        private IUnitOfWork _Repository  = new UnitOfWork();
+        #region List of Things used in the recieve view model
+
+        //private IUnitOfWork _Repository  = new UnitOfWork();
         private UserProfile _UserProfile = null;
         /// <summary>
         /// Lists of important Lookups,
@@ -43,16 +44,16 @@ namespace DRMFSS.Web.Models
         {
             get
             {
-                if (_units == null)
-                {
-                    _units = _Repository.Unit.GetAll().OrderBy(o => o.Name).ToList();
-                }
+                //if (_units == null)
+                //{
+                //    _units = _Repository.Unit.GetAll().OrderBy(o => o.Name).ToList();
+                //}
                 return _units;
             }
-            
+
         }
         public List<CommodityGrade> CommodityGrades { get; set; }
-        public List<Commodity>  Commodities { get; set; }
+        public List<Commodity> Commodities { get; set; }
         public List<Transporter> Transporters { get; set; }
         public List<CommodityType> CommodityTypes { get; set; }
         public List<CommoditySource> CommoditySources { get; set; }
@@ -61,78 +62,90 @@ namespace DRMFSS.Web.Models
         public List<Program> Programs { get; set; }
         public List<Hub> Hubs { get; set; }
 
+        private List<AdminUnitItem> _stacks;
         public List<AdminUnitItem> Stacks
         {
             get
             {
-                if (this.StoreID != 0)
-                {
-                    BLL.Store store = _Repository.Store.FindById(StoreID);
-                    var stacks = new List<AdminUnitItem>();
-                    foreach (var i in store.Stacks)
-                    {
-                        stacks.Add(new AdminUnitItem { Name = i.ToString(), Id = i });
-                    }
-                    return stacks;
-                }
-                return new List<AdminUnitItem>();
+                //TODO:Make sure constractor stacks variable brings same data with the same logic
+                //if (this.StoreID != 0)
+                //{
+                //    BLL.Store store = _Repository.Store.FindById(StoreID);
+                //    var stacks = new List<AdminUnitItem>();
+                //    foreach (var i in store.Stacks)
+                //    {
+                //        stacks.Add(new AdminUnitItem { Name = i.ToString(), Id = i });
+                //    }
+                //    return stacks;
+                //}
+                //return new List<AdminUnitItem>();
+                return _stacks;
             }
         }
         #endregion
-        
+
         /// <summary>
         /// parameterless constructor, which is hidden so that this object is not constructed with out the user being specified,
         /// </summary>
-        
+
         public ReceiveViewModel()
         {
-           
+
         }
 
-        
+
         /// <summary>
         /// constructor with the testable repositories and the user
         /// the user is required because we need to decide what wareshouses to display for her.
         /// </summary>
-        public ReceiveViewModel( IUnitOfWork unitOfWork, BLL.UserProfile user)
+        public ReceiveViewModel(List<Commodity> commodities, List<CommodityGrade> commodityGrades, List<Transporter> transporters, List<CommodityType> commodityTypes,
+            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user, List<AdminUnitItem> stacks)
         {
+            _stacks = stacks;
             _UserProfile = user;
-            _Repository = unitOfWork;
-            InitalizeViewModel();
+            InitalizeViewModel(commodities, commodityGrades, transporters, commodityTypes,
+             commoditySources, programs, donors, hubs, user);
         }
 
         /// <summary>
         /// Initalizes the view model.
         /// </summary>
-        private void InitalizeViewModel()
+        private void InitalizeViewModel(List<Commodity> commodities, List<CommodityGrade> commodityGrades, List<Transporter> transporters, List<CommodityType> commodityTypes,
+            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user)
         {
+            _UserProfile = user;
             ReceiveID = null;
             IsEditMode = false;
             ReceiptDate = DateTime.Now;
-            InitializeEditLists(_UserProfile);
+            InitializeEditLists(commodities, commodityGrades, transporters, commodityTypes,
+             commoditySources, programs, donors, hubs, user);
             ReceiveDetails = new List<ReceiveDetailViewModel>();
             ReceiveDetails.Add(new ReceiveDetailViewModel());
+
         }
 
         /// <summary>
         /// Initializes the edit lists.
         /// </summary>
-        public void InitializeEditLists(UserProfile user)
+        public void InitializeEditLists(List<Commodity> commodities, List<CommodityGrade> commodityGrades, List<Transporter> transporters, List<CommodityType> commodityTypes,
+            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user)
         {
-            _UserProfile = user;
-            Commodities = _Repository.Commodity.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            CommodityGrades = _Repository.CommodityGrade.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            Transporters = _Repository.Transporter.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            CommoditySources = _Repository.CommoditySource.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            CommodityTypes = _Repository.CommodityType.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            //  _UserProfile = user;
+            Commodities = commodities;// _Repository.Commodity.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            CommodityGrades = commodityGrades;// _Repository.CommodityGrade.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            Transporters = transporters;// _Repository.Transporter.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            CommoditySources = commoditySources;// _Repository.CommoditySource.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            CommodityTypes = commodityTypes;// _Repository.CommodityType.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
             Stores = _UserProfile.DefaultHub.Stores.DefaultIfEmpty().ToList();
-            Programs = _Repository.Program.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-            Donors = _Repository.Donor.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            Programs = programs;// _Repository.Program.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            Donors = donors;// _Repository.Donor.GetAll().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            //=========================Old Comment============================================
             //_Repository.Hub.GetOthersWithDifferentOwner(user.DefaultHub); //
             //remove the users current ware house from the list not to allow receive from HUBX to HUBX 
-            Hubs = _Repository.Hub.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-           
-            
+            //==========================end old comment=======================================
+            Hubs = hubs;// _Repository.Hub.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+
+
         }
 
         /// <summary>
@@ -158,7 +171,7 @@ namespace DRMFSS.Web.Models
         /// <value>
         /// The SI number.
         /// </value>
-        [Required(ErrorMessage="SI Number is required")]
+        [Required(ErrorMessage = "SI Number is required")]
         public string SINumber { get; set; }
 
         /// <summary>
@@ -170,7 +183,7 @@ namespace DRMFSS.Web.Models
         [Required]
         [Key]
         [RegularExpression("[0-9]*", ErrorMessage = "Only numbers allowed for GRN")]
-        [StringLength(7,ErrorMessage = "Length Must be less than or equal to 7")]
+        [StringLength(7, ErrorMessage = "Length Must be less than or equal to 7")]
         [Remote("NotUnique", "Receive", AdditionalFields = "ReceiveID")]
         public string GRN { get; set; }
 
@@ -352,19 +365,22 @@ namespace DRMFSS.Web.Models
         public int CommoditySourceID { get; set; }
 
 
+        //TODO:Make sure to set value on commoditySoureText during mapping
+        public string CommoditySourceText { get; set; }
 
-        public string CommoditySourceText{
-            get { return _Repository.CommoditySource.FindById(CommoditySourceID).Name; }
-        }
-
-        public string SourceHubText
-        {
-            get { 
-                if (SourceHubID != null) 
-                    return _Repository.Hub.FindById(SourceHubID.Value).HubNameWithOwner; 
-                return "";
-            }
-        }
+        //public string CommoditySourceText{
+        //    get { return _Repository.CommoditySource.FindById(CommoditySourceID).Name; }
+        //}
+        //TODO:Make sure to put SourceHubText during mapping
+        public string SourceHubText { get; set; }
+        //public string SourceHubText
+        //{
+        //    get { 
+        //        if (SourceHubID != null) 
+        //            return _Repository.Hub.FindById(SourceHubID.Value).HubNameWithOwner; 
+        //        return "";
+        //    }
+        //}
         /// <summary>
         /// Gets or sets the ticket number.
         /// </summary>
@@ -400,14 +416,14 @@ namespace DRMFSS.Web.Models
         /// <value>
         /// The received by store man.
         /// </value>
-        
+
         [Required(ErrorMessage = "Name of store man is required")]
         [Display(Name = "Received By Store Man")]
         [StringLength(50)]
         [UIHint("AmharicTextBox")]
         public string ReceivedByStoreMan { get; set; }
 
-        public bool ChangeStoreManPermanently { set; get;}
+        public bool ChangeStoreManPermanently { set; get; }
 
         /// <summary>
         /// Gets or sets the name of the port.
@@ -482,13 +498,15 @@ namespace DRMFSS.Web.Models
         /// <param name="receive">The receive.</param>
         /// <param name="user">The user.</param>
         /// <returns></returns>
-        public static Models.ReceiveViewModel GenerateReceiveModel(BLL.Receive receive, UserProfile user)
+        public static Models.ReceiveViewModel GenerateReceiveModel(BLL.Receive receive, List<Commodity> commodities, List<CommodityGrade> commodityGrades, List<Transporter> transporters, List<CommodityType> commodityTypes,
+            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user)
         {
 
             ReceiveViewModel model = new ReceiveViewModel();
             model._UserProfile = user;
 
-            model.InitalizeViewModel();
+            model.InitalizeViewModel(commodities, commodityGrades, transporters, commodityTypes,
+             commoditySources, programs, donors, hubs, user);
             model.IsEditMode = true;
             model.ReceiveID = receive.ReceiveID;
             model.DriverName = receive.DriverName;
@@ -505,26 +523,27 @@ namespace DRMFSS.Web.Models
                 foreach (Transaction transaction in receiveDetail.TransactionGroup.Transactions)
                 {
                     var negTransaction = receiveDetail.TransactionGroup.Transactions.FirstOrDefault(p => p.QuantityInMT < 0);
-                    if(negTransaction != null)
+                    if (negTransaction != null)
                         model.SourceHubID = negTransaction.Account.EntityID;
                     receiveDetailtransaction = transaction;
                     break;
                 }
             if (receiveDetailtransaction != null)
-             {
-                 model.SINumber = receiveDetailtransaction.ShippingInstruction != null ? receiveDetailtransaction.ShippingInstruction.Value : "";
+            {
+                model.SINumber = receiveDetailtransaction.ShippingInstruction != null ? receiveDetailtransaction.ShippingInstruction.Value : "";
 
-                 model.ProjectNumber = receiveDetailtransaction.ProjectCode != null ? receiveDetailtransaction.ProjectCode.Value : "";
+                model.ProjectNumber = receiveDetailtransaction.ProjectCode != null ? receiveDetailtransaction.ProjectCode.Value : "";
 
-                 model.ProgramID = receiveDetailtransaction.Program != null ? receiveDetailtransaction.Program.ProgramID : default(int);
+                model.ProgramID = receiveDetailtransaction.Program != null ? receiveDetailtransaction.Program.ProgramID : default(int);
 
-                 model.StoreID = receiveDetailtransaction.Store != null ? receiveDetailtransaction.Store.StoreID : default(int);
+                model.StoreID = receiveDetailtransaction.Store != null ? receiveDetailtransaction.Store.StoreID : default(int);
 
-                 model.StackNumber = receiveDetailtransaction.Stack.HasValue ? receiveDetailtransaction.Stack.Value : default(int);
+                model.StackNumber = receiveDetailtransaction.Stack.HasValue ? receiveDetailtransaction.Stack.Value : default(int);
 
-                
 
-             }else
+
+            }
+            else
             {
                 model.SINumber = "";
                 model.ProjectNumber = "";
@@ -532,7 +551,7 @@ namespace DRMFSS.Web.Models
                 model.StoreID = default(int);
                 model.StackNumber = default(int);
             }
-            
+
             model.ReceiptDate = receive.ReceiptDate;
             model.WayBillNo = receive.WayBillNo;
             model.CommodityTypeID = receive.CommodityTypeID;
@@ -547,10 +566,10 @@ namespace DRMFSS.Web.Models
             model.ReceiptAllocationID = receive.ReceiptAllocationID;
             model.PurchaseOrder = receive.PurchaseOrder;
             model.SupplierName = receive.SupplierName;
-            
+
             model.Remark = receive.Remark;
             model.ReceivedByStoreMan = receive.ReceivedByStoreMan;
-            
+
             model.ReceiveDetails = DRMFSS.Web.Models.ReceiveDetailViewModel.GenerateReceiveDetailModels(receive.ReceiveDetails);
             return model;
         }
@@ -565,7 +584,7 @@ namespace DRMFSS.Web.Models
             {
                 CreatedDate = DateTime.Now,
                 ReceiptDate = this.ReceiptDate,
-                
+
                 DriverName = this.DriverName,
                 GRN = this.GRN,
                 PlateNo_Prime = this.PlateNo_Prime,
@@ -577,7 +596,7 @@ namespace DRMFSS.Web.Models
                 ResponsibleDonorID = this.ResponsibleDonorID,
                 SourceDonorID = this.SourceDonorID,
                 CommoditySourceID = this.CommoditySourceID,
-                WeightBridgeTicketNumber  = this.TicketNumber,
+                WeightBridgeTicketNumber = this.TicketNumber,
                 WeightBeforeUnloading = this.WeightBeforeUnloading,
                 WeightAfterUnloading = this.WeightAfterUnloading,
                 ReceivedByStoreMan = this.ReceivedByStoreMan,
@@ -588,7 +607,7 @@ namespace DRMFSS.Web.Models
                 ReceiptAllocationID = this.ReceiptAllocationID,
                 Remark = this.Remark,
             };
-            if(this.ReceiveID.HasValue)
+            if (this.ReceiveID.HasValue)
             {
                 receive.ReceiveID = this.ReceiveID.Value;
             }

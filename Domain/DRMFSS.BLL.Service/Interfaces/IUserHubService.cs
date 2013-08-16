@@ -10,6 +10,7 @@ namespace DRMFSS.BLL.Services
     {
        bool AddUserHub(UserHub entity);
         void AddUserHub(int warehouseID, int userID);
+        void RemoveUserHub(int warehouseID, int userID);
        bool DeleteUserHub(UserHub entity);
        bool DeleteById(int id);
        bool EditUserHub(UserHub entity);

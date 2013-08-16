@@ -224,10 +224,7 @@ namespace DRMFSS.BLL.Services
             return true;
         }
 
-        public List<Store> GetStoreByHub(int hubId)
-        {
-            return db.Stores.Where(p => p.HubID == hubId).ToList();
-        }
+       
         public Hub FindHubById(int HubId)
         {
             return _unitOfWork.HubRepository.FindBy(h => h.HubID == HubId).SingleOrDefault();
