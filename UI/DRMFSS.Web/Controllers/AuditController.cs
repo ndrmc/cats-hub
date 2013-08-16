@@ -4,16 +4,19 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
     public class AuditController : BaseController
     {
 
-        IUnitOfWork repository = new UnitOfWork();
+        private readonly IAuditService _auditService;
+       
 
-        public AuditController()
+        public AuditController(IAuditService auditService)
         {
+            this._auditService = auditService;
         }
 
         public AuditController(IUnitOfWork repository)
@@ -33,7 +36,7 @@ namespace DRMFSS.Web.Controllers
         [Authorize]
         public ActionResult Audits(string id, string tableName, string fieldName, string foreignTable, string foreignFeildName,string foreignFeildKey)
         {
-            List<BLL.FieldChange> changes = repository.Audit.GetChanges(tableName, fieldName, foreignTable, foreignFeildName, foreignFeildKey, id.ToString());
+            List<BLL.FieldChange> changes = _auditService.GetChanges(tableName, fieldName, foreignTable, foreignFeildName, foreignFeildKey, id.ToString());
             return PartialView("FieldAudits", changes);
         }
     }

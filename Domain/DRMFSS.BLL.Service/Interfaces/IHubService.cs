@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using DRMFSS.BLL.ViewModels.Report;
+using DRMFSS.BLL.ViewModels.Report.Data;
 
 namespace DRMFSS.BLL.Services
 {
@@ -16,5 +18,7 @@ namespace DRMFSS.BLL.Services
         List<Hub> GetAllHub();
         List<Hub> FindBy(Expression<Func<Hub, bool>> predicate);
         List<ViewModels.Common.StoreViewModel> GetAllStoreByUser(UserProfile user);
+        List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel);
+   
     }
 }

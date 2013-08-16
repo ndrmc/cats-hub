@@ -6,12 +6,27 @@ using DRMFSS.BLL.ViewModels.Report.Data;
 using System.Collections.Generic;
 using DRMFSS.Web.Reports;
 using DevExpress.XtraReports.UI;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers.Reports
 {
      [Authorize]
     public partial class ReportsController : BaseController
-    {
+     {
+         private readonly IDispatchService _dispatchService;
+         private readonly IReceiveService _receiveService;
+         private readonly IUserProfileService _userProfileService;
+         private readonly IHubService _hubService;
+         private readonly ITransactionService _transactionService;
+
+         public ReportsController(IDispatchService dispatchService,IReceiveService receiveService,IUserProfileService userProfileService,IHubService hubService,ITransactionService transactionService)
+         {
+             this._dispatchService = dispatchService;
+             this._receiveService = receiveService;
+             this._userProfileService = userProfileService;
+             this._hubService = hubService;
+             this._transactionService = transactionService;
+         }
         //
         // GET: /Reports/
 
@@ -20,18 +35,18 @@ namespace DRMFSS.Web.Controllers.Reports
             return View();
         }
 
-        DRMFSS.BLL.CTSContext db = new BLL.CTSContext();
+       // DRMFSS.BLL.CTSContext db = new BLL.CTSContext();
         public virtual ActionResult SIReport(string siNumber)
         {
             if (!string.IsNullOrEmpty(siNumber))
             {
                 // TODO: redo this report
-                var dispatches = from dis in db.Dispatches
+                var dispatches = from dis in _dispatchService.GetAllDispatch()
                                  where dis.DispatchDetails.FirstOrDefault().ToString() == siNumber.Trim()
                                  select dis;
 
                 // TODO: redo this report
-                var recieves = from res in db.Receives
+                var recieves = from res in _receiveService.GetAllReceive()
                                where res.ReceiveDetails.FirstOrDefault().TransactionGroup.Transactions.FirstOrDefault().ShippingInstruction.Value == siNumber.Trim()
                                select res;
 
@@ -104,7 +119,7 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult FreeStock()
         {
             MasterReportBound report= GetFreeStock(new FreeStockFilterViewModel());
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             FreeStockFilterViewModel ViewModel = new FreeStockFilterViewModel(repository, user);
             ViewBag.Filters = ViewModel;
             return View(report);
@@ -121,9 +136,9 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             List<DRMFSS.BLL.ViewModels.Report.Data.FreeStockReport> reports = new List<BLL.ViewModels.Report.Data.FreeStockReport>();
             DRMFSS.BLL.ViewModels.Report.Data.FreeStockReport freestockreport = new BLL.ViewModels.Report.Data.FreeStockReport();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user =_userProfileService.GetUser(User.Identity.Name);
 
-            freestockreport.Programs = repository.Hub.GetFreeStockGroupedByProgram(user.DefaultHub.HubID, freeStockFilterViewModel);
+            freestockreport.Programs = _hubService.GetFreeStockGroupedByProgram(user.DefaultHub.HubID, freeStockFilterViewModel);
             freestockreport.PreparedBy = user.GetFullName();
             freestockreport.HubName = user.DefaultHub.HubNameWithOwner;
             freestockreport.ReportDate = System.DateTime.Now;
@@ -140,9 +155,9 @@ namespace DRMFSS.Web.Controllers.Reports
 
          public MasterReportBound GetOffloading(DispatchesViewModel dispatchesViewModel)
            {
-               BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+               BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
                OffloadingReportMain main = new OffloadingReportMain();
-               List<OffloadingReport> reports = repository.Transaction.GetOffloadingReport(user.DefaultHub.HubID, dispatchesViewModel);
+               List<OffloadingReport> reports = _transactionService.GetOffloadingReport(user.DefaultHub.HubID, dispatchesViewModel);
                main.reports = reports;
                main.PreparedBy = user.GetFullName();
                main.HubName = user.DefaultHub.HubNameWithOwner;
@@ -161,7 +176,7 @@ namespace DRMFSS.Web.Controllers.Reports
          public ActionResult OffloadingReport()
         {
             MasterReportBound report = GetOffloading(new DispatchesViewModel());
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             DispatchesViewModel ViewModel = new DispatchesViewModel(repository, user);
             ViewBag.Filters = ViewModel;
             return View(report);
@@ -188,7 +203,7 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult Receive()
         {
             MasterReportBound report = GetReceiveReportByBudgetYear(new ReceiptsViewModel());
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             ReceiptsViewModel ViewModel = new ReceiptsViewModel(repository, user);
             ViewBag.Filters = ViewModel;
             return View(report);
@@ -204,9 +219,9 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             List<DRMFSS.BLL.ViewModels.Report.Data.ReceiveReportMain> reports = new List<ReceiveReportMain>();
             DRMFSS.BLL.ViewModels.Report.Data.ReceiveReportMain receivereport = new BLL.ViewModels.Report.Data.ReceiveReportMain();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
-            receivereport.receiveReports = repository.Transaction.GetReceiveReport(user.DefaultHub.HubID, receiptsViewModel);//new List<BLL.ViewModels.Report.Data.ReceiveReport>();
+            receivereport.receiveReports = _transactionService.GetReceiveReport(user.DefaultHub.HubID, receiptsViewModel);//new List<BLL.ViewModels.Report.Data.ReceiveReport>();
             receivereport.PreparedBy = user.GetFullName();
             receivereport.HubName = user.DefaultHub.HubNameWithOwner;
             receivereport.ReportDate = System.DateTime.Now;
@@ -224,9 +239,9 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             List<DRMFSS.BLL.ViewModels.Report.Data.ReceiveReportMain> reports = new List<ReceiveReportMain>();
             DRMFSS.BLL.ViewModels.Report.Data.ReceiveReportMain receivereport = new BLL.ViewModels.Report.Data.ReceiveReportMain();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
-            receivereport.receiveReports = repository.Transaction.GetReceiveReport(user.DefaultHub.HubID, receiptsViewModel);//new List<BLL.ViewModels.Report.Data.ReceiveReport>();
+            receivereport.receiveReports = _transactionService.GetReceiveReport(user.DefaultHub.HubID, receiptsViewModel);//new List<BLL.ViewModels.Report.Data.ReceiveReport>();
             receivereport.PreparedBy = user.GetFullName();
             receivereport.HubName = user.DefaultHub.HubNameWithOwner;
             receivereport.ReportDate = System.DateTime.Now;
@@ -256,7 +271,7 @@ namespace DRMFSS.Web.Controllers.Reports
             DistributionViewModel newDistributionViewModel = new DistributionViewModel();
             newDistributionViewModel.PeriodId = (DateTime.Now.Month - 1/3) + 1;// current quarter by default 
             MasterReportBound report = GetDistributionReportPivot(newDistributionViewModel);
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             DistributionViewModel ViewModel = new DistributionViewModel(repository, user);
             ViewBag.Filters = ViewModel;
             
@@ -273,7 +288,7 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             List<DRMFSS.BLL.ViewModels.Report.Data.DistributionReport> reports = new List<BLL.ViewModels.Report.Data.DistributionReport>();
             DRMFSS.BLL.ViewModels.Report.Data.DistributionReport distribution = new BLL.ViewModels.Report.Data.DistributionReport();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             distribution.PreparedBy = user.GetFullName();
             distribution.ReportCode = DateTime.Now.ToString();
@@ -306,7 +321,7 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             List<DRMFSS.BLL.ViewModels.Report.Data.DistributionReport> reports = new List<BLL.ViewModels.Report.Data.DistributionReport>();
             DRMFSS.BLL.ViewModels.Report.Data.DistributionReport distribution = new BLL.ViewModels.Report.Data.DistributionReport();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             distribution.PreparedBy = user.GetFullName();
             distribution.HubName = user.DefaultHub.HubNameWithOwner;
@@ -316,7 +331,7 @@ namespace DRMFSS.Web.Controllers.Reports
             distribution.ReportTitle = "Distribution Report";
             distribution.Rows = new List<DistributionRows>();
             
-            distribution.Rows = repository.Transaction.GetDistributionReport(user.DefaultHub.HubID, distributionViewModel);
+            distribution.Rows = _transactionService.GetDistributionReport(user.DefaultHub.HubID, distributionViewModel);
              //   new List<DistributionRows>();
             //for (int i = 1; i < 5; i++)
             //{
@@ -370,7 +385,7 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             List<DRMFSS.BLL.ViewModels.Report.Data.DeliveryReport> reports = new List<BLL.ViewModels.Report.Data.DeliveryReport>();
             DRMFSS.BLL.ViewModels.Report.Data.DeliveryReport donation = new BLL.ViewModels.Report.Data.DeliveryReport();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             donation.PreparedBy = user.GetFullName();
             donation.ReportCode = DateTime.Now.ToString();
