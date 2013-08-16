@@ -80,6 +80,7 @@
     <Compile Include="ReceiptAllocationControllerTest.cs" />
     <Compile Include="ReceiveCommodityControllerTest.cs" />
     <Compile Include="UnitControllerTests.cs" />
+    <Compile Include="UserWarehouseControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
