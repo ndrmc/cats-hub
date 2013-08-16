@@ -21,24 +21,25 @@ namespace DRMFSS.Web.Test
         {
             var userProfile = new List<UserProfile>
                 {
-                    new UserProfile {},
-                    new UserProfile {}
+                    new UserProfile {UserProfileID = 1, UserName = "Abebe", Password = "Abebe", Email = "123@yahoo.com"},
+                    new UserProfile {UserProfileID = 2, UserName = "Kebede", Password = "Bekele", Email = "123@yahoo.com"}
                 };
             var userProfileService = new Mock<IUserProfileService>();
             userProfileService.Setup(t => t.GetAllUserProfile()).Returns(userProfile);
 
             var commodity = new List<Commodity>
                 {
-                    new Commodity {},
-                    new Commodity {}
+                    new Commodity {CommodityID = 1, Name = "Cereal", CommodityCode = "CER", CommodityTypeID = 1, ParentID = null},
+                    new Commodity {CommodityID = 2, Name = "CSB", CommodityCode = "CSB", CommodityTypeID = 1, ParentID = 1}
                 };
             var commodityService = new Mock<ICommodityService>();
             commodityService.Setup(t => t.GetAllCommodity()).Returns(commodity);
 
             var hub = new List<Hub>
                 {
-                    new Hub {},
-                    new Hub {}
+                    new Hub {HubID = 1,Name = "Adama",HubOwnerID = 1},
+                    new Hub { HubID =2,Name = "Kombolcha",HubOwnerID = 1},
+                    new Hub { HubID =3,Name = "Diredawa",HubOwnerID = 1}
 
                 };
             var hubService = new Mock<IHubService>();
