@@ -65,14 +65,20 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AdminControllerTests.cs" />
-    <Compile Include="AdminUnitControllerTest.cs" />
+    <Compile Include="AdminUnitControllerTests.cs" />
+    <Compile Include="AuditControllerTests.cs" />
     <Compile Include="CommodityControllerTests.cs" />
     <Compile Include="CommodityGradeTests.cs" />
     <Compile Include="CommoditySourceTests.cs" />
     <Compile Include="CommodityTypeControllerTests.cs" />
     <Compile Include="ContactControllerTests.cs" />
+    <Compile Include="DonorControllerTests.cs" />
+    <Compile Include="ErrorControllerTests.cs" />
     <Compile Include="FDPControllerTests.cs" />
     <Compile Include="GiftCertificateControllerTest.cs" />
+    <Compile Include="HubControllerTests.cs" />
+    <Compile Include="HubOwnerControllerTests.cs" />
+    <Compile Include="InternalMovementControllerTests.cs" />
     <Compile Include="ProgramControllerTest.cs" />
     <Compile Include="DispatchAllocationControllerTest.cs" />
     <Compile Include="CurrentHubControllerTests.cs" />
@@ -85,6 +91,7 @@
     <Compile Include="UserWarehouseControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
