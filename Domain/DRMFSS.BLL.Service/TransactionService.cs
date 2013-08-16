@@ -425,7 +425,7 @@ namespace DRMFSS.BLL.Services
         /// <param name="user">The user.</param>
         public void SaveDispatchTransaction(DispatchModel dispatchModel, UserProfile user)
         {
-            Dispatch dispatch = dispatchModel.GenerateDipatch();
+            Dispatch dispatch = dispatchModel.GenerateDipatch(user);
 
             dispatch.HubID = user.DefaultHub.HubID;
             dispatch.UserProfileID = user.UserProfileID;

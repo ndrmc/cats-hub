@@ -74,7 +74,13 @@ namespace DRMFSS.BLL.Services
                 return new List<StoreViewModel>();
             }
             //var stores = (from c in user.DefaultHub.Stores select new ViewModels.Common.StoreViewModel { StoreId = c.StoreID, StoreName = string.Format("{0} - {1} ", c.Name, c.StoreManName) }).OrderBy(c => c.StoreName).ToList();
-            var stores = (from c in _unitOfWork.StoreRepository.GetStoreByHub(user.DefaultHub.HubID) select new ViewModels.Common.StoreViewModel { StoreId = c.StoreID, StoreName = string.Format("{0} - {1} ", c.Name, c.StoreManName) }).OrderBy(c => c.StoreName).ToList();
+           
+            //=======================modified by banty=================================
+            //var stores = (from c in _unitOfWork.StoreRepository.GetStoreByHub(user.DefaultHub.HubID) select new ViewModels.Common.StoreViewModel { StoreId = c.StoreID, StoreName = string.Format("{0} - {1} ", c.Name, c.StoreManName) }).OrderBy(c => c.StoreName).ToList();
+            var stores = (from c in _unitOfWork.StoreRepository.Get(t=>t.HubID==user.DefaultHub.HubID) select new ViewModels.Common.StoreViewModel { StoreId = c.StoreID, StoreName = string.Format("{0} - {1} ", c.Name, c.StoreManName) }).OrderBy(c => c.StoreName).ToList();
+            
+            //==============================end
+            
             //stores.Insert(0, new ViewModels.Common.StoreViewModel { StoreName = "Total Hub" });  //I need it for report only so I will modify it on report
             return stores;
         }
@@ -82,25 +88,25 @@ namespace DRMFSS.BLL.Services
         {
             var commodity = _unitOfWork.CommodityRepository.FindById(commodityID);
             if (commodity != null && commodity.CommodityTypeID == 1)
-                return db.RPT_StockStatus(hubID, commodityID);
+                return _unitOfWork.ReportRepository.RPT_StockStatus(hubID, commodityID);
             else
-                return db.RPT_StockStatusNonFood(hubID, commodityID);
+                return _unitOfWork.ReportRepository.RPT_StockStatusNonFood(hubID, commodityID);
         }
 
         public IEnumerable<StatusReportBySI_Result> GetStatusReportBySI(int hubID)
         {
-            return db.GetStatusReportBySI(hubID).AsEnumerable();
+            return _unitOfWork.ReportRepository.GetStatusReportBySI(hubID).AsEnumerable();
         }
 
         public IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID)
         {
-            return db.GetDispatchFulfillmentStatus(hubID);
+            return _unitOfWork.ReportRepository.GetDispatchFulfillmentStatus(hubID);
         }
 
 
         public List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel)
         {
-            var dbGetStatusReportBySI = db.GetStatusReportBySI(HuBID).ToList();
+            var dbGetStatusReportBySI = _unitOfWork.ReportRepository.GetStatusReportBySI(HuBID).ToList();
             if (freeStockFilterViewModel.ProgramId.HasValue && freeStockFilterViewModel.ProgramId != 0)
             {
                 dbGetStatusReportBySI = dbGetStatusReportBySI.Where(p => p.ProgramID == freeStockFilterViewModel.ProgramId).ToList();
