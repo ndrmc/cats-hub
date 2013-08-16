@@ -11,9 +11,9 @@ namespace DRMFSS.Web.Controllers
 {
     public partial class ErrorController : BaseController
     {
-        private readonly IErrorService _ErrorService;
+        private readonly IErrorLogService _ErrorService;
 
-        public ErrorController(IErrorService errorServiceParam)
+        public ErrorController(IErrorLogService errorServiceParam)
         {
             _ErrorService = errorServiceParam;
         }
@@ -39,7 +39,7 @@ namespace DRMFSS.Web.Controllers
         {
             
             //get all the errors here and paginate them for the admin/developer role
-            IEnumerable<ErrorLog> errors = _ErrorService.GetAllError();
+            IEnumerable<ErrorLog> errors = _ErrorService.GetAllErrorLog();
             return View(errors.ToList());
         }
 
