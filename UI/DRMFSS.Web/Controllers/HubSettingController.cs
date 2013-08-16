@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using DRMFSS.BLL;
 using DRMFSS.BLL.Interfaces;
 using DRMFSS.BLL.Repository;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
@@ -15,23 +16,31 @@ namespace DRMFSS.Web.Controllers
     {
 
         IUnitOfWork repository = new UnitOfWork();
+        private readonly IHubSettingService _hubSettingService;
+
+        public HubSettingController(IHubSettingService hubSettingService)
+        {
+            _hubSettingService = hubSettingService;
+        }
+
 
         public virtual ActionResult Index()
         {
-            return View(repository.HubSetting.GetAll());
+            return View(_hubSettingService.GetAllHubSetting());
+            
         }
 
 
         public virtual ActionResult ListPartial()
         {
-            return PartialView(repository.HubSetting.GetAll());
+            return PartialView(_hubSettingService.GetAllHubSetting());
         }
         //
         // GET: /WarehouseSetting/Details/5
 
         public virtual ViewResult Details(int id)
         {
-            HubSetting hubSetting = repository.HubSetting.FindById(id);
+            HubSetting hubSetting = _hubSettingService.FindById(id);
             return View(hubSetting);
         }
 
@@ -51,7 +60,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.HubSetting.Add(hubSetting);
+                _hubSettingService.AddHubSetting(hubSetting);
                 return RedirectToAction("Index");   
             }
 
@@ -63,7 +72,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Edit(int id)
         {
-            HubSetting hubsetting = repository.HubSetting.FindById(id);
+            HubSetting hubsetting = _hubSettingService.FindById(id);
             return PartialView(hubsetting);
         }
 
@@ -75,7 +84,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.HubSetting.SaveChanges(hubSetting);
+                _hubSettingService.EditHubSetting(hubSetting);
                 //return RedirectToAction("Index");
                 return Json(new { success = true });
             }
@@ -87,7 +96,7 @@ namespace DRMFSS.Web.Controllers
 
         public virtual ActionResult Delete(int id)
         {
-            HubSetting hubSetting = repository.HubSetting.FindById(id) ;
+            HubSetting hubSetting = _hubSettingService.FindById(id) ;
             return View(hubSetting);
         }
 
@@ -97,7 +106,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            repository.HubSetting.DeleteByID(id);
+            _hubSettingService.DeleteByID(id);
             return RedirectToAction("Index");
         }
     }

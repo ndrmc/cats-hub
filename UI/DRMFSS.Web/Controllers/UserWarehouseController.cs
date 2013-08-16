@@ -6,20 +6,26 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Controllers
 {
      [Authorize]
     public class UserWarehouseController : BaseController
-    {
-        IUnitOfWork repository = new UnitOfWork();
+     {
+         private readonly IUserHubService _userHubService;
+
+         public UserWarehouseController(IUserHubService userHubService)
+         {
+             this._userHubService = userHubService;
+         }
 
         //
         // GET: /UserWarehouse/
 
         public ViewResult Index()
         {
-            var userwarehouses = repository.UserHub.GetAll();
+            var userwarehouses = _userHubService.GetAllUserHub();
             return View(userwarehouses.ToList());
         }
 
