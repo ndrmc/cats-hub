@@ -35,12 +35,13 @@ namespace DRMFSS.BLL.ViewModels.Report
         public StockBalanceViewModel()
         {
         }
-        public StockBalanceViewModel(IUnitOfWork Repository, UserProfile user)
+        public StockBalanceViewModel(List<CodesViewModel> codes, List<CommodityTypeViewModel> commodityTypes, List<ProgramViewModel> programs, List<StoreViewModel> stores
+             )
         {
-            this.Cods = ConstantsRepository.GetAllCodes();
-            this.CommodityTypes = Repository.CommodityType.GetAllCommodityTypeForReprot();
-            this.Programs = Repository.Program.GetAllProgramsForReport();
-            this.Stores = Repository.Hub.GetAllStoreByUser(user);
+            this.Cods = codes;// ConstantsRepository.GetAllCodes();
+            this.CommodityTypes = commodityTypes;// Repository.CommodityType.GetAllCommodityTypeForReprot();
+            this.Programs = programs;//Repository.Program.GetAllProgramsForReport();
+            this.Stores = stores;// Repository.Hub.GetAllStoreByUser(user);
         }
     }
 }
