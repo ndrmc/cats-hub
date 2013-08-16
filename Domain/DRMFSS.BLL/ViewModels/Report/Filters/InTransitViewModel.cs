@@ -37,15 +37,16 @@ namespace DRMFSS.BLL.ViewModels.Report
 
         }
 
-        public InTransitViewModel(IUnitOfWork Repository, UserProfile user)
+        public InTransitViewModel(List<CodesViewModel> codes, List<CommodityTypeViewModel> commodityTypes, List<ProgramViewModel> programs, List<StoreViewModel> stores,
+            List<AreaViewModel> areas,List<TypeViewModel> types )
         {
 
-            this.Cods = ConstantsRepository.GetAllCodes();
-            this.CommodityTypes = Repository.CommodityType.GetAllCommodityTypeForReprot();
-            this.Programs = Repository.Program.GetAllProgramsForReport();
-            this.Stores = Repository.Hub.GetAllStoreByUser(user);
-            this.Areas = Repository.AdminUnit.GetAllAreasForReport();
-            this.Types = ConstantsRepository.GetAllTypes();
+            this.Cods = codes;// ConstantsRepository.GetAllCodes();
+            this.CommodityTypes = commodityTypes;//Repository.CommodityType.GetAllCommodityTypeForReprot();
+            this.Programs = programs;// Repository.Program.GetAllProgramsForReport();
+            this.Stores = stores;//Repository.Hub.GetAllStoreByUser(user);
+            this.Areas = areas;//Repository.AdminUnit.GetAllAreasForReport();
+            this.Types = types;// ConstantsRepository.GetAllTypes();
         }
     }
 }

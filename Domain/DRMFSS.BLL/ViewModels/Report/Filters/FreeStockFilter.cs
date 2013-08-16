@@ -38,14 +38,15 @@ namespace DRMFSS.BLL.ViewModels.Report
         {
         }
 
-        public FreeStockFilterViewModel(IUnitOfWork Repository, UserProfile user)
+        public FreeStockFilterViewModel(List<CodesViewModel> codes, List<CommodityTypeViewModel> commodityTypes, List<ProgramViewModel> programs, List<CommodityViewModel> commodities,
+            List<AreaViewModel> areas)
         {
             this.Periods = GetAllPeriod();
-            this.Cods = ConstantsRepository.GetAllCodes();
-            this.CommodityTypes = Repository.CommodityType.GetAllCommodityTypeForReprot();
-            this.Programs = Repository.Program.GetAllProgramsForReport();
-            this.Commodities = Repository.Commodity.GetAllCommodityForReprot();
-            this.Areas = Repository.AdminUnit.GetAllAreasForReport();
+            this.Cods = codes;// ConstantsRepository.GetAllCodes();
+            this.CommodityTypes = commodityTypes;// Repository.CommodityType.GetAllCommodityTypeForReprot();
+            this.Programs = programs;// Repository.Program.GetAllProgramsForReport();
+            this.Commodities = commodities;// Repository.Commodity.GetAllCommodityForReprot();
+            this.Areas = areas;// Repository.AdminUnit.GetAllAreasForReport();
         }
 
         public List<PeriodViewModel> GetAllPeriod()

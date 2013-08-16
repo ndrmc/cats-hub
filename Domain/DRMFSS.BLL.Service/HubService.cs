@@ -78,6 +78,26 @@ namespace DRMFSS.BLL.Services
             //stores.Insert(0, new ViewModels.Common.StoreViewModel { StoreName = "Total Hub" });  //I need it for report only so I will modify it on report
             return stores;
         }
+        public IEnumerable<StockStatusReport> GetStockStatusReport(int hubID, int commodityID)
+        {
+            var commodity = _unitOfWork.CommodityRepository.FindById(commodityID);
+            if (commodity != null && commodity.CommodityTypeID == 1)
+                return db.RPT_StockStatus(hubID, commodityID);
+            else
+                return db.RPT_StockStatusNonFood(hubID, commodityID);
+        }
+
+        public IEnumerable<StatusReportBySI_Result> GetStatusReportBySI(int hubID)
+        {
+            return db.GetStatusReportBySI(hubID).AsEnumerable();
+        }
+
+        public IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID)
+        {
+            return db.GetDispatchFulfillmentStatus(hubID);
+        }
+
+
         public List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel)
         {
             var dbGetStatusReportBySI = db.GetStatusReportBySI(HuBID).ToList();
