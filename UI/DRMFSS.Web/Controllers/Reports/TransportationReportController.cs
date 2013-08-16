@@ -5,13 +5,20 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using DRMFSS.BLL.Services;
 using DRMFSS.BLL.ViewModels;
 
 namespace DRMFSS.Web.Controllers.Reports
 {
      [Authorize]
     public class TransportationReportController : BaseController
-    {
+     {
+         private readonly ITransactionService _transactionService;
+
+         public TransportationReportController(ITransactionService transactionService)
+         {
+             this._transactionService = transactionService;
+         }
         //
         // GET: /TransportationReport/
          BLL.IUnitOfWork repository = new BLL.UnitOfWork();
@@ -34,7 +41,7 @@ namespace DRMFSS.Web.Controllers.Reports
             OperationMode mode = (OperationMode)Operation;
             DateTime? f = (fromResult)? fromDate : (DateTime?) null;
             DateTime? t = (toResult) ? toDate : (DateTime?)null;
-            var list = repository.Transaction.GetTransportationReports(mode, f, t);
+            var list = _transactionService.GetTransportationReports(mode, f, t);
           
             
             return PartialView("PartialGrid", list);

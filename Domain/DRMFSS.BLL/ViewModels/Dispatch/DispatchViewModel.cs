@@ -65,10 +65,11 @@ namespace DRMFSS.Web.Models
             {
                 get
                 {
-                    if (_commodities == null)
-                    {
-                        _commodities = Repository.Commodity.GetAllParents().OrderBy(o => o.Name).ToList();
-                    }
+                    //TODO:Make sure this property is loaded with commodity
+                    //if (_commodities == null)
+                    //{
+                    //    _commodities = Repository.Commodity.GetAllParents().OrderBy(o => o.Name).ToList();
+                    //}
                     return _commodities;
                 }
                 set { _commodities = value; }
@@ -86,10 +87,11 @@ namespace DRMFSS.Web.Models
             {
                 get
                 {
-                    if (_units == null)
-                    {
-                        _units = Repository.Unit.GetAll().OrderBy(o => o.Name).ToList();
-                    }
+                    //TODO:Make sure this property is loaded with full of units
+                    //if (_units == null)
+                    //{
+                    //    _units = Repository.Unit.GetAll().OrderBy(o => o.Name).ToList();
+                    //}
                     return _units;
                 }
                 set { _units = value; }
@@ -107,10 +109,11 @@ namespace DRMFSS.Web.Models
         {
             get
             {
-                if(_FDPs == null)
-                {
-                    _FDPs = Repository.FDP.GetAll();
-                }
+                //TODO:make sure this property is loaded with full of FDPs
+                //if(_FDPs == null)
+                //{
+                //    _FDPs = Repository.FDP.GetAll();
+                //}
                 return _FDPs;
             }
             set { _FDPs = value; }
@@ -128,10 +131,11 @@ namespace DRMFSS.Web.Models
         {
             get
             {
-                if(_programs == null)
-                {
-                    _programs = Repository.Program.GetAll().OrderBy(o => o.Name).ToList();
-                }
+                //TODO:make sure programs to be loaded 
+                //if(_programs == null)
+                //{
+                //    _programs = Repository.Program.GetAll().OrderBy(o => o.Name).ToList();
+                //}
                 return _programs;
             }
             set { _programs = value; }
@@ -149,10 +153,11 @@ namespace DRMFSS.Web.Models
             {
                 get
                 {
-                    if(_Regions == null)
-                    {
-                        _Regions = Repository.AdminUnit.GetRegions();
-                    }
+                    //TODO:make sure regions are loaded
+                    //if(_Regions == null)
+                    //{
+                    //    _Regions = Repository.AdminUnit.GetRegions();
+                    //}
                     return _Regions;
                 }
                 set { _Regions = value; }
@@ -170,13 +175,14 @@ namespace DRMFSS.Web.Models
             {
                 get
                 {
-                    if(RegionID != null)
-                    {
-                        _Zones = Repository.AdminUnit.GetChildren(RegionID.Value);
-                    }else
-                    {
-                        _Zones = new List<AdminUnit>();
-                    }
+                    //TODO:Make sure zones are loaded
+                    //if(RegionID != null)
+                    //{
+                    //    _Zones = Repository.AdminUnit.GetChildren(RegionID.Value);
+                    //}else
+                    //{
+                    //    _Zones = new List<AdminUnit>();
+                    //}
                     return _Zones;
                 }
                 set { _Zones = value; }
@@ -194,10 +200,11 @@ namespace DRMFSS.Web.Models
             {
                 get
                 {
-                    if(_stores == null)
-                    {
-                        _stores = Repository.Store.GetAll();
-                    }
+                    //TODO:make sure stores are loaded
+                    //if(_stores == null)
+                    //{
+                    //    _stores = Repository.Store.GetAll();
+                    //}
                     return _stores;
                 }
                 set { _stores = value; }
@@ -526,9 +533,10 @@ namespace DRMFSS.Web.Models
         /// Generates the dipatch.
         /// </summary>
         /// <returns></returns>
-        public BLL.Dispatch GenerateDipatch()
+        public BLL.Dispatch GenerateDipatch(UserProfile user)
         {
-            BLL.UserProfile user = Repository.UserProfile.GetUser(HttpContext.Current.User.Identity.Name);
+            //TODO:Check if any impact converting default constructor to injuct user
+            //BLL.UserProfile user = Repository.UserProfile.GetUser(HttpContext.Current.User.Identity.Name);
             BLL.Dispatch dispatch = new BLL.Dispatch()
             {
                 BidNumber = this.BidNumber,
@@ -569,7 +577,7 @@ namespace DRMFSS.Web.Models
         /// <param name="dispatch">The dispatch.</param>
         /// <param name="Repository">The repository.</param>
         /// <returns></returns>
-        public static Models.DispatchModel GenerateDispatchModel(BLL.Dispatch dispatch, IUnitOfWork Repository)
+        public static Models.DispatchModel GenerateDispatchModel(BLL.Dispatch dispatch,Transaction transactionObj)
         {
             DispatchModel model = new DispatchModel();
             model.BidNumber = dispatch.BidNumber;
@@ -598,7 +606,8 @@ namespace DRMFSS.Web.Models
             
             // model.ProjectNumber = dispatch.ProjectNumber;
             //model.SINumber = dispatch.SINumber;
-            BLL.Transaction transaction = Repository.Dispatch.GetDispatchTransaction(dispatch.DispatchID);
+            //TODO:Check modification have any impact
+            BLL.Transaction transaction = transactionObj;// Repository.Dispatch.GetDispatchTransaction(dispatch.DispatchID);
             if (transaction != null)
             {
                 if (transaction.Stack != null) model.StackNumber = transaction.Stack.Value;
