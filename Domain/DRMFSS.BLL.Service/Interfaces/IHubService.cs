@@ -18,7 +18,8 @@ namespace DRMFSS.BLL.Services
         List<Hub> GetAllHub();
         List<Hub> FindBy(Expression<Func<Hub, bool>> predicate);
         List<ViewModels.Common.StoreViewModel> GetAllStoreByUser(UserProfile user);
-        List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel);
-   
+        IEnumerable<StockStatusReport> GetStockStatusReport(int hubID, int commodityID);
+        IEnumerable<StatusReportBySI_Result> GetStatusReportBySI(int hubID);
+        IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID);
     }
 }

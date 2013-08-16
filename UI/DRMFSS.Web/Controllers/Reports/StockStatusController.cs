@@ -4,21 +4,34 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 using DRMFSS.Web.Reports;
 
 namespace DRMFSS.Web.Controllers.Reports
 {
      [Authorize]
     public partial class StockStatusController : BaseController
-    {
+     {
+
+         private readonly IUserProfileService _userProfileService;
+         private readonly ICommodityService _commodityService;
+         private readonly IHubService _hubService;
+
+         public StockStatusController(IUserProfileService userProfileService,ICommodityService commodityService,IHubService hubService)
+         {
+             _userProfileService = userProfileService;
+             _commodityService = commodityService;
+             _hubService = hubService;
+         }
+
 
         public ActionResult Index()
         {
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
            // ViewBag.Stock = db.GetStockStatusReport(user.DefaultHub.HubID,).ToList();
 
-            ViewBag.Commodity = repository.Commodity.GetAllParents();
-            ViewBag.Stock = repository.Hub.GetStockStatusReport(user.DefaultHub.HubID, 1).ToList();
+            ViewBag.Commodity = _commodityService.GetAllParents();
+            ViewBag.Stock = _hubService.GetStockStatusReport(user.DefaultHub.HubID, 1).ToList();
             ViewBag.CommodityID = 1;
             return View();
         }
@@ -27,10 +40,10 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             if (id != null)
             {
-                BLL.UserProfile user =repository.UserProfile.GetUser(User.Identity.Name);
-                ViewBag.Stock = repository.Hub.GetStockStatusReport(user.DefaultHub.HubID,id.Value).ToList();
+                BLL.UserProfile user =_userProfileService.GetUser(User.Identity.Name);
+                ViewBag.Stock = _hubService.GetStockStatusReport(user.DefaultHub.HubID,id.Value).ToList();
                 
-                ViewBag.Commodity = repository.Commodity.GetAllParents();
+                ViewBag.Commodity = _commodityService.GetAllParents();
                 ViewBag.CommodityID = id;
                 return View("Index");
             }
@@ -39,22 +52,22 @@ namespace DRMFSS.Web.Controllers.Reports
 
          public ActionResult FreeStock()
          {
-             BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-             ViewBag.Stock = repository.Hub.GetStatusReportBySI(user.DefaultHub.HubID).ToList();
+             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+             ViewBag.Stock = _hubService.GetStatusReportBySI(user.DefaultHub.HubID).ToList();
              return View();
          }
 
          public ActionResult Receipts()
          {
-             BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-             ViewBag.Stock = repository.Hub.GetStatusReportBySI(user.DefaultHub.HubID).ToList();
+             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+             ViewBag.Stock = _hubService.GetStatusReportBySI(user.DefaultHub.HubID).ToList();
              return View();
          }
 
          public ActionResult Dispatch()
          {
-             BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-             ViewBag.Stock = repository.Hub.GetDispatchFulfillmentStatus(user.DefaultHub.HubID).ToList();
+             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+             ViewBag.Stock = _hubService.GetDispatchFulfillmentStatus(user.DefaultHub.HubID).ToList();
              var report = new DispatchReport();
              ViewBag.Report = report;
              report.DataSource = ViewBag.Stock;
@@ -65,8 +78,8 @@ namespace DRMFSS.Web.Controllers.Reports
 
          public ActionResult DispatchPartial()
          {
-             BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-             ViewBag.Stock = repository.Hub.GetDispatchFulfillmentStatus(user.DefaultHub.HubID).ToList();
+             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+             ViewBag.Stock = _hubService.GetDispatchFulfillmentStatus(user.DefaultHub.HubID).ToList();
              var report = new DispatchReport();
              ViewBag.Report = report;
              report.DataSource = ViewBag.Stock;
@@ -77,8 +90,8 @@ namespace DRMFSS.Web.Controllers.Reports
 
          public ActionResult ReportViewerExportTo()
          {
-             BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
-             ViewBag.Stock = repository.Hub.GetDispatchFulfillmentStatus(user.DefaultHub.HubID).ToList();
+             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+             ViewBag.Stock = _hubService.GetDispatchFulfillmentStatus(user.DefaultHub.HubID).ToList();
              var report = new DispatchReport();
              ViewBag.Report = report;
              report.DataSource = ViewBag.Stock;
