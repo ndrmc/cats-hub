@@ -71,7 +71,9 @@
     <Compile Include="CommoditySourceTests.cs" />
     <Compile Include="CommodityTypeControllerTests.cs" />
     <Compile Include="ContactControllerTests.cs" />
+    <Compile Include="ErrorControllerTests.cs" />
     <Compile Include="FDPControllerTests.cs" />
+    <Compile Include="HubOwnerControllerTests.cs" />
     <Compile Include="ProgramControllerTest.cs" />
     <Compile Include="DispatchAllocationControllerTest.cs" />
     <Compile Include="CurrentHubControllerTests.cs" />
