@@ -63,7 +63,7 @@ namespace DRMFSS.BLL.Services
         }
         public DispatchAllocation FindById(System.Guid id)
         {
-            return _unitOfWork.DispatchAllocationRepository.GetAll().FirstOrDefault(t => t.DispatchAllocationID == id);
+            return _unitOfWork.DispatchAllocationRepository.Get(t => t.DispatchAllocationID == id).FirstOrDefault();
 
         }
         public List<DispatchAllocation> FindBy(Expression<Func<DispatchAllocation, bool>> predicate)
@@ -593,7 +593,7 @@ namespace DRMFSS.BLL.Services
                 delAllocation.IsClosed = true;
             _unitOfWork.Save();
         }
-
+       
         public void Dispose()
         {
             _unitOfWork.Dispose();

@@ -160,10 +160,28 @@ namespace DRMFSS.BLL.Services
                         }).ToList();
 
         }
-
+        public List<Hub> GetAllWithoutId(int hubId)
+        {
+            return _unitOfWork.HubRepository.Get(p => p.HubID != hubId).ToList();
+        }
+        public List<Hub> GetOthersHavingSameOwner(Hub hub)
+        {
+            return (from v in _unitOfWork.HubRepository.GetAll()
+                    where v.HubID != hub.HubID && v.HubOwnerID == hub.HubOwnerID
+                    select v).ToList();
+        }
+        public List<Hub> GetOthersWithDifferentOwner(Hub hub)
+        {
+            return (from v in _unitOfWork.HubRepository.GetAll()
+                    where v.HubOwnerID != hub.HubOwnerID
+                    select v).ToList();
+        }
         public void Dispose()
         {
             _unitOfWork.Dispose();
         }
-    }
+    
+
+
+}
 }

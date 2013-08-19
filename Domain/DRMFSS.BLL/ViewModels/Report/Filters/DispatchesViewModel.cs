@@ -33,7 +33,11 @@ namespace DRMFSS.BLL.ViewModels.Report
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        public DispatchesViewModel(IUnitOfWork Repository, List<CodesViewModel> codes, List<Commodity> commodities, List<CommodityTypeViewModel> commodityTypes, List<ProgramViewModel> programs, List<StoreViewModel> stores, List<AreaViewModel> areas, List<BidRefViewModel> bidRefs)
+        public DispatchesViewModel()
+        {
+            
+        }
+        public DispatchesViewModel( List<CodesViewModel> codes, List<CommodityTypeViewModel> commodityTypes, List<ProgramViewModel> programs, List<StoreViewModel> stores, List<AreaViewModel> areas, List<BidRefViewModel> bidRefs)
         {
             this.Periods = GetAllPeriod();
             this.Cods = codes;// ConstantsRepository.GetAllCodes();

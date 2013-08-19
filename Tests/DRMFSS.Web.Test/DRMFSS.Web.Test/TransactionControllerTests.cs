@@ -22,8 +22,7 @@ namespace DRMFSS.Web.Test
         {
             var transactionService = new Mock<ITransactionService>();
             var ledgerServie = new Mock<ILedgerService>();
-            var commodityService=new Mock<ICommodityService>()
-            ;
+            var commodityService=new Mock<ICommodityService>();
             _transactionController = new TransactionController(transactionService.Object, ledgerServie.Object,
                                                                commodityService.Object);
         }

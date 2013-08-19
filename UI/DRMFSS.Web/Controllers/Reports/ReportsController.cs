@@ -18,14 +18,38 @@ namespace DRMFSS.Web.Controllers.Reports
          private readonly IUserProfileService _userProfileService;
          private readonly IHubService _hubService;
          private readonly ITransactionService _transactionService;
+         private readonly ICommodityService _commodityService;
+         private readonly ICommodityTypeService _commodityTypeService;
+         private readonly IProgramService _programService;
+         private readonly IAdminUnitService _adminUnitService;
+         private readonly IDispatchAllocationService _dispatchAllocationService;
+         private readonly ICommoditySourceService _commoditySourceService;
 
-         public ReportsController(IDispatchService dispatchService,IReceiveService receiveService,IUserProfileService userProfileService,IHubService hubService,ITransactionService transactionService)
+         public ReportsController(IDispatchService dispatchService,
+             IReceiveService receiveService,
+             IUserProfileService userProfileService,
+             IHubService hubService,
+             ITransactionService transactionService,
+             ICommodityService commodityService,
+             ICommodityTypeService commodityTypeService,
+             IProgramService programService,
+             IAdminUnitService adminUnitService,
+             IDispatchAllocationService dispatchAllocationService,
+             ICommoditySourceService commoditySourceService
+             
+             )
          {
              this._dispatchService = dispatchService;
              this._receiveService = receiveService;
              this._userProfileService = userProfileService;
              this._hubService = hubService;
              this._transactionService = transactionService;
+             _commodityService = commodityService;
+             _commodityTypeService = commodityTypeService;
+             _programService = programService;
+             _adminUnitService = adminUnitService;
+             _dispatchAllocationService = dispatchAllocationService;
+             _commoditySourceService = commoditySourceService;
          }
         //
         // GET: /Reports/
@@ -120,7 +144,13 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             MasterReportBound report= GetFreeStock(new FreeStockFilterViewModel());
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            FreeStockFilterViewModel ViewModel = new FreeStockFilterViewModel(repository, user);
+           var codes=ConstatntsService.GetAllCodes();
+            var commodityTypes=_commodityTypeService.GetAllCommodityTypeForReprot();
+            var programs = _programService.GetAllProgramsForReport();
+            var commodities = _commodityService.GetAllCommodityForReprot();
+            var areas = _adminUnitService.GetAllAreasForReport();
+
+            FreeStockFilterViewModel ViewModel = new FreeStockFilterViewModel(codes, commodityTypes, programs, commodities, areas);
             ViewBag.Filters = ViewModel;
             return View(report);
         }
@@ -177,7 +207,14 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             MasterReportBound report = GetOffloading(new DispatchesViewModel());
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            DispatchesViewModel ViewModel = new DispatchesViewModel(repository, user);
+
+             var codes =ConstatntsService.GetAllCodes();
+             var commodityTypes =_commodityTypeService.GetAllCommodityTypeForReprot();;
+             var programs =_programService.GetAllProgramsForReport();
+             var stores =_hubService.GetAllStoreByUser(user);
+             var areas = _adminUnitService.GetAllAreasForReport();
+             var bidRefs = _dispatchAllocationService.GetAllBidRefsForReport();
+            DispatchesViewModel ViewModel = new DispatchesViewModel(codes,commodityTypes,programs,stores,areas,bidRefs);
             ViewBag.Filters = ViewModel;
             return View(report);
         }
@@ -204,8 +241,15 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             MasterReportBound report = GetReceiveReportByBudgetYear(new ReceiptsViewModel());
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            ReceiptsViewModel ViewModel = new ReceiptsViewModel(repository, user);
-            ViewBag.Filters = ViewModel;
+          
+            var commoditySources = _commoditySourceService.GetAllCommoditySourceForReport();
+           var ports = _receiveService.GetALlPorts();
+           var codes =ConstatntsService.GetAllCodes();
+            var commodityTypes =  _commodityTypeService.GetAllCommodityTypeForReprot();
+           var programs = _programService.GetAllProgramsForReport();
+            var stores = _hubService.GetAllStoreByUser(user);
+            var viewModel = new ReceiptsViewModel(codes,commodityTypes,programs,stores,commoditySources,ports);
+            ViewBag.Filters = viewModel;
             return View(report);
         }
 
@@ -272,8 +316,14 @@ namespace DRMFSS.Web.Controllers.Reports
             newDistributionViewModel.PeriodId = (DateTime.Now.Month - 1/3) + 1;// current quarter by default 
             MasterReportBound report = GetDistributionReportPivot(newDistributionViewModel);
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            DistributionViewModel ViewModel = new DistributionViewModel(repository, user);
-            ViewBag.Filters = ViewModel;
+            var codes=ConstatntsService.GetAllCodes();
+            var commodityTypes=_commodityTypeService.GetAllCommodityTypeForReprot();
+            var programs=_programService.GetAllProgramsForReport();
+            var stores=_hubService.GetAllStoreByUser(user);
+            var areas=_adminUnitService.GetAllAreasForReport();
+            var bidRefs=_dispatchAllocationService.GetAllBidRefsForReport();
+            var viewModel = new DistributionViewModel(codes,commodityTypes,programs,stores,areas,bidRefs);
+            ViewBag.Filters = viewModel;
             
             return View(report);
         }
@@ -286,8 +336,8 @@ namespace DRMFSS.Web.Controllers.Reports
 
         public MasterReportBound GetDistributionReport()
         {
-            List<DRMFSS.BLL.ViewModels.Report.Data.DistributionReport> reports = new List<BLL.ViewModels.Report.Data.DistributionReport>();
-            DRMFSS.BLL.ViewModels.Report.Data.DistributionReport distribution = new BLL.ViewModels.Report.Data.DistributionReport();
+           var reports = new List<BLL.ViewModels.Report.Data.DistributionReport>();
+            var distribution = new BLL.ViewModels.Report.Data.DistributionReport();
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             distribution.PreparedBy = user.GetFullName();
@@ -383,8 +433,8 @@ namespace DRMFSS.Web.Controllers.Reports
 
         public MasterReportBound GetDonationReport()
         {
-            List<DRMFSS.BLL.ViewModels.Report.Data.DeliveryReport> reports = new List<BLL.ViewModels.Report.Data.DeliveryReport>();
-            DRMFSS.BLL.ViewModels.Report.Data.DeliveryReport donation = new BLL.ViewModels.Report.Data.DeliveryReport();
+           var reports = new List<BLL.ViewModels.Report.Data.DeliveryReport>();
+            var donation = new BLL.ViewModels.Report.Data.DeliveryReport();
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             donation.PreparedBy = user.GetFullName();

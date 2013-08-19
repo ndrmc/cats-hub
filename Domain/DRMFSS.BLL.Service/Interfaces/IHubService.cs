@@ -24,5 +24,12 @@ namespace DRMFSS.BLL.Services
 
         List<Hub> GetAllWithoutId(int hubId);
 
+        List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel);
+         List<Hub> GetAllWithoutId(int hubId);
+         List<Hub> GetOthersHavingSameOwner(Hub hub);
+        List<Hub> GetOthersWithDifferentOwner(Hub hub);
+   
+
+
     }
 }
