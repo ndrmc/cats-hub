@@ -25,6 +25,9 @@ namespace DRMFSS.Web.Controllers.Allocations
         private readonly ICommonService _commonService;
         private readonly IAdminUnitService _adminUnitService;
         private readonly IFDPService _fdpService;
+        private readonly IHubService _hubService;
+        private readonly ICommodityTypeService _commodityTypeService;
+        
 
         public DispatchAllocationController(IDispatchAllocationService dispatchAllocationService,
                                             IUserProfileService userProfileService,
@@ -34,7 +37,9 @@ namespace DRMFSS.Web.Controllers.Allocations
                                             ITransporterService transporterService,
                                             ICommonService commonService,
                                             IAdminUnitService adminUnitService,
-                                            IFDPService fdpService)
+                                            IFDPService fdpService,
+                                            IHubService hubService,
+                                             ICommodityTypeService commodityTypeService)
         {
             this._dispatchAllocationService = dispatchAllocationService;
             this._userProfileService = userProfileService;
@@ -45,6 +50,8 @@ namespace DRMFSS.Web.Controllers.Allocations
             this._adminUnitService = adminUnitService;
             this._fdpService = fdpService;
             this._commonService = commonService;
+            this._hubService = hubService;
+            this._commodityTypeService = commodityTypeService;
         }
         public ActionResult Index()
         {
@@ -466,7 +473,9 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         private BLL.ViewModels.DispatchAllocationViewModel GetAllocationModel(BLL.DispatchAllocation dispatch)
         {
-            BLL.ViewModels.DispatchAllocationViewModel model = new BLL.ViewModels.DispatchAllocationViewModel(dispatch.FDPID, repository);
+            //TODO:Make sure if includeproperties are loaded correctly
+            var fdp = _fdpService.FindById(dispatch.FDPID);
+            BLL.ViewModels.DispatchAllocationViewModel model = new BLL.ViewModels.DispatchAllocationViewModel(fdp);
             model.Amount = dispatch.Amount;
             model.Beneficiery = dispatch.Beneficiery;
             model.BidRefNo = dispatch.BidRefNo;
@@ -546,15 +555,27 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult CreateTransfer()
         {
             var model = new OtherDispatchAllocationViewModel();
-            model.InitTransfer( _userProfileService.GetUser(User.Identity.Name), repository );
-            return PartialView("EditTransfer", model);
+           
+            return PartialView("EditTransfer", InitTransfer(model));
         }
+        private OtherDispatchAllocationViewModel InitTransfer(OtherDispatchAllocationViewModel otherDispatchAllocationViewModel)
+        {
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            var tohubs = _hubService.GetOthersHavingSameOwner(user.DefaultHub);
 
+            var commodities = _commonService.GetAllParents();
+            var commodityTypes = _commodityTypeService.GetAllCommodityType();
+            var programs = _commonService.GetAllProgram();
+            var units = _commonService.GetAllUnit();
+
+            otherDispatchAllocationViewModel.InitTransfer(user, tohubs, commodities, commodityTypes, programs, units);
+            return otherDispatchAllocationViewModel;
+        }
         public ActionResult EditTransfer(string id)
         {
             var model = _otherDispatchAllocationService.GetViewModelByID( Guid.Parse(id));
-            model.InitTransfer(_userProfileService.GetUser(User.Identity.Name), repository);
-            return PartialView("EditTransfer", model);
+           // model.InitTransfer(_userProfileService.GetUser(User.Identity.Name), repository);
+            return PartialView("EditTransfer", InitTransfer(model));
         }
 
         // Only do the save if this has been a post.
@@ -572,8 +593,8 @@ namespace DRMFSS.Web.Controllers.Allocations
             }
             else
             {
-                model.InitTransfer(_userProfileService.GetUser(User.Identity.Name), repository);
-                return PartialView("EditTransfer", model);
+               // model.InitTransfer(_userProfileService.GetUser(User.Identity.Name), repository);
+                return PartialView("EditTransfer", InitTransfer(model));
             }
         }
 
@@ -581,15 +602,28 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult CreateLoan()
         {
             var model = new OtherDispatchAllocationViewModel();
-            model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
-            return PartialView("EditLoans", model);
+           // model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
+            return PartialView("EditLoans",InitLoan(model));
         }
 
+        private OtherDispatchAllocationViewModel InitLoan(OtherDispatchAllocationViewModel otherDispatchAllocationViewModel)
+        {
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            var tohubs = _hubService.GetOthersWithDifferentOwner(user.DefaultHub);
+
+            var commodities = _commonService.GetAllParents();
+            var commodityTypes = _commodityTypeService.GetAllCommodityType();
+            var programs = _commonService.GetAllProgram();
+            var units = _commonService.GetAllUnit();
+
+           otherDispatchAllocationViewModel.InitLoan(user,tohubs,commodities,commodityTypes,programs,units);
+            return otherDispatchAllocationViewModel;
+        }
         public ActionResult EditLoan(string id)
         {
             var model = _otherDispatchAllocationService.GetViewModelByID( Guid.Parse(id));
-            model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
-            return PartialView("EditLoans", model);
+           // model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
+            return PartialView("EditLoans", InitLoan(model));
         }
 
         // Only do the save if this has been a post.
@@ -607,8 +641,8 @@ namespace DRMFSS.Web.Controllers.Allocations
             }
             else
             {
-                model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
-                return PartialView("EditLoans", model);
+                //model.InitLoan(_userProfileService.GetUser(User.Identity.Name), repository);
+                return PartialView("EditLoans", InitLoan(model));
             }
         }
 
@@ -686,15 +720,17 @@ namespace DRMFSS.Web.Controllers.Allocations
             {
                 if (disposing)
                 {
-                    _userProfileService.Dispose();
-                    _dispatchAllocationService.Dispose();
-                    _shippingInstructionService.Dispose();
-                    _projectCodeService.Dispose();
-                    _otherDispatchAllocationService.Dispose();
-                    _transporterService.Dispose();
-                    _commonService.Dispose();
-                    _adminUnitService.Dispose();
-                    _fdpService.Dispose();
+                     _userProfileService.Dispose();
+                     _dispatchAllocationService.Dispose();
+                     _shippingInstructionService.Dispose();
+                     _projectCodeService.Dispose();
+                     _otherDispatchAllocationService.Dispose();
+                     _transporterService.Dispose();
+                     _commonService.Dispose();
+                     _adminUnitService.Dispose();
+                     _fdpService.Dispose();
+                     _hubService.Dispose();
+                     _commodityTypeService.Dispose();
                 }
             }
             this._disposed = true;

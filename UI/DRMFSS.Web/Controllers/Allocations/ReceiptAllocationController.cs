@@ -22,9 +22,19 @@ namespace DRMFSS.Web.Controllers.Allocations
         private readonly ICommodityService _commodityService;
         private readonly IDonorService _donorService;
         private readonly IGiftCertificateDetailService _giftCertificateDetailService;
-
-        public ReceiptAllocationController(IReceiptAllocationService receiptAllocationService,IUserProfileService userProfileService,ICommoditySourceService commoditySourceService,IGiftCertificateService giftCertificateService,ICommodityService commodityService,
-            IDonorService donorService,IGiftCertificateDetailService giftCertificateDetailService)
+        private readonly IHubService _hubService;
+        private readonly IProgramService _programService;
+        private readonly ICommodityTypeService _commodityTypeService;
+        public ReceiptAllocationController(IReceiptAllocationService receiptAllocationService,
+            IUserProfileService userProfileService,
+            ICommoditySourceService commoditySourceService,
+            IGiftCertificateService giftCertificateService,
+            ICommodityService commodityService,
+            IDonorService donorService,
+            IGiftCertificateDetailService giftCertificateDetailService,
+            IHubService hubService,
+            IProgramService programService,
+            ICommodityTypeService commodityTypeService)
         {
             this._receiptAllocationService = receiptAllocationService;
             this._userProfileService = userProfileService;
@@ -33,6 +43,9 @@ namespace DRMFSS.Web.Controllers.Allocations
             this._commodityService = commodityService;
             this._donorService = donorService;
             this._giftCertificateDetailService = giftCertificateDetailService;
+            this._hubService = hubService;
+            this._programService = programService;
+            this._commodityTypeService = commodityTypeService;
         }
 
         public ActionResult SelfReference(int HubID, int? SourceHubID)
@@ -123,9 +136,10 @@ namespace DRMFSS.Web.Controllers.Allocations
 
         public ActionResult Create(int? type)
         {
-            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            ReceiptAllocationViewModel viewModel = new DRMFSS.Web.Models.ReceiptAllocationViewModel(repository, user);
-            viewModel.HubID = user.DefaultHub.HubID;
+            var viewModel = BindReceiptAllocaitonViewModel();
+
+          
+          
 
             if (Request["type"] != null)
             {
@@ -138,7 +152,31 @@ namespace DRMFSS.Web.Controllers.Allocations
 
             return View(viewModel);
         }
+        private ReceiptAllocationViewModel BindReceiptAllocaitonViewModel()
+        {
+            var user = _userProfileService.GetUser(User.Identity.Name);
+            var commodities = _commodityService.GetAllCommodity().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var donors = _donorService.GetAllDonor().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var hubs = new List<Hub>();
+            if (user != null)
+            {
+                //Hubs = new List<Hub>() { user.DefaultHub };
+                hubs = _hubService.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name)
+                    .ToList();
+            }
+            else
+            {
 
+                hubs =
+                    _hubService.GetAllHub().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            }
+            var programs = _programService.GetAllProgram().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commoditySources = _commoditySourceService.GetAllCommoditySource().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commodityTypes = _commodityTypeService.GetAllCommodityType().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var viewModel = new ReceiptAllocationViewModel(commodities, donors, hubs, programs, commoditySources, commodityTypes, user);
+            viewModel.HubID = user.DefaultHub.HubID;
+            return viewModel;
+        }
         //
         // POST: /Create
 
@@ -214,7 +252,10 @@ namespace DRMFSS.Web.Controllers.Allocations
             //check this out later
             //return this.Create(receiptAllocationViewModel.CommoditySourceID);
             //ModelState.Remove("SINumber");
-            receiptAllocationViewModel.InitalizeViewModel();
+            //TODO:Check if commenting out has any effect
+            //=================================================
+            //receiptAllocationViewModel.InitalizeViewModel();
+            //================================================
             return PartialView(receiptAllocationViewModel);
 
         }
@@ -224,7 +265,7 @@ namespace DRMFSS.Web.Controllers.Allocations
 
             var receiptAllocation = _receiptAllocationService.FindById(Guid.Parse(allocationId));
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            ReceiptAllocationViewModel receiptAllocationViewModel = new ReceiptAllocationViewModel(repository, user);
+            var receiptAllocationViewModel =BindReceiptAllocaitonViewModel();
             if (receiptAllocation != null) // && receiptAllocation.IsCommited == false)
             {
                 receiptAllocationViewModel.IsCommited = receiptAllocation.IsCommited;
@@ -421,7 +462,10 @@ namespace DRMFSS.Web.Controllers.Allocations
             }
             //return this.Create(receiptAllocationViewModel.CommoditySourceID);
             //ModelState.Remove("SINumber");
-            receiptAllocationViewModel.InitalizeViewModel();
+            //TODO:Check if commenting out has any effect
+            //================================================
+           // receiptAllocationViewModel.InitalizeViewModel();
+            //=============================================
             return PartialView(receiptAllocationViewModel);
         }
 
@@ -433,7 +477,8 @@ namespace DRMFSS.Web.Controllers.Allocations
         public ActionResult LoadBySIPartial(string SInumber, int? type)
         {
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            ReceiptAllocationViewModel receiptAllocationViewModel = new ReceiptAllocationViewModel(repository, user);
+           
+            var receiptAllocationViewModel = BindReceiptAllocaitonViewModel();;
             receiptAllocationViewModel.HubID = user.DefaultHub.HubID;
             if (SInumber != null)
             {

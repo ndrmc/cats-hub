@@ -59,6 +59,7 @@
     <Compile Include="CommoditySourceService.cs" />
     <Compile Include="CommodityTypeService.cs" />
     <Compile Include="CommonService.cs" />
+    <Compile Include="ConstatntsService.cs" />
     <Compile Include="ContactService.cs" />
     <Compile Include="DetailService.cs" />
     <Compile Include="DispatchAllocationService.cs" />

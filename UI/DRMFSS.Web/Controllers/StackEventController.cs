@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL.ViewModels;
 using DRMFSS.BLL;
+using DRMFSS.BLL.ViewModels.Common;
 using Telerik.Web.Mvc;
 using DRMFSS.BLL.Services;
 
@@ -37,14 +38,14 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Index()
         {
             List<StackEventType> stackEventType;
-            List<Store> hub;
+            List<StoreViewModel> store;
 
             UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             stackEventType = _StackEventTypeService.GetAllStackEventType();
             store = _hubService.GetAllStoreByUser(user);
 
-            UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            StackEventViewModel viewModel = new StackEventViewModel(stackEventType, store, user);
+           
+            StackEventViewModel viewModel = new StackEventViewModel(stackEventType, store);
             return View(viewModel );
         }
         
@@ -72,14 +73,14 @@ namespace DRMFSS.Web.Controllers
         {
 
             List<StackEventType> stackEventType;
-            List<Store> hub;
+            List<StoreViewModel> store;
 
             UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             stackEventType = _StackEventTypeService.GetAllStackEventType();
             store = _hubService.GetAllStoreByUser(user);
 
             
-            StackEventViewModel viewModel = new StackEventViewModel(stackEventType,store, user);
+            StackEventViewModel viewModel = new StackEventViewModel(stackEventType,store);
             return PartialView(viewModel);
         }
         [HttpPost]
@@ -122,7 +123,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost]
         public ActionResult GetEventType()
         {
-            return new JsonResult { Data = new SelectList(_StackEventTypeService.GetAll(), "StackEventTypeID", "Name") };
+            return new JsonResult { Data = new SelectList(_StackEventTypeService.GetAllStackEventType(), "StackEventTypeID", "Name") };
         }
 
         [HttpPost]

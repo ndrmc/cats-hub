@@ -9,7 +9,7 @@ using DRMFSS.BLL.ViewModels;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IOtherDispatchAllocationService
+    public interface IOtherDispatchAllocationService:IDisposable
     {
 
         bool AddOtherDispatchAllocation(OtherDispatchAllocation otherDispatchAllocation);
@@ -34,6 +34,8 @@ namespace DRMFSS.BLL.Services
         List<OtherDispatchAllocationDto> GetCommitedTransferAllocationsDetached(UserProfile user, bool? closedToo, int? CommodityType);
 
         void CloseById(Guid otherDispatchAllocationId);
+        OtherDispatchAllocation FindById(Guid id);
+    
     }
 }
 

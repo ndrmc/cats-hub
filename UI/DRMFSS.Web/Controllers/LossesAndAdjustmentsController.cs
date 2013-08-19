@@ -64,11 +64,13 @@ namespace DRMFSS.Web.Controllers
         public ActionResult CreateLoss()
         {
             List<Commodity> commodity;
-            List<Store> stores;
+            List<StoreViewModel> stores;
             List<AdjustmentReason> adjustmentReasonMinus;
             List<AdjustmentReason> adjustmentReasonPlus;
-            List<uint> units;
-            List<Program> programs;
+            List<Unit> units;
+            List<ProgramViewModel> programs;
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             commodity = _commodityService.GetAllParents();
             stores = _hubService.GetAllStoreByUser(user);
@@ -78,7 +80,7 @@ namespace DRMFSS.Web.Controllers
             programs = _programService.GetAllProgramsForReport();
 
 
-            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            
             LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(commodity, stores, adjustmentReasonMinus, adjustmentReasonPlus,units, programs, user, 1);
 
             return View(viewModel);
@@ -87,11 +89,13 @@ namespace DRMFSS.Web.Controllers
         public ActionResult CreateAdjustment()
         {
             List<Commodity> commodity;
-            List<Store> stores;
+            List<StoreViewModel> stores;
             List<AdjustmentReason> adjustmentReasonMinus;
             List<AdjustmentReason> adjustmentReasonPlus;
-            List<uint> units;
-            List<Program> programs;
+            List<Unit> units;
+            List<ProgramViewModel> programs;
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             commodity = _commodityService.GetAllParents();
             stores = _hubService.GetAllStoreByUser(user);
@@ -101,7 +105,7 @@ namespace DRMFSS.Web.Controllers
             programs = _programService.GetAllProgramsForReport();
 
 
-            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+           
             LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(commodity, stores, adjustmentReasonMinus, adjustmentReasonPlus, units, programs, user, 2);
 
             return View(viewModel);
@@ -111,11 +115,13 @@ namespace DRMFSS.Web.Controllers
         public ActionResult CreateLoss(LossesAndAdjustmentsViewModel viewModel)
         {
             List<Commodity> commodity;
-            List<Store> stores;
+            List<StoreViewModel> stores;
             List<AdjustmentReason> adjustmentReasonMinus;
             List<AdjustmentReason> adjustmentReasonPlus;
-            List<uint> units;
-            List<Program> programs;
+            List<Unit> units;
+            List<ProgramViewModel> programs;
+
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
             commodity = _commodityService.GetAllParents();
             stores = _hubService.GetAllStoreByUser(user);
@@ -125,8 +131,8 @@ namespace DRMFSS.Web.Controllers
             programs = _programService.GetAllProgramsForReport();
 
 
-            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            LossesAndAdjustmentsViewModel viewModel = new LossesAndAdjustmentsViewModel(commodity, stores, adjustmentReasonMinus, adjustmentReasonPlus, units, programs, user, 1);
+
+            LossesAndAdjustmentsViewModel newViewModel = new LossesAndAdjustmentsViewModel(commodity, stores, adjustmentReasonMinus, adjustmentReasonPlus, units, programs, user, 1);
 
            
             
@@ -252,7 +258,7 @@ namespace DRMFSS.Web.Controllers
         public ActionResult SINumberBalance(int? parentCommodityId, int? projectcode, int? SINumber, int? StoreId, int? StackId)
         {
             StoreBalanceViewModel viewModel = new StoreBalanceViewModel();
-            BLL.UserProfile user = repository.UserProfile.GetUser(User.Identity.Name);
+            BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             if (!StoreId.HasValue && !StackId.HasValue && parentCommodityId.HasValue && projectcode.HasValue && SINumber.HasValue)
             {
                 viewModel.ParentCommodityNameB = _commodityService.FindById(parentCommodityId.Value).Name;

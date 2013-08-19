@@ -85,7 +85,7 @@ namespace DRMFSS.BLL.ViewModels
         /// <param name="fdpID">The FDP ID.</param>
         /// <param name="repository">The repository.</param>
         //TODO:Make sure FDP is loaded with all include properties
-        public DispatchAllocationViewModel(FDP fdp, IUnitOfWork repository)
+        public DispatchAllocationViewModel(FDP fdp)
         {
             FDPID = fdp.FDPID;
             // Initalize the parents of the FDP.
