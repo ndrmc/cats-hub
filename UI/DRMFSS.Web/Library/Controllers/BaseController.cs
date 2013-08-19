@@ -16,7 +16,16 @@ namespace DRMFSS.Web
     /// </summary>
     public class BaseController : Controller
     {
+        
+        public BaseController()
+        {
+            
+        }
+        
         private UserProfile userProfile = null;
+        
+        
+        
         /// <summary>
         /// Gets the user profile.
         /// </summary>
@@ -29,8 +38,8 @@ namespace DRMFSS.Web
                 return userProfile;
             }  
         }
-        protected IUnitOfWork repository = new UnitOfWork();
-
+        
+        
 
         /// <summary>
         /// Gets the current user profile.
@@ -41,7 +50,7 @@ namespace DRMFSS.Web
                 
                 MembershipUser currentUser = Membership.GetUser(User.Identity.Name, true);
                 MembershipProvider mem = new MembershipProvider();
-                return mem.getUser(currentUser,repository);
+                return mem.getUser(currentUser);
         }
 
         /// <summary>

@@ -13,12 +13,14 @@ namespace DRMFSS.Web.Controllers
     public class RolesController : BaseController
     {
         
-        private CTSContext db = new CTSContext();
+       // private CTSContext db = new CTSContext();
         private readonly IRoleService _roleService;
+        private readonly IUserRoleService _userRoleService;
 
-        public RolesController(IRoleService roleSerivce)
+        public RolesController(IRoleService roleSerivce, IUserRoleService userRoleService)
         {
             _roleService = roleSerivce;
+            _userRoleService = userRoleService;
         }
         //
         // GET: /Admin/
@@ -35,7 +37,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Update()
         {
-            return PartialView(_roleService.GetAllRole().OrderBy(r=>r.SortOrder)).ToList();
+            return PartialView(_roleService.GetAllRole().OrderBy(r=>r.SortOrder));
         }
 
         //
@@ -43,13 +45,26 @@ namespace DRMFSS.Web.Controllers
         //[AutoMap(typeof(BLL.Role), typeof(DRMFSS.Web.Models.RoleModel))]
         public ViewResult Details(int id)
         {
-            Role role = _roleService.FindBy(r => r.RoleID == id).SingleOrDefault();
-            return View("Details", role);
+
+            Role role = _roleService.FindBy(r => r.RoleID == id).FirstOrDefault();
+
+            return View("Details", BindRoleModel(role));
+
 
             //Role role = db.Roles.Single(u => u.RoleID == id);
             //return View("Details", role);
         }
-
+        private RoleModel BindRoleModel(Role role)
+        {
+            RoleModel roleModel = new RoleModel
+                                      {
+                                          Description = role.Description,
+                                          Name = role.Name,
+                                          RoleID = role.RoleID,
+                                          SortOrder = role.SortOrder
+                                      };
+            return roleModel;
+        }
         public ActionResult Create()
         {
             ViewBag.RoleId = new SelectList(_roleService.GetAllRole().ToList(), "RoleID", "RoleID");
@@ -69,8 +84,8 @@ namespace DRMFSS.Web.Controllers
                 return Json(new { success = true }); 
             }
 
-            ViewBag.UserProfileID = new SelectList(db.Roles, "RoleID", "RoleID", role.RoleID);
-            return PartialView(role);
+            ViewBag.UserProfileID = new SelectList(_roleService.GetAllRole(), "RoleID", "RoleID", role.RoleID);
+            return PartialView(BindRoleModel(role));
         }
 
         //
@@ -78,9 +93,9 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            Role role = _roleService.FindBy(r => r.RoleID == id);
+            Role role = _roleService.FindBy(r => r.RoleID == id).FirstOrDefault();
             
-            ViewBag.UserProfileID = new SelectList(db.UserRoles, "UserRoleID", "UserRoleID", role.RoleID);
+            ViewBag.UserProfileID = new SelectList(_userRoleService.GetAllUserRole(), "UserRoleID", "UserRoleID", role.RoleID);
             return PartialView("Edit", role);
         }
 
@@ -96,7 +111,7 @@ namespace DRMFSS.Web.Controllers
                 
                 return Json(new { success = true }); 
             }
-            ViewBag.UserProfileID = new SelectList(db.Roles, "RoleID", "RoleID", role.RoleID);
+            ViewBag.UserProfileID = new SelectList(_roleService.GetAllRole(), "RoleID", "RoleID", role.RoleID);
             return PartialView("Edit", role);
         }
 
@@ -105,7 +120,7 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Delete(int id)
         {
-            Role role = _roleService.FindBy(r => r.RoleID == id);
+            Role role = _roleService.FindById(id);
             
             return View(role);
         }
@@ -116,7 +131,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Role role = _roleService.FindBy(r => r.RoleID == id);
+            Role role = _roleService.FindById(id);
 
             _roleService.DeleteRole(role);
            
@@ -125,7 +140,8 @@ namespace DRMFSS.Web.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _roleService.Dispose();
+            _userRoleService.Dispose();
             base.Dispose(disposing);
         }
          

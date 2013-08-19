@@ -19,10 +19,7 @@ namespace DRMFSS.Web.Controllers
             this._auditService = auditService;
         }
 
-        public AuditController(IUnitOfWork repository)
-        {
-            this.repository = repository;
-        }
+       
 
         //
         // GET: /Audit/

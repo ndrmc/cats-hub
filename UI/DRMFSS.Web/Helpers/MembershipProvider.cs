@@ -25,12 +25,12 @@ namespace DRMFSS.Web.Helpers
         private bool requiresUniqueEmail;
         IUnitOfWork repository = new UnitOfWork();
 
-        private readonly IUserProfileService _userProfileService;
+        //private readonly IUserProfileService _userProfileService;
 
-        public MembershipProvider(IUserProfileService userProfileService)
-        {
-            _userProfileService = userProfileService;
-        }
+        //public MembershipProvider(IUserProfileService userProfileService)
+        //{
+        //    _userProfileService = userProfileService;
+        //}
 
         public override string ApplicationName
         {
@@ -199,10 +199,12 @@ namespace DRMFSS.Web.Helpers
             user.PreferedWeightMeasurment = "MT";
 
 
-            IUnitOfWork repository = new UnitOfWork();
+            
+
             try
             {
-                _userProfileService.AddUserProfile(user);
+                //TODO:More refactoring required
+                repository.UserProfileRepository.Add(user);
                 status = MembershipCreateStatus.Success;
                 return GetMembershipUser(user);
             }
@@ -260,7 +262,7 @@ namespace DRMFSS.Web.Helpers
         public override MembershipUser GetUser(object providerUserKey, bool userIsOnline)
         {
 
-            UserProfile user = _userProfileService.FindById(Convert.ToInt32(providerUserKey));
+            UserProfile user = repository.UserProfileRepository.FindById(Convert.ToInt32(providerUserKey));
             return (user != null) ? GetMembershipUser(user) : null;
         }
 
@@ -310,13 +312,13 @@ namespace DRMFSS.Web.Helpers
             return mUser;
         }
 
-        public UserProfile getUser(MembershipUser use, IUnitOfWork repo)
+        public UserProfile getUser(MembershipUser use)
         {
             if(use == null)
             {
                 return null;
             }
-            return _userProfileService.GetUser(use.UserName);
+            return repository.UserProfileRepository.FindBy(t=>t.UserName==use.UserName).FirstOrDefault();
         }
     }
 }

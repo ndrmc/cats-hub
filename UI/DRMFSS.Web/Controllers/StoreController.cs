@@ -163,7 +163,7 @@ namespace DRMFSS.Web.Controllers
             return Json(stores, JsonRequestBehavior.AllowGet);
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             _userProfileService.Dispose();
            
