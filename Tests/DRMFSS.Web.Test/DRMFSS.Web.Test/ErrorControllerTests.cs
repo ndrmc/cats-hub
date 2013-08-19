@@ -27,8 +27,8 @@ namespace DRMFSS.Web.Test
                     new ErrorLog {Application = "HUBS", Host = "http://111.234.214",Message="Message3",ErrorLogID=Guid.NewGuid(),Sequence=14,Source="",PartitionID=1,StatusCode=500,TimeUtc=DateTime.Now,Type="",User="Admin"},
                     new ErrorLog {Application = "HUBS", Host = "http://111.234.214",Message="Message4",ErrorLogID=Guid.NewGuid(),Sequence=10,Source="",PartitionID=1,StatusCode=404,TimeUtc=DateTime.Now,Type="",User="Admin"},
                 };
-            var errorService = new Mock<IErrorService>();
-            errorService.Setup(t => t.GetAllError()).Returns(errors);
+            var errorService = new Mock<IErrorLogService>();
+            errorService.Setup(t => t.GetAllErrorLog()).Returns(errors);
             _errorController = new ErrorController(errorService.Object);
 
         }
@@ -48,7 +48,7 @@ namespace DRMFSS.Web.Test
         {
             //ACT
             var result = _errorController.ViewErrors();
-            var model = result.Model;
+            var model = ((ViewResult)result).Model;
             //Assert
 
             Assert.IsInstanceOf<ViewResult>(result);
@@ -61,7 +61,7 @@ namespace DRMFSS.Web.Test
         {
             //ACT
             var result = _errorController.NotFound("/none_existing/item");
-            var model = result.model;
+            var model = ((ViewResult)result).Model;
             //Assert
 
             Assert.IsInstanceOf<ViewResult>(result);

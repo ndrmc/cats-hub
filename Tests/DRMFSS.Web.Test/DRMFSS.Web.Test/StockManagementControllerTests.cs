@@ -71,10 +71,25 @@ namespace DRMFSS.Web.Test
                 };
             var shippingInstructionService = new Mock<IShippingInstructionService>();
             shippingInstructionService.Setup(t => t.GetAllShippingInstruction()).Returns(shippingInstructions);
-
-            _stockManagementController = new StockManagementController(userProfileService.Object, programService.Object,
-                commodityTypeService.Object, commoditySourceService.Object, projectCodeService.Object, 
-                shippingInstructionService.Object);
+            var receiveService = new Mock<IReceiveService>();
+            var storeService = new Mock<IStoreService>();
+            var hubService = new Mock<IHubService>();
+            var adminUnitService = new Mock<IAdminUnitService>();
+            var dispatchAllocationServie = new Mock<IDispatchAllocationService>();
+            var donorService = new Mock<IDonorService>();
+            _stockManagementController = new StockManagementController(
+                userProfileService.Object, 
+                programService.Object,
+                commodityTypeService.Object, 
+                commoditySourceService.Object, 
+                projectCodeService.Object, 
+                shippingInstructionService.Object,
+                receiveService.Object,
+                storeService.Object,
+                hubService.Object,
+               adminUnitService.Object, 
+               dispatchAllocationServie.Object,
+               donorService.Object);
         }
 
         [TearDown]

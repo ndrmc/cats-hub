@@ -29,12 +29,18 @@ namespace DRMFSS.Web.Test
             var commodityService = new Mock<ICommodityService>();
             var donorService = new Mock<IDonorService>();
             var giftCertificateDetailService = new Mock<IGiftCertificateDetailService>();
+            var hubService = new Mock<IHubService>();
+            var programService = new Mock<IProgramService>();
+            var commodityTypeService = new Mock<ICommodityTypeService>();
             _receiptAllocationController = new ReceiptAllocationController(receiptAllocationService.Object,
                                                                            userProfileService.Object,
                                                                            commoditySourceService.Object,
                                                                            giftCertificateService.Object,
                                                                            commodityService.Object, donorService.Object,
-                                                                           giftCertificateDetailService.Object);
+                                                                           giftCertificateDetailService.Object,
+                                                                           hubService.Object,
+                                                                           programService.Object,
+                                                                           commodityTypeService.Object);
 
         }
 

@@ -28,9 +28,27 @@ namespace DRMFSS.Web.Test
             var userProfileService = new Mock<IUserProfileService>();
             var hubService = new Mock<IHubService>();
             var transactionService = new Mock<ITransactionService>();
-            _reportsController = new ReportsController(dispatchService.Object, receiveService.Object,
-                                                       userProfileService.Object, hubService.Object,
-                                                       transactionService.Object);
+            var commodityService = new Mock<ICommodityService>();
+            var commodityTypeService = new Mock<ICommodityTypeService>();
+            var programService = new Mock<IProgramService>();
+            var adminUnitService = new Mock<IAdminUnitService>();
+            var dispatchAllocationService = new Mock<IDispatchAllocationService>();
+            var commoditySourceService = new Mock<ICommoditySourceService>();
+
+            _reportsController = new ReportsController(
+                dispatchService.Object, 
+                 receiveService.Object,
+                 userProfileService.Object, 
+                 hubService.Object,
+                transactionService.Object,
+                commodityService.Object,
+                commodityTypeService.Object,
+                programService.Object,
+                adminUnitService.Object,
+                dispatchAllocationService.Object,
+                commoditySourceService.Object
+
+                );
         }
 
         [TearDown]

@@ -30,13 +30,22 @@ namespace DRMFSS.Web.Test
             var transporterService = new Mock<TransporterService>();
             var commonService = new Mock<ICommonService>();
             var adminUnitService = new Mock<IAdminUnitService>();
-            var fdpService = new Mock<FDPService>();
+            var fdpService = new Mock<IFDPService>();
+            var hubService = new Mock<IHubService>();
+            var commodityTypeService = new Mock<ICommodityTypeService>();
 
             this._dispatchAllocationController = new DispatchAllocationController(
-                dispatchAllocationService.Object, userProfileService.Object, otherDispatchAllocationService.Object,
-                shippingInstructionService.Object, projectCodeService.Object, transporterService.Object,
-                commonService.Object, adminUnitService.Object,
-                fdpService.Object);
+                dispatchAllocationService.Object, 
+                userProfileService.Object, 
+                otherDispatchAllocationService.Object,
+                shippingInstructionService.Object, 
+                projectCodeService.Object, 
+                transporterService.Object,
+                commonService.Object, 
+                adminUnitService.Object,
+                fdpService.Object,
+                hubService.Object,
+                commodityTypeService.Object);
 
         }
 

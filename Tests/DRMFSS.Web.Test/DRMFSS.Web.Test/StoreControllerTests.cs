@@ -15,7 +15,7 @@ namespace DRMFSS.Web.Test
     {
         #region SetUp / TearDown
 
-        private StoreControllerTests _storeController;
+        private StoreController _storeController;
         [SetUp]
         public void Init()
         {
@@ -58,7 +58,7 @@ namespace DRMFSS.Web.Test
         {
             //ACT
             var result = _storeController.Index();
-            var model = result.Model;
+            var model = ((ViewResult)result).Model;
             //Assert
 
             Assert.IsInstanceOf<ViewResult>(result);
@@ -110,7 +110,7 @@ namespace DRMFSS.Web.Test
             var result = _storeController.Edit(store);
             //Assert
             Assert.IsInstanceOf<ActionResult>(result);
-            Assert.IsInstanceOf<int>(store.storeID);
+            Assert.IsInstanceOf<int>(store.StoreID);
         }
 
         [Test]

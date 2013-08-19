@@ -13,9 +13,9 @@ namespace DRMFSS.Web.Controllers
     public partial class StoreController : BaseController
     {
         
-         private readonly StoreService _storService;
-         private readonly UserProfileService _userProfileService;
-         public StoreController(StoreService storeServiceParam,UserProfileService userProfileServiceParam)
+         private readonly IStoreService _storService;
+         private readonly IUserProfileService _userProfileService;
+         public StoreController(IStoreService storeServiceParam,IUserProfileService userProfileServiceParam)
          {
              _storService = storeServiceParam;
              _userProfileService = userProfileServiceParam;
@@ -120,7 +120,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            _storService.DeleteByID(id);
+            _storService.DeleteById(id);
             return RedirectToAction("Index");
         }
 

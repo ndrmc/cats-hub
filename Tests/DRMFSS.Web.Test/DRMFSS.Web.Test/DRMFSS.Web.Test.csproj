@@ -37,6 +37,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\..\packages\EntityFramework.4.3.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Moq">
       <HintPath>..\..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
@@ -48,9 +51,11 @@
       <HintPath>..\..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
@@ -89,14 +94,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiptAllocationControllerTest.cs" />
     <Compile Include="ReceiveCommodityControllerTest.cs" />
-
     <Compile Include="ReportControllerTests.cs" />
     <Compile Include="SettingControllerTests.cs" />
     <Compile Include="StockManagementControllerTests.cs" />
     <Compile Include="StoreControllerTests.cs" />
     <Compile Include="TransactionControllerTests.cs" />
     <Compile Include="TransportationReportControllerTests.cs" />
-
     <Compile Include="StockStatusControllerTest.cs" />
     <Compile Include="UnitControllerTests.cs" />
     <Compile Include="UserWarehouseControllerTests.cs" />

@@ -20,18 +20,18 @@ namespace DRMFSS.Web.Test
         [SetUp]
         public void Init()
         {
-            var requisitionSummary=new List<RequisitionSummary>()
-                                       {
-                                           new RequisitionSummary
-                                               {
-                                                   CommodityName="CSB",
-                                                   FdpCount=20,
-                                                   Region="Afar",
-                                                   RequistionNo="R-001",
-                                                   Status="Open",
-                                                   Zone = "Afdera"
-                                               }
-                                       }
+            var requisitionSummary = new List<RequisitionSummary>()
+                                         {
+                                             new RequisitionSummary
+                                                 {
+                                                     CommodityName = "CSB",
+                                                     FdpCount = 20,
+                                                     Region = "Afar",
+                                                     RequistionNo = "R-001",
+                                                     Status = "Open",
+                                                     Zone = "Afdera"
+                                                 }
+                                         };
             var dispatchAllocationService = new Mock<IDispatchAllocationService>();
             dispatchAllocationService.Setup(t => t.GetSummaryForUncommitedAllocations(1)).Returns(requisitionSummary);
             this._dispatchPlanController = new DispatchPlanController(dispatchAllocationService.Object);
