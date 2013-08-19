@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL;
 using DRMFSS.BLL.Services;
+using Newtonsoft.Json;
 using Telerik.Web.Mvc;
 using DRMFSS.Web.Models;
 using System.ComponentModel.DataAnnotations;
@@ -28,12 +29,20 @@ namespace DRMFSS.Web.Controllers
         private readonly ITransactionService _transactionService;
         private readonly IUnitService _unitService;
         private readonly IShippingInstructionService _shippingInstructionService;
+        private readonly IHubService _hubService;
+        private readonly ICommodityGradeService _commodityGradeService;
+        private readonly IProgramService _programService;
+        private readonly ITransporterService _transporterService;
+        private readonly ICommoditySourceService _commoditySourceService;
+        private readonly IDonorService _donorService;
 
         public ReceiveController(IReceiveService receiveService,IGiftCertificateService giftCertificateService,
                                  IReceiptAllocationService receiptAllocationService,IUserProfileService userProfileService,
                                  ICommodityTypeService commodityTypeService ,IReceiveDetailService receiveDetailService,
                                  ICommodityService commodityService,IStoreService storeService,ITransactionService transactionService,
-                                 IUnitService unitService,IShippingInstructionService shippingInstructionService)
+                                 IUnitService unitService,IShippingInstructionService shippingInstructionService,IHubService hubService,
+                                 ICommodityGradeService commodityGradeService,IProgramService programService,ITransporterService transporterService,
+                                 ICommoditySourceService commoditySourceService,IDonorService donorService)
         {
             _receiveService = receiveService;
             _giftCertificateService = giftCertificateService;
@@ -46,6 +55,12 @@ namespace DRMFSS.Web.Controllers
             _transactionService = transactionService;
             _unitService = unitService;
             _shippingInstructionService = shippingInstructionService;
+            _hubService = hubService;
+            _commodityGradeService = commodityGradeService;
+            _programService = programService;
+            _transporterService = transporterService;
+            _commoditySourceService=commoditySourceService;
+            _donorService = donorService;
 
         }
         public ActionResult SINotUnique(string SINUmber, int CommoditySourceID)
@@ -166,7 +181,7 @@ namespace DRMFSS.Web.Controllers
         {
             BLL.UserProfile user =  _userProfileService.GetUser(User.Identity.Name);
            //TODO cascade using allocation id
-            List<ReceiveViewModelDto> receives = repository.Receive.ByHubIdAndAllocationIDetached(user.DefaultHub.HubID, Guid.Parse(ReceiptAllocationID));
+            List<ReceiveViewModelDto> receives = _receiveService.ByHubIdAndAllocationIDetached(user.DefaultHub.HubID, Guid.Parse(ReceiptAllocationID));
             return View(new GridModel(receives));
         }
 
@@ -181,10 +196,21 @@ namespace DRMFSS.Web.Controllers
 
         //
         // GET: /Receive/Create
-
+        
         public virtual ActionResult Create(string receiveId)
         {
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+
+            var commodities = _commodityService.GetAllCommodity().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commodityGrades = _commodityGradeService.GetAllCommodityGrade().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var transporters = _transporterService.GetAllTransporter().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commoditySources = _commoditySourceService.GetAllCommoditySource().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commodityTypes = _commodityTypeService.GetAllCommodityType().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+
+            var programs = _programService.GetAllProgram().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var donors = _donorService.GetAllDonor().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+
+            var hubs = _hubService.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name).ToList();
 
             if (receiveId != "" && receiveId != null)
             {
@@ -192,7 +218,7 @@ namespace DRMFSS.Web.Controllers
 
                 if (receive != null && (receive.HubID == user.DefaultHub.HubID))
                 {
-                    return View("Create", ReceiveViewModel.GenerateReceiveModel(receive, user));
+                    return View("Create", ReceiveViewModel.GenerateReceiveModel(receive, commodities, commodityGrades, transporters, commodityTypes, commoditySources, programs, donors, hubs, user));
                 }
                 else if (receive != null && (receive.HubID != user.DefaultHub.HubID))
                 {
@@ -207,8 +233,8 @@ namespace DRMFSS.Web.Controllers
             ViewBag.Stacks = new SelectList(Enumerable.Empty<SelectListItem>());
             List<Models.ReceiveDetailViewModel> receiveCommodities = new List<Models.ReceiveDetailViewModel>();
             ViewBag.ReceiveCommodities = receiveCommodities;
-
-            var receiveViewModel = new Models.ReceiveViewModel(repository, user);
+            //TODO:Stacks shuld be sent basend storeID
+            var receiveViewModel = new Models.ReceiveViewModel(commodities, commodityGrades, transporters, commodityTypes, commoditySources, programs, donors, hubs, user, new List<AdminUnitItem>());
             if (Request["type"] != null)
             {
                 receiveViewModel.CommoditySourceID = Convert.ToInt32(Request["type"]);
@@ -294,12 +320,23 @@ namespace DRMFSS.Web.Controllers
         public virtual ActionResult _ReceivePartial(string grnNo)
         {
 
+           var commodities=_commodityService.GetAllCommodity().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commodityGrades=_commodityGradeService.GetAllCommodityGrade().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+           var transporters=_transporterService.GetAllTransporter().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commoditySources=_commoditySourceService.GetAllCommoditySource().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commodityTypes=_commodityTypeService.GetAllCommodityType().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+        
+            var programs=_programService.GetAllProgram().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+           var donors=_donorService.GetAllDonor().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+          
+
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+            var hubs = _hubService.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name).ToList();
 
             BLL.Receive receive = BLL.Receive.GetReceiveByGRN(grnNo);
             if (receive != null && (receive.HubID == user.DefaultHub.HubID))
             {
-                return PartialView("_ReceivePartial", ReceiveViewModel.GenerateReceiveModel(receive, user));
+                return PartialView("_ReceivePartial", ReceiveViewModel.GenerateReceiveModel(receive,commodities,commodityGrades,transporters,commodityTypes,commoditySources,programs,donors,hubs,user));
             }
             else if (receive != null && (receive.HubID != user.DefaultHub.HubID))
             {
@@ -310,7 +347,7 @@ namespace DRMFSS.Web.Controllers
             ViewBag.Stacks = new SelectList(Enumerable.Empty<SelectListItem>());
             List<Models.ReceiveDetailViewModel> ReceiveCommodities = new List<Models.ReceiveDetailViewModel>();
             ViewBag.ReceiveCommodities = ReceiveCommodities;
-            var viewmode = new Models.ReceiveViewModel(repository, user);
+            var viewmode = new Models.ReceiveViewModel(commodities,commodityGrades,transporters,commodityTypes,commoditySources,programs,donors,hubs,user,new List<AdminUnitItem>());
            // viewmode.GRN = grnNo;
             return PartialView("_ReceivePartial", viewmode);
         }
@@ -341,6 +378,19 @@ namespace DRMFSS.Web.Controllers
 
             MembershipProvider membership = new MembershipProvider();
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
+
+
+            var commodities = _commodityService.GetAllCommodity().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commodityGrades = _commodityGradeService.GetAllCommodityGrade().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var transporters = _transporterService.GetAllTransporter().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commoditySources = _commoditySourceService.GetAllCommoditySource().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var commodityTypes = _commodityTypeService.GetAllCommodityType().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+
+            var programs = _programService.GetAllProgram().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var donors = _donorService.GetAllDonor().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+
+            var hubs = _hubService.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+
 
             var insertCommodities = new List<Models.ReceiveDetailViewModel>();
             var updateCommodities = new List<Models.ReceiveDetailViewModel>();
@@ -462,7 +512,7 @@ namespace DRMFSS.Web.Controllers
 
                 return RedirectToAction("Index");
             }
-            receiveModels.InitializeEditLists( user );
+            receiveModels.InitializeEditLists(commodities,commodityGrades,transporters,commodityTypes,commoditySources,programs,donors,hubs,user );
             if(receiveModels.ReceiveID != null)
             {
                 receiveModels.IsEditMode = true;

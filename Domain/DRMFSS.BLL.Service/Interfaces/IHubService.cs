@@ -21,5 +21,8 @@ namespace DRMFSS.BLL.Services
         IEnumerable<StockStatusReport> GetStockStatusReport(int hubID, int commodityID);
         IEnumerable<StatusReportBySI_Result> GetStatusReportBySI(int hubID);
         IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID);
+
+        List<Hub> GetAllWithoutId(int hubId);
+
     }
 }

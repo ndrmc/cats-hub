@@ -98,6 +98,11 @@ namespace DRMFSS.BLL.Services
             return _unitOfWork.ReportRepository.GetStatusReportBySI(hubID).AsEnumerable();
         }
 
+        public List<Hub> GetAllWithoutId(int hubId)
+        {
+            return _unitOfWork.HubRepository.FindBy(p => p.HubID != hubId).ToList();
+        }
+
         public IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID)
         {
             return _unitOfWork.ReportRepository.GetDispatchFulfillmentStatus(hubID);

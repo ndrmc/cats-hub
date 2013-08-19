@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using DRMFSS.BLL.ViewModels.Report;
 using System.Linq;
+using DRMFSS.Web.Models;
 
 namespace DRMFSS.BLL.Services
 {
@@ -77,6 +78,29 @@ namespace DRMFSS.BLL.Services
         {
             return _unitOfWork.ReceiveRepository.FindBy(r => r.HubID == hubId);
            
+        }
+
+        public Receive FindById(System.Guid id)
+        {
+            return _unitOfWork.ReceiveRepository.FindBy(t => t.ReceiveID == id).FirstOrDefault();
+
+        }
+
+        public List<ReceiveViewModelDto> ByHubIdAndAllocationIDetached(int hubId, Guid receiptAllocationId)
+        {
+            List<ReceiveViewModelDto> receives = new List<ReceiveViewModelDto>();
+
+            var query = (from r in _unitOfWork.ReceiveRepository.GetAll()
+                         where r.HubID == hubId && r.ReceiptAllocationID == receiptAllocationId
+                         select new ReceiveViewModelDto()
+                         {
+                             ReceiptDate = r.ReceiptDate,
+                             GRN = r.GRN,
+                             ReceivedByStoreMan = r.ReceivedByStoreMan,
+                             ReceiveID = r.ReceiveID
+                         });
+
+            return query.ToList();
         }
         /// <summary>
         /// Return All Ports
