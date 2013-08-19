@@ -22,8 +22,6 @@ namespace DRMFSS.BLL.Services
         IEnumerable<StatusReportBySI_Result> GetStatusReportBySI(int hubID);
         IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID);
 
-        List<Hub> GetAllWithoutId(int hubId);
-
         List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel);
          List<Hub> GetAllWithoutId(int hubId);
          List<Hub> GetOthersHavingSameOwner(Hub hub);
