@@ -21,5 +21,13 @@ namespace DRMFSS.BLL.Services
         IEnumerable<StockStatusReport> GetStockStatusReport(int hubID, int commodityID);
         IEnumerable<StatusReportBySI_Result> GetStatusReportBySI(int hubID);
         IEnumerable<DispatchFulfillmentStatus_Result> GetDispatchFulfillmentStatus(int hubID);
+
+        List<FreeStockProgram> GetFreeStockGroupedByProgram(int HuBID, FreeStockFilterViewModel freeStockFilterViewModel);
+         List<Hub> GetAllWithoutId(int hubId);
+         List<Hub> GetOthersHavingSameOwner(Hub hub);
+        List<Hub> GetOthersWithDifferentOwner(Hub hub);
+   
+
+
     }
 }

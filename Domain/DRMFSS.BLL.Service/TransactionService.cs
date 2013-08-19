@@ -17,10 +17,11 @@ namespace DRMFSS.BLL.Services
         private readonly IAccountService _accountService;
         private readonly IShippingInstructionService _shippingInstructionService;
 
-        public TransactionService(IUnitOfWork unitOfWork, IAccountService accountService)
+        public TransactionService(IUnitOfWork unitOfWork, IAccountService accountService,IShippingInstructionService shippingInstructionService)
         {
             this._unitOfWork = unitOfWork;
             this._accountService = accountService;
+            this._shippingInstructionService = shippingInstructionService;
         }
 
 

@@ -10,7 +10,7 @@ using DRMFSS.BLL.ViewModels.Dispatch;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IDispatchAllocationService
+    public interface IDispatchAllocationService:IDisposable
     {
 
         bool AddDispatchAllocation(DispatchAllocation dispatchAllocation);
@@ -172,6 +172,8 @@ namespace DRMFSS.BLL.Services
         DispatchAllocation FindById(System.Guid id);
 
         List<BidRefViewModel> GetAllBidRefsForReport();
+        DispatchAllocation FindById(System.Guid id);
+
     }
 }
 

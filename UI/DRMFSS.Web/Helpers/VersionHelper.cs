@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DRMFSS.BLL;
+using DRMFSS.BLL.Services;
 
 namespace DRMFSS.Web.Helpers
 {
@@ -11,8 +12,9 @@ namespace DRMFSS.Web.Helpers
     {
         public static MvcHtmlString CTSVersion(this HtmlHelper htmlHelper)
         {
-            IUnitOfWork repository = new UnitOfWork();
-            ReleaseNote rnote = repository.ReleaseNote.GetAll().OrderBy(o => o.ReleaseNoteID).LastOrDefault();
+            
+            ReleaseNoteService releaseNoteService=new ReleaseNoteService();
+            ReleaseNote rnote = releaseNoteService.GetAllReleaseNote().OrderBy(o => o.ReleaseNoteID).LastOrDefault();
             if (rnote != null)
             {
                 string buildNumber = string.Format("<p>Build: {2} - {0}, Released on: {1:dd-MM-yyyy} click here to read <a href='/ReleaseNotes/'>the release notes</a></p>", rnote.BuildNumber, rnote.Date, rnote.ReleaseName);

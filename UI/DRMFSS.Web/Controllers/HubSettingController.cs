@@ -106,7 +106,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            _hubSettingService.DeleteByID(id);
+            _hubSettingService.DeleteById(id);
             return RedirectToAction("Index");
         }
     }

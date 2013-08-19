@@ -9,7 +9,7 @@ using DRMFSS.BLL.ViewModels.Common;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IProjectCodeService
+    public interface IProjectCodeService:IDisposable
     {
 
         bool AddProjectCode(ProjectCode projectCode);
