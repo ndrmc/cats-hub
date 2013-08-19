@@ -14,6 +14,7 @@ namespace DRMFSS.Web.Controllers
    [Authorize]
     public class StartingBalanceController : BaseController
     {
+       
         //
         // GET: /StartingBalance/
        private IUnitOfWork repository;

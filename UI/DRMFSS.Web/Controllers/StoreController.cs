@@ -12,6 +12,7 @@ namespace DRMFSS.Web.Controllers
      [Authorize]
     public partial class StoreController : BaseController
     {
+        
          private readonly StoreService _storService;
          private readonly UserProfileService _userProfileService;
          public StoreController(StoreService storeServiceParam,UserProfileService userProfileServiceParam)

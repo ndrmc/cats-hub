@@ -12,6 +12,7 @@ namespace DRMFSS.Web.Controllers
 {
     public class RolesController : BaseController
     {
+        
         private CTSContext db = new CTSContext();
         private readonly IRoleService _roleService;
 
@@ -127,5 +128,6 @@ namespace DRMFSS.Web.Controllers
             db.Dispose();
             base.Dispose(disposing);
         }
+         
     }
 }

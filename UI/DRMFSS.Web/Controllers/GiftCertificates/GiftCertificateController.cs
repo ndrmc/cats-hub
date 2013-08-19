@@ -184,7 +184,7 @@ namespace DRMFSS.Web.Controllers
             List<Models.GiftCertificateDetailsViewModel> giftCertificateDetails = null;
             if (!string.IsNullOrEmpty(jsonArray))
             {
-                giftCertificateDetails = JsonConvert.DeserializeObject<List<Models.GiftCertificateDetailsViewModel>>(jsonArray);
+               // giftCertificateDetails = JsonConvert.DeserializeObject<List<Models.GiftCertificateDetailsViewModel>>(jsonArray);
             }
             return giftCertificateDetails;
         }
