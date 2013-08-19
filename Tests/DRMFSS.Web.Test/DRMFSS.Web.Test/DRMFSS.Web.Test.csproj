@@ -72,28 +72,26 @@
     <Compile Include="CommoditySourceTests.cs" />
     <Compile Include="CommodityTypeControllerTests.cs" />
     <Compile Include="ContactControllerTests.cs" />
-    <Compile Include="DispatchAllocationControllerTest.cs" />
-    <Compile Include="CurrentHubControllerTests.cs" />
-    <Compile Include="DispatchPlanControllerTest.cs" />
     <Compile Include="DonorControllerTests.cs" />
     <Compile Include="ErrorControllerTests.cs" />
     <Compile Include="FDPControllerTests.cs" />
+    <Compile Include="GiftCertificateControllerTest.cs" />
     <Compile Include="HubControllerTests.cs" />
     <Compile Include="HubOwnerControllerTests.cs" />
     <Compile Include="InternalMovementControllerTests.cs" />
     <Compile Include="ProgramControllerTest.cs" />
+    <Compile Include="DispatchAllocationControllerTest.cs" />
+    <Compile Include="CurrentHubControllerTests.cs" />
+    <Compile Include="DispatchPlanControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiptAllocationControllerTest.cs" />
     <Compile Include="ReceiveCommodityControllerTest.cs" />
-    <Compile Include="ReportControllerTests.cs" />
-    <Compile Include="SettingControllerTests.cs" />
-    <Compile Include="StockManagementControllerTests.cs" />
-    <Compile Include="TransactionControllerTests.cs" />
+    <Compile Include="StockStatusControllerTest.cs" />
     <Compile Include="UnitControllerTests.cs" />
     <Compile Include="UserWarehouseControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DRMFSS.Web.Test.csproj.orig" />
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
