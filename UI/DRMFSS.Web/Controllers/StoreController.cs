@@ -60,7 +60,7 @@ namespace DRMFSS.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _storService.Add(store);
+                _storService.AddStore(store);
                 return Json(new { success = true }); 
             }
 
@@ -163,9 +163,10 @@ namespace DRMFSS.Web.Controllers
             return Json(stores, JsonRequestBehavior.AllowGet);
         }
 
-        protected override void Dispose(bool disposing)
+        public void Dispose()
         {
-            base.Dispose(disposing);
+            _userProfileService.Dispose();
+           
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using DRMFSS.BLL.ViewModels.Report;
+using DRMFSS.Web.Models;
 
 
 namespace DRMFSS.BLL.Services
@@ -21,7 +22,11 @@ namespace DRMFSS.BLL.Services
         List<Receive> FindBy(Expression<Func<Receive, bool>> predicate);
         List<Receive> ByHubId(int hubId);
          List<PortViewModel> GetALlPorts();
-   
+        Receive FindById(System.Guid id);
+        List<ReceiveViewModelDto> ByHubIdAndAllocationIDetached(int hubId, Guid receiptAllocationId);
+
+
+
 
 
     }
