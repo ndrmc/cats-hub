@@ -17,6 +17,7 @@ namespace DRMFSS.BLL.Services
         bool DeleteById(int id);
         bool EditOtherDispatchAllocation(OtherDispatchAllocation otherDispatchAllocation);
         OtherDispatchAllocation FindById(int id);
+        OtherDispatchAllocation FindById(Guid id);
         List<OtherDispatchAllocation> GetAllOtherDispatchAllocation();
         List<OtherDispatchAllocation> FindBy(Expression<Func<OtherDispatchAllocation, bool>> predicate);
 
