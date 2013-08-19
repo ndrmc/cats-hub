@@ -17,6 +17,7 @@ namespace DRMFSS.Web.Controllers
     [Authorize]
     public partial class ReceiveController : BaseController
     {
+        
         private readonly IReceiveService _receiveService;
         private readonly IGiftCertificateService _giftCertificateService;
         private readonly IReceiptAllocationService _receiptAllocationService;
@@ -733,10 +734,10 @@ namespace DRMFSS.Web.Controllers
                             receiveDetailViewModelComms.ReceiveDetailCounter = count--;
                             commodities.Add(receiveDetailViewModelComms);
                         }
-                        /**
-                         * TODO the lines below are too nice to have but we need to look into the performance issue and 
-                         * policies (i.e. editing should not be allowed ) may be only for quanitities 
-                          */
+                        //
+                        // TODO the lines below are too nice to have but we need to look into the performance issue and 
+                        //policies (i.e. editing should not be allowed ) may be only for quanitities 
+                         
                         else //replace the commodity read from the db by what's comming from the user
                         {
                             commodities.Remove(commodities.Find(p => p.ReceiveDetailID == receiveDetailViewModelComms.ReceiveDetailID));
@@ -993,5 +994,6 @@ namespace DRMFSS.Web.Controllers
             }
             return Json(list,JsonRequestBehavior.AllowGet);
         }
+        
     }
 } 

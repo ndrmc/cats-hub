@@ -12,6 +12,7 @@ namespace DRMFSS.Web.Controllers
 {
     public class InternalMovementController : BaseController
     {
+        
         private readonly IUserProfileService _userProfileService;
         private readonly IInternalMovementService _internalMovementService;
         private readonly ITransactionService _transactionService;
@@ -216,6 +217,6 @@ namespace DRMFSS.Web.Controllers
 
             return viewModel;
         }
-        
+      
     }
 }

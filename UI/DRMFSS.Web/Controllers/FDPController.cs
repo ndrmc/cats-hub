@@ -114,7 +114,7 @@ namespace DRMFSS.Web.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            _FDPService.Dispose();
+           // _FDPService.Dispose();
             base.Dispose(disposing);
         }
     }

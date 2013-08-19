@@ -7,11 +7,12 @@ using System.IO;
 using System.Xml;
 using System.Reflection;
 using DRMFSS.BLL;
-
+using DRMFSS.BLL.Services;
 namespace DRMFSS.Web.Helpers
 {
     public class LetterTemplateHelper
     {
+        
         private static string html = "<br/><table id='detail' style=\"width:100%\">" +
                                         "<thead>" +
                                             "<tr id='headers'>" +
@@ -45,9 +46,13 @@ namespace DRMFSS.Web.Helpers
         IUnitOfWork repository = new UnitOfWork();
         public string Parse(int certificateId, int templateId)
         {
+            IUnitOfWork repository = new UnitOfWork();
+            LetterTemplateService letterService = new LetterTemplateService();
+            GiftCertificateService giftService = new GiftCertificateService(repository);
 
-            BLL.GiftCertificate gift = repository.GiftCertificate.FindById(certificateId);
-            BLL.LetterTemplate template = repository.LetterTemplate.FindById(templateId);
+            BLL.GiftCertificate gift = giftService.FindById(certificateId);
+
+            BLL.LetterTemplate template = letterService.FindById(templateId);
             string raw = HttpContext.Current.Server.HtmlDecode(template.Template);
             string tableString = string.Empty;
             int startIndex = raw.IndexOf("<table id=\"detail\"");//("<table id=\"detail\" style=\"width:100%;\">")
@@ -67,7 +72,7 @@ namespace DRMFSS.Web.Helpers
             if(@tableString != "")
                 populatedTable = PopulateTableData(gift.GiftCertificateDetails.ToList(), tableString.Replace("&nbsp;", ""));
             string finalString = raw.Replace("{tablePlaceHolder}", populatedTable);
-
+            
             return finalString;
         }
 
@@ -115,12 +120,14 @@ namespace DRMFSS.Web.Helpers
 
         private string GetValue(string key, BLL.GiftCertificateDetail detail)
         {
+            
+            LetterTemplateService letterService = new LetterTemplateService();
             if (!string.IsNullOrEmpty(key) && detail != null)
             {
                 switch (key.ToUpper())
                 {
                     case CertificateDetailFields.CURRENCY:
-                        return repository.Detail.FindById(detail.DCurrencyID).Name;
+                        return letterService.FindById(detail.DCurrencyID).Name;
                     case CertificateDetailFields.ACCOUNTNUMBER:
                         return detail.AccountNumber.ToString();
                     case CertificateDetailFields.BILLOFLOADING:
@@ -128,9 +135,9 @@ namespace DRMFSS.Web.Helpers
                     case CertificateDetailFields.COMMODITY:
                         return detail.Commodity.Name;
                     case CertificateDetailFields.BUDGETTYPE:
-                        return repository.Detail.FindById(detail.DBudgetTypeID).Name;
+                        return letterService.FindById(detail.DBudgetTypeID).Name;
                     case CertificateDetailFields.FUNDSOURCE:
-                        return repository.Detail.FindById(detail.DFundSourceID).Name;
+                        return letterService.FindById(detail.DFundSourceID).Name;
                     case CertificateDetailFields.ESTIMATEDPRICE:
                         return detail.EstimatedPrice.ToString("N3");
                     case CertificateDetailFields.ESTIMATEDTAX:

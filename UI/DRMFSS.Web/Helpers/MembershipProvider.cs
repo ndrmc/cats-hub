@@ -10,6 +10,7 @@ namespace DRMFSS.Web
 {
     public class MembershipProvider : System.Web.Security.MembershipProvider
     {
+        
         private string applicationName;
         private bool enablePasswordReset;
         private bool enablePasswordRetrieval;

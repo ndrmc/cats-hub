@@ -8,8 +8,10 @@ using DevExpress.XtraRichEdit.Utils;
 
 namespace DRMFSS.Web.Controllers.Reports
 {
+    
     public class StockManagementController : BaseController
     {
+        /*
         private readonly IUserProfileService _userProfileService;
         private readonly IProgramService _programService;
         private readonly ICommodityTypeService _commodityTypeService;
@@ -344,5 +346,6 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             return PartialView();
         }
+         * */
     }
 }

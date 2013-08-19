@@ -14,6 +14,7 @@ namespace DRMFSS.Web.Controllers.Allocations
     [Authorize]
     public class ReceiptAllocationController : BaseController
     {
+        /*
         private readonly IReceiptAllocationService _receiptAllocationService;
         private readonly IUserProfileService _userProfileService;
         private readonly ICommoditySourceService _commoditySourceService;
@@ -832,5 +833,6 @@ namespace DRMFSS.Web.Controllers.Allocations
 
             return Json(projectCode , JsonRequestBehavior.AllowGet );
         }
+         * */
     }
 }
