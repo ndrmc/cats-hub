@@ -52,8 +52,9 @@ namespace DRMFSS.Web.Controllers
         public ActionResult GetListOfStartingBalances()
         {
             var userProfile = _userProfileService.GetUser(User.Identity.Name);
-            List<StartingBalanceViewModelDto> startBalanceDto = _transactionService.GetListOfStartingBalances(user.DefaultHub.HubID);
-            return View(new GridModel(startBalnceDto)); 
+
+            List<StartingBalanceViewModelDto> startBalanceDto = _transactionService.GetListOfStartingBalances(userProfile.DefaultHub.HubID);
+            return View(new GridModel(startBalanceDto)); 
 
            
         }
@@ -78,13 +79,15 @@ namespace DRMFSS.Web.Controllers
             List<Unit> Units;
             List<Donor> Donors;
 
+            var user = _userProfileService.GetUser(User.Identity.Name);
+
             Commodities = _commodityService.GetAllCommodity().ToList();
             Programs = _programService.GetAllProgram().ToList();
-            Stores =_storeService.GetAllByHUbs().Where(h=>h.HubID == user.DefaultHub.HubID).ToList();
+            Stores =_storeService.GetAllStore().Where(h=>h.HubID == user.DefaultHub.HubID).ToList();
             Units = _unitService.GetAllUnit().ToList();
             Donors = _donorSerivce.GetAllDonor().ToList();
 
-            var user = _userProfileService.GetUser(User.Identity.Name);
+            
 
             StartingBalanceViewModel startingBalanceViewModel = new StartingBalanceViewModel(Commodities,Stores,Units,Programs,Donors, user);
             return PartialView(startingBalanceViewModel);
@@ -108,6 +111,7 @@ namespace DRMFSS.Web.Controllers
                     return Json(true, JsonRequestBehavior.AllowGet);
                    
                 }
+                return View();
             }
             catch
             {

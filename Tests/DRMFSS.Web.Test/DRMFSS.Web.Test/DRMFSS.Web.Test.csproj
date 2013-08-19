@@ -88,11 +88,13 @@
     <Compile Include="ReportControllerTests.cs" />
     <Compile Include="SettingControllerTests.cs" />
     <Compile Include="StockManagementControllerTests.cs" />
+    <Compile Include="TranlationControllerTest.cs" />
     <Compile Include="TransactionControllerTests.cs" />
     <Compile Include="UnitControllerTests.cs" />
     <Compile Include="UserWarehouseControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="DRMFSS.Web.Test.csproj.orig" />
     <None Include="packages.config" />
   </ItemGroup>
