@@ -144,7 +144,7 @@ namespace DRMFSS.Web.Controllers.Reports
         {
             MasterReportBound report= GetFreeStock(new FreeStockFilterViewModel());
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-           var codes=ConstatntsService.GetAllCodes();
+           var codes=ConstantsService.GetAllCodes();
             var commodityTypes=_commodityTypeService.GetAllCommodityTypeForReprot();
             var programs = _programService.GetAllProgramsForReport();
             var commodities = _commodityService.GetAllCommodityForReprot();
@@ -208,7 +208,7 @@ namespace DRMFSS.Web.Controllers.Reports
             MasterReportBound report = GetOffloading(new DispatchesViewModel());
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
 
-             var codes =ConstatntsService.GetAllCodes();
+             var codes =ConstantsService.GetAllCodes();
              var commodityTypes =_commodityTypeService.GetAllCommodityTypeForReprot();;
              var programs =_programService.GetAllProgramsForReport();
              var stores =_hubService.GetAllStoreByUser(user);
@@ -244,7 +244,7 @@ namespace DRMFSS.Web.Controllers.Reports
           
             var commoditySources = _commoditySourceService.GetAllCommoditySourceForReport();
            var ports = _receiveService.GetALlPorts();
-           var codes =ConstatntsService.GetAllCodes();
+           var codes =ConstantsService.GetAllCodes();
             var commodityTypes =  _commodityTypeService.GetAllCommodityTypeForReprot();
            var programs = _programService.GetAllProgramsForReport();
             var stores = _hubService.GetAllStoreByUser(user);
@@ -316,7 +316,7 @@ namespace DRMFSS.Web.Controllers.Reports
             newDistributionViewModel.PeriodId = (DateTime.Now.Month - 1/3) + 1;// current quarter by default 
             MasterReportBound report = GetDistributionReportPivot(newDistributionViewModel);
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            var codes=ConstatntsService.GetAllCodes();
+            var codes=ConstantsService.GetAllCodes();
             var commodityTypes=_commodityTypeService.GetAllCommodityTypeForReprot();
             var programs=_programService.GetAllProgramsForReport();
             var stores=_hubService.GetAllStoreByUser(user);

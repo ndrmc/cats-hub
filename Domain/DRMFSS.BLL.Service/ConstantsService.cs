@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DRMFSS.BLL.Services.Interfaces;
+using DRMFSS.BLL.ViewModels.Report;
 
 namespace DRMFSS.BLL.Services
 {
-    public class ConstatntsService
+    public class ConstantsService : IConstantsService
     {
         public static List<ViewModels.Report.CodesViewModel> GetAllCodes()
         {
@@ -14,6 +16,16 @@ namespace DRMFSS.BLL.Services
             codes.Add(new ViewModels.Report.CodesViewModel { CodesId = 1, CodesName = "Particular SI" });
             codes.Add(new ViewModels.Report.CodesViewModel { CodesId = 2, CodesName = "Particular PC" });
             return codes;
+        }
+
+        List<TypeViewModel> IConstantsService.GetAllTypes()
+        {
+            return GetAllTypes();
+        }
+
+        List<CodesViewModel> IConstantsService.GetAllCodes()
+        {
+            return GetAllCodes();
         }
 
         public static List<ViewModels.Report.TypeViewModel> GetAllTypes()
