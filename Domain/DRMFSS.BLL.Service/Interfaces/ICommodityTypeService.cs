@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface ICommodityTypeService
+    public interface ICommodityTypeService:IDisposable
     {
 
         bool AddCommodityType(CommodityType commodityType);
