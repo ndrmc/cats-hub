@@ -43,7 +43,7 @@ namespace DRMFSS.Web.Controllers
         //[AutoMap(typeof(BLL.Role), typeof(DRMFSS.Web.Models.RoleModel))]
         public ViewResult Details(int id)
         {
-            Role role = _roleService.FindBy(r => r.RoleID == id);
+            Role role = _roleService.FindBy(r => r.RoleID == id).SingleOrDefault();
             return View("Details", role);
 
             //Role role = db.Roles.Single(u => u.RoleID == id);

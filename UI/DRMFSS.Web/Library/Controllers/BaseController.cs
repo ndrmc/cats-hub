@@ -7,6 +7,7 @@ using System.Threading;
 using System.Web.Security;
 using DRMFSS.BLL;
 using DRMFSS.Web.Helpers;
+using MembershipProvider = DRMFSS.Web.Helpers.MembershipProvider;
 
 namespace DRMFSS.Web
 {

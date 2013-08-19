@@ -5,8 +5,9 @@ using System.Linq;
 using System.Web.Security;
 using DRMFSS.BLL;
 using DRMFSS.Shared;
+using DRMFSS.BLL.Services;
 
-namespace DRMFSS.Web
+namespace DRMFSS.Web.Helpers
 {
     public class MembershipProvider : System.Web.Security.MembershipProvider
     {
@@ -23,6 +24,14 @@ namespace DRMFSS.Web
         private bool requiresQuestionAndAnswer;
         private bool requiresUniqueEmail;
         IUnitOfWork repository = new UnitOfWork();
+
+        private readonly IUserProfileService _userProfileService;
+
+        public MembershipProvider(IUserProfileService userProfileService)
+        {
+            _userProfileService = userProfileService;
+        }
+
         public override string ApplicationName
         {
             get { return applicationName; }
@@ -193,7 +202,7 @@ namespace DRMFSS.Web
             IUnitOfWork repository = new UnitOfWork();
             try
             {
-                repository.UserProfile.Add(user);
+                _userProfileService.AddUserProfile(user);
                 status = MembershipCreateStatus.Success;
                 return GetMembershipUser(user);
             }
@@ -251,7 +260,7 @@ namespace DRMFSS.Web
         public override MembershipUser GetUser(object providerUserKey, bool userIsOnline)
         {
 
-            UserProfile user = repository.UserProfile.FindById(Convert.ToInt32(providerUserKey));
+            UserProfile user = _userProfileService.FindById(Convert.ToInt32(providerUserKey));
             return (user != null) ? GetMembershipUser(user) : null;
         }
 
@@ -307,7 +316,7 @@ namespace DRMFSS.Web
             {
                 return null;
             }
-            return repo.UserProfile.GetUser(use.UserName);
+            return _userProfileService.GetUser(use.UserName);
         }
     }
 }
