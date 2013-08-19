@@ -169,9 +169,9 @@ namespace DRMFSS.BLL.Services
         /// <returns></returns>
         List<DispatchAllocationViewModelDto> GetCommitedAllocationsByHubDetached(int hubId, string PreferedWeightMeasurment, bool? closedToo, int? AdminUnitId, int? CommodityType);
 
+        DispatchAllocation FindById(System.Guid id);
 
         List<BidRefViewModel> GetAllBidRefsForReport();
-        DispatchAllocation FindById(System.Guid id);
 
     }
 }

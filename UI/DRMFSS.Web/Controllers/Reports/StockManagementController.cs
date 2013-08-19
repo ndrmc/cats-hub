@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using DRMFSS.BLL.Services;
+using DRMFSS.BLL.ViewModels.Common;
 using DRMFSS.BLL.ViewModels.Report;
+using DevExpress.XtraRichEdit.Utils;
 
 namespace DRMFSS.Web.Controllers.Reports
 {
@@ -15,12 +18,20 @@ namespace DRMFSS.Web.Controllers.Reports
         private readonly ICommoditySourceService _commoditySourceService;
         private readonly IProjectCodeService _projectCodeService;
         private readonly IShippingInstructionService _shippingInstructionService;
-
+        private readonly IReceiveService _receiveService;
+        private readonly IConstantsService _constantsService;
+        private readonly IStoreService _storeService;
+        private readonly IHubService _hubService;
+        private readonly IAdminUnitService _adminUnitService;
+        private readonly IDispatchAllocationService _dispatchAllocationService;
+        private readonly IDonorService _donorService;
         //
         // GET: /StockManagement/
         public StockManagementController(IUserProfileService userProfileService, IProgramService programService,
             ICommodityTypeService commodityTypeService, ICommoditySourceService commoditySourceService, 
-            IProjectCodeService projectCodeService, IShippingInstructionService shippingInstructionService)
+            IProjectCodeService projectCodeService, IShippingInstructionService shippingInstructionService, 
+            IReceiveService receiveService, IConstantsService constantsService, IStoreService storeService, IHubService hubService,
+            IAdminUnitService adminUnitService, IDispatchAllocationService dispatchAllocationService, IDonorService donorService)
         {
             _userProfileService = userProfileService;
             _programService = programService;
@@ -28,6 +39,13 @@ namespace DRMFSS.Web.Controllers.Reports
             _commoditySourceService = commoditySourceService;
             _projectCodeService = projectCodeService;
             _shippingInstructionService = shippingInstructionService;
+            _receiveService = receiveService;
+            _constantsService = constantsService;
+            _storeService = storeService;
+            _hubService = hubService;
+            _adminUnitService = adminUnitService;
+            _dispatchAllocationService = dispatchAllocationService;
+            _donorService = donorService;
         }
 
         /// <summary>
@@ -37,7 +55,13 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult ArrivalsVsReceipts()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new ArrivalsVsReceiptsViewModel(repository, user);
+            var commoditySourceViewModels = _commoditySourceService.GetAllCommoditySourceForReport();
+            var portViewModels = _receiveService.GetALlPorts();
+            var codesViewModels = _constantsService.GetAllCodes();
+            var commodityTypeViewModels = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programViewModels = _programService.GetAllProgramsForReport();
+            var viewModel = new ArrivalsVsReceiptsViewModel(commoditySourceViewModels, portViewModels, codesViewModels,
+                commodityTypeViewModels, programViewModels, user);
           
             return View(viewModel);
         }
@@ -62,8 +86,14 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult Receipts()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new ReceiptsViewModel(repository, user);
-            
+            var commoditySourceViewModels = _commoditySourceService.GetAllCommoditySourceForReport();
+            var portViewModels = _receiveService.GetALlPorts();
+            var codesViewModels = _constantsService.GetAllCodes();
+            var commodityTypeViewModels = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programViewModels = _programService.GetAllProgramsForReport();
+            var storeViewModel = _hubService.GetAllStoreByUser(user);
+            var viewModel = new ReceiptsViewModel(codesViewModels, commodityTypeViewModels, programViewModels,
+                storeViewModel, commoditySourceViewModels, portViewModels);
 
             return View(viewModel);
         }
@@ -87,7 +117,11 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult StockBalance()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new StockBalanceViewModel(repository, user);
+            var codesViewModels = _constantsService.GetAllCodes();
+            var commodityTypeViewModels = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programViewModels = _programService.GetAllProgramsForReport();
+            var storeViewModel = _hubService.GetAllStoreByUser(user);
+            var viewModel = new StockBalanceViewModel(codesViewModels, commodityTypeViewModels, programViewModels, storeViewModel);
 
             
             return View(viewModel);
@@ -111,7 +145,14 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult Dispatches()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new DispatchesViewModel(repository,user);
+            var codesViewModels = _constantsService.GetAllCodes();
+            var commodityTypeViewModels = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programViewModels = _programService.GetAllProgramsForReport();
+            var storeViewModels = _hubService.GetAllStoreByUser(user);
+            var areaViewModels = _adminUnitService.GetAllAreasForReport();
+            var bidRefViewModels = _dispatchAllocationService.GetAllBidRefsForReport();
+            var viewModel = new DispatchesViewModel( codesViewModels, commodityTypeViewModels, programViewModels, storeViewModels,
+                areaViewModels, bidRefViewModels);
             
             return View(viewModel);
         }
@@ -133,7 +174,12 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult CommittedVsDispatched()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new CommittedVsDispatchedViewModel(repository,user);
+            var storeViewModel = _hubService.GetAllStoreByUser(user);
+            var areas = _adminUnitService.GetAllAreasForReport();
+            var codes = _constantsService.GetAllCodes();
+            var commodityTypes = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programs = _programService.GetAllProgramsForReport();
+            var viewModel = new CommittedVsDispatchedViewModel(storeViewModel, areas, codes, commodityTypes, programs, user);
             return View(viewModel);
         }
         /// <summary>
@@ -165,7 +211,13 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult InTransit()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new InTransitViewModel(repository,user);
+            var codes = _constantsService.GetAllCodes();
+            var commodityTypes = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programs = _programService.GetAllProgramsForReport();
+            var stores = _hubService.GetAllStoreByUser(user);
+            var areas = _adminUnitService.GetAllAreasForReport();
+            var types = _constantsService.GetAllTypes();
+            var viewModel = new InTransitViewModel(codes, commodityTypes, programs, stores, areas, types);
             return View(viewModel);
         }
         /// <summary>
@@ -175,7 +227,13 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult DeliveryAgainstDispatch()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new DeliveryAgainstDispatchViewModel(repository, user);
+            var stores = _hubService.GetAllStoreByUser(user);
+            var areas = _adminUnitService.GetAllAreasForReport();
+            var codes = _constantsService.GetAllCodes();
+            var commodityTypes = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programs = _programService.GetAllProgramsForReport();
+            var types = _constantsService.GetAllTypes();
+            var viewModel = new DeliveryAgainstDispatchViewModel(stores, areas, codes, commodityTypes, programs, types);
             
             return View(viewModel);
         }
@@ -197,7 +255,12 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult DistributionDeliveryDispatch()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new DistributionDeliveryDispatchViewModel(repository,user);
+            var stores = _hubService.GetAllStoreByUser(user);
+            var areas = _adminUnitService.GetAllAreasForReport();
+            var codes = _constantsService.GetAllCodes();
+            var commodityTypes = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programs = _programService.GetAllProgramsForReport();
+            var viewModel = new DistributionDeliveryDispatchViewModel(codes, commodityTypes, programs, stores, areas);
             return View(viewModel);
         }
         /// <summary>
@@ -218,7 +281,15 @@ namespace DRMFSS.Web.Controllers.Reports
         public ActionResult DistributionByOwner()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new DistributionByOwnerViewModel(repository,user);
+            var stores = _hubService.GetAllStoreByUser(user);
+            var areas = _adminUnitService.GetAllAreasForReport();
+            var codes = _constantsService.GetAllCodes();
+            var commodityTypes = _commodityTypeService.GetAllCommodityTypeForReprot();
+            var programs = _programService.GetAllProgramsForReport();
+            var sourceDonors = _donorService.GetAllSourceDonorForReport();
+            var responsibleDonors = _donorService.GetAllResponsibleDonorForReport();
+            var viewModel = new DistributionByOwnerViewModel(codes, commodityTypes, programs, stores, areas, sourceDonors,
+                responsibleDonors);
            
             return View(viewModel);
         }

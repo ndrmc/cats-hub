@@ -56,6 +56,8 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IDispatchDetailService>().To<DispatchDetailService>();
             kernel.Bind<IPeriodService>().To<PeriodService>();
             kernel.Bind<IHubService>().To<HubService>();
+            kernel.Bind<IReceiveService>().To<ReceiveService>();
+            kernel.Bind<IConstantsService>().To<ConstantsService>();
         }
     }
 }

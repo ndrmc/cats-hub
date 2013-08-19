@@ -17,6 +17,7 @@ namespace DRMFSS.BLL.Services
         bool DeleteById(int id);
         bool EditOtherDispatchAllocation(OtherDispatchAllocation otherDispatchAllocation);
         OtherDispatchAllocation FindById(int id);
+        OtherDispatchAllocation FindById(Guid id);
         List<OtherDispatchAllocation> GetAllOtherDispatchAllocation();
         List<OtherDispatchAllocation> FindBy(Expression<Func<OtherDispatchAllocation, bool>> predicate);
 
@@ -34,7 +35,6 @@ namespace DRMFSS.BLL.Services
         List<OtherDispatchAllocationDto> GetCommitedTransferAllocationsDetached(UserProfile user, bool? closedToo, int? CommodityType);
 
         void CloseById(Guid otherDispatchAllocationId);
-        OtherDispatchAllocation FindById(Guid id);
     
     }
 }

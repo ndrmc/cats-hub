@@ -374,7 +374,9 @@
     <Compile Include="Controllers\CurrentHubController.cs" />
     <Compile Include="Controllers\DispatchController.cs" />
     <Compile Include="Controllers\DonorController.cs" />
-    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\ErrorController.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Controllers\FDPController.cs" />
     <Compile Include="Controllers\InternalMovementController.cs" />
     <Compile Include="Controllers\LossesAndAdjustmentsController.cs" />

@@ -57,6 +57,11 @@ namespace DRMFSS.BLL.Services
         {
             return _unitOfWork.DispatchRepository.FindById(id);
         }
+        public Dispatch FindById(System.Guid id)
+        {
+            return _unitOfWork.DispatchRepository.GetAll().FirstOrDefault(t => t.DispatchID == id);
+
+        }
         public List<Dispatch> FindBy(Expression<Func<Dispatch, bool>> predicate)
         {
             return _unitOfWork.DispatchRepository.FindBy(predicate);

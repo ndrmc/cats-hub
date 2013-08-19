@@ -59,7 +59,7 @@
     <Compile Include="CommoditySourceService.cs" />
     <Compile Include="CommodityTypeService.cs" />
     <Compile Include="CommonService.cs" />
-    <Compile Include="ConstatntsService.cs" />
+    <Compile Include="ConstantsService.cs" />
     <Compile Include="ContactService.cs" />
     <Compile Include="DetailService.cs" />
     <Compile Include="DispatchAllocationService.cs" />
@@ -85,6 +85,7 @@
     <Compile Include="Interfaces\ICommoditySourceService.cs" />
     <Compile Include="Interfaces\ICommodityTypeService.cs" />
     <Compile Include="Interfaces\ICommonService.cs" />
+    <Compile Include="Interfaces\IConstantsService.cs" />
     <Compile Include="Interfaces\IContactService.cs" />
     <Compile Include="Interfaces\IDetailService.cs" />
     <Compile Include="Interfaces\IDispatchAllocationService.cs" />
