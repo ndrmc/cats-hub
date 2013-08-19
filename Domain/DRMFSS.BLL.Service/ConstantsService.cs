@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DRMFSS.BLL.Services.Interfaces;
+using DRMFSS.BLL.Services;
 using DRMFSS.BLL.ViewModels.Report;
 
 namespace DRMFSS.BLL.Services
