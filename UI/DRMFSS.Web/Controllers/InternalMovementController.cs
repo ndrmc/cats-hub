@@ -19,11 +19,16 @@ namespace DRMFSS.Web.Controllers
         private readonly IProjectCodeService _projectCodeService;
         private readonly IShippingInstructionService _shippingInstructionService;
         private readonly ICommodityService _commodityService;
+        private readonly IHubService _hubService;
+        private readonly IProgramService _programService;
+        private readonly IUnitService _unitService;
+        private readonly IDetailService _detailService;
         //
         // GET: /InternalMovement/
         public InternalMovementController(IUserProfileService userProfileService, IInternalMovementService internalMovementService, 
             ITransactionService transactionService, IStoreService storeService, IProjectCodeService projectCodeService,
-            IShippingInstructionService shippingInstructionService, ICommodityService commodityService)
+            IShippingInstructionService shippingInstructionService, ICommodityService commodityService, IHubService hubService,
+            IProgramService programService, IUnitService unitService, IDetailService detailService)
         {
             _userProfileService = userProfileService;
             _internalMovementService = internalMovementService;
@@ -32,6 +37,10 @@ namespace DRMFSS.Web.Controllers
             _projectCodeService = projectCodeService;
             _shippingInstructionService = shippingInstructionService;
             _commodityService = commodityService;
+            _hubService = hubService;
+            _programService = programService;
+            _unitService = unitService;
+            _detailService = detailService;
         }
 
         public ActionResult Index()
@@ -42,7 +51,13 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Create()
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var viewModel = new InternalMovementViewModel(repository, user);
+            var fromStore = _hubService.GetAllStoreByUser(user); ;
+            var commodities = _commodityService.GetAllParents(); ;
+            var programs = _programService.GetAllProgramsForReport();
+            var units = _unitService.GetAllUnit(); ;
+            var toStore = _hubService.GetAllStoreByUser(user); ;
+            var reasons = _detailService.GetReasonByMaster(Master.Constants.REASON_FOR_INTERNAL_MOVMENT);
+            var viewModel = new InternalMovementViewModel(fromStore, commodities, programs, units, toStore, reasons);
             return View(viewModel);
         }
 
@@ -50,7 +65,13 @@ namespace DRMFSS.Web.Controllers
         public ActionResult Create(InternalMovementViewModel viewModel)
         {
             var user = _userProfileService.GetUser(User.Identity.Name);
-            var newViewModel = new InternalMovementViewModel(repository, user);
+            var fromStore = _hubService.GetAllStoreByUser(user); ;
+            var commodities = _commodityService.GetAllParents(); ;
+            var programs = _programService.GetAllProgramsForReport();
+            var units = _unitService.GetAllUnit(); ;
+            var toStore = _hubService.GetAllStoreByUser(user); ;
+            var reasons = _detailService.GetReasonByMaster(Master.Constants.REASON_FOR_INTERNAL_MOVMENT);
+            var newViewModel = new InternalMovementViewModel(fromStore, commodities, programs, units, toStore, reasons);
             if (viewModel.QuantityInMt > _transactionService.GetCommodityBalanceForStack(viewModel.FromStoreId, viewModel.FromStackId, viewModel.CommodityId, viewModel.ShippingInstructionId, viewModel.ProjectCodeId))
             {
                 ModelState.AddModelError("QuantityInMt", "you dont have sufficent ammout to transfer");

@@ -172,7 +172,6 @@ namespace DRMFSS.BLL.Services
         DispatchAllocation FindById(System.Guid id);
 
         List<BidRefViewModel> GetAllBidRefsForReport();
-        DispatchAllocation FindById(System.Guid id);
 
     }
 }

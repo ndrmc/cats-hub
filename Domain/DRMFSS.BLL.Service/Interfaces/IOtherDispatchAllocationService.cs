@@ -35,7 +35,6 @@ namespace DRMFSS.BLL.Services
         List<OtherDispatchAllocationDto> GetCommitedTransferAllocationsDetached(UserProfile user, bool? closedToo, int? CommodityType);
 
         void CloseById(Guid otherDispatchAllocationId);
-        OtherDispatchAllocation FindById(Guid id);
     
     }
 }

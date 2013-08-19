@@ -15,7 +15,7 @@ namespace DRMFSS.BLL.Services
         bool DeleteById(int id);
         bool EditDispatch(Dispatch dispatch);
         Dispatch FindById(int id);
-        Dispatch FindById(System.Guid id)
+        Dispatch FindById(System.Guid id);
         List<Dispatch> GetAllDispatch();
         List<Dispatch> FindBy(Expression<Func<Dispatch, bool>> predicate);
 
