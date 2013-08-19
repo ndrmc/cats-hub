@@ -15,7 +15,7 @@ namespace DRMFSS.Web.Controllers.Allocations
     {
         //
         // GET: /DispatchAllocation/
-
+        /*
         private readonly IUserProfileService _userProfileService;
         private readonly IDispatchAllocationService _dispatchAllocationService;
         private readonly IShippingInstructionService _shippingInstructionService;
@@ -705,5 +705,6 @@ namespace DRMFSS.Web.Controllers.Allocations
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+         * */
     }
 }

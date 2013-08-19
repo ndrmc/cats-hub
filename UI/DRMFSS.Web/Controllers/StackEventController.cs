@@ -12,6 +12,7 @@ namespace DRMFSS.Web.Controllers
 {
     public class StackEventController : BaseController
     {
+        
         //
         // GET: /StackEvent/
         IUnitOfWork repository;

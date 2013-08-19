@@ -16,6 +16,7 @@ namespace DRMFSS.Web.Controllers
     [Authorize]
     public class DispatchController : BaseController
     {
+        
         private readonly IDispatchAllocationService _dispatchAllocationService;
         private readonly IDispatchService _dispatchService;
         private readonly IUserProfileService _userProfileService;
@@ -313,10 +314,10 @@ namespace DRMFSS.Web.Controllers
                             dispatchDetailViewModelComms.DispatchDetailCounter = count--;
                             commodities.Add(dispatchDetailViewModelComms);
                         }
-                        /**
-                         * TODO the lines below are too nice to have but we need to look into the performance issue and 
-                         * policies (i.e. editing should not be allowed ) may be only for quanitities 
-                          */
+                        //
+                        // TODO the lines below are too nice to have but we need to look into the performance issue and 
+                        // policies (i.e. editing should not be allowed ) may be only for quanitities 
+                         //
                         else //replace the commodity read from the db by what's comming from the user
                         {
                             commodities.Remove(commodities.Find(p => p.Id == dispatchDetailViewModelComms.Id));

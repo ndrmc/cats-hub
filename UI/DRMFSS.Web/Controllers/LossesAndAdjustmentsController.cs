@@ -15,6 +15,7 @@ namespace DRMFSS.Web.Controllers
     [Authorize]
     public class LossesAndAdjustmentsController : BaseController
     {
+        
         private readonly IUserProfileService _userProfileService;
         private readonly ICommodityService _commodityService;
         private readonly IStoreService _storeService;
@@ -293,5 +294,6 @@ namespace DRMFSS.Web.Controllers
 
             return viewModel;
         }
+         
     }
 }
