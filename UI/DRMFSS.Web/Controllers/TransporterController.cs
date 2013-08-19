@@ -144,7 +144,7 @@ namespace DRMFSS.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public virtual ActionResult DeleteConfirmed(int id)
         {
-            Transporter transporter = _transporterService.DeleteById(id);
+            _transporterService.DeleteById(id);
             return  RedirectToAction("Index");
 
             //repository.Transporter.DeleteByID(id);
