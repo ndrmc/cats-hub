@@ -8,7 +8,7 @@ using DRMFSS.BLL.ViewModels.Report;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface IFDPService
+    public interface IFDPService:IDisposable
     {
 
         bool AddFDP(FDP fdp);

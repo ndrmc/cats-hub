@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DRMFSS.BLL.Services
 {
-    public interface ITransporterService
+    public interface ITransporterService:IDisposable
     {
 
         bool AddTransporter(Transporter entity);

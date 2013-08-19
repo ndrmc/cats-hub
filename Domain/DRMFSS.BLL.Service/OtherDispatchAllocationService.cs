@@ -65,6 +65,8 @@ namespace DRMFSS.BLL.Services
         {
             return _unitOfWork.OtherDispatchAllocationRepository.FindBy(t => t.OtherDispatchAllocationID == id).FirstOrDefault();
         }
+
+
         public List<OtherDispatchAllocation> FindBy(Expression<Func<OtherDispatchAllocation, bool>> predicate)
         {
             return _unitOfWork.OtherDispatchAllocationRepository.FindBy(predicate);
@@ -322,7 +324,7 @@ namespace DRMFSS.BLL.Services
             _unitOfWork.Save();
         }
 
-
+       
 
     }
 }
