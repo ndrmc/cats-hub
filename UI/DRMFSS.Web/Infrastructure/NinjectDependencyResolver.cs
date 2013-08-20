@@ -58,6 +58,12 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IHubService>().To<HubService>();
             kernel.Bind<IReceiveService>().To<ReceiveService>();
             kernel.Bind<IConstantsService>().To<ConstantsService>();
+            kernel.Bind<IMembershipWrapper>().To<MembershipWrapper>(); ;
+            kernel.Bind<IUrlHelperWrapper>().To<UrlHelperWrapper>();
+            kernel.Bind<IFormsAuthenticationWrapper>().To<FormsAuthenticationWrapper>();
+            kernel.Bind<IForgetPasswordRequestService>().To<ForgetPasswordRequestService>();
+            kernel.Bind<ISettingService>().To<SettingService>();
+        //
         }
     }
 }

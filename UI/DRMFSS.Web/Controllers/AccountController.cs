@@ -43,14 +43,14 @@ namespace DRMFSS.Web.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
-        public AccountController(IUserProfileService userProfileService,
-            IForgetPasswordRequestService forgetPasswordRequestService,ISettingService settingService)
-            : this(new MembershipWrapper(), new FormsAuthenticationWrapper(), null)
-        {
-            _userProfileService = userProfileService;
-            _forgetPasswordRequestService = forgetPasswordRequestService;
-            _settingService = settingService;
-        }
+        //public AccountController(IUserProfileService userProfileService,
+        //    IForgetPasswordRequestService forgetPasswordRequestService,ISettingService settingService)
+        //    : this(new MembershipWrapper(), new FormsAuthenticationWrapper(), null)
+        //{
+        //    _userProfileService = userProfileService;
+        //    _forgetPasswordRequestService = forgetPasswordRequestService;
+        //    _settingService = settingService;
+        //}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
