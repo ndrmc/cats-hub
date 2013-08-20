@@ -64,12 +64,12 @@ namespace DRMFSS.BLL.Services
            
        }
 
-        public bool IsNameValid(int? TransporterID, string Name)
+        public bool IsNameValid(int? transporterID, string name)
         {
              
        
-           var Trans = _unitOfWork.TransporterRepository.FindBy(t=>t.Name == Name && t.TransporterID!=TransporterID).Any();
-           if (Trans == null) return false;
+           var trans = _unitOfWork.TransporterRepository.FindBy(t=>t.Name == name && t.TransporterID!=transporterID).Any();
+           if (trans == false) return false;
            return true;
 
        

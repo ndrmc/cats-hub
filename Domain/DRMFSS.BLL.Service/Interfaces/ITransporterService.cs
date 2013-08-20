@@ -17,7 +17,7 @@ namespace DRMFSS.BLL.Services
         List<Transporter> GetAllTransporter();
         List<Transporter> FindBy(Expression<Func<Transporter, bool>> predicate);
 
-        bool IsNameValid(int? TransporterID, string Name);
+        bool IsNameValid(int? transporterID, string name);
        
     }
 }

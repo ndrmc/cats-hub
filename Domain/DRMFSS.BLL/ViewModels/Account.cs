@@ -6,6 +6,7 @@ using System.Text;
 
 namespace DRMFSS.BLL
 {
+    
     /// <summary>
     /// 
     /// </summary>
@@ -14,6 +15,8 @@ namespace DRMFSS.BLL
         /// <summary>
         /// 
         /// </summary>
+        /// 
+        
        public class Constants
        {
            /// <summary>
@@ -46,16 +49,24 @@ namespace DRMFSS.BLL
                    switch (this.EntityType)
                    {
                        case Constants.DONOR:
-                           return unitOfWork.DonorRepository.FindById(this.EntityID).Name;
+                           var donor = unitOfWork.DonorRepository.FindById(this.EntityID);
+                           if (donor != null)
+                               return donor.Name;
                            break;
                        case Constants.FDP:
-                           return unitOfWork.FDPRepository.FindById(EntityID).Name;
+                           var fdp = unitOfWork.FDPRepository.FindById(EntityID);
+                           if (fdp != null)
+                               return fdp.Name;
                            break;
                        case Constants.HUBOWNER:
-                           return unitOfWork.HubOwnerRepository.FindById(EntityID).Name;
+                           var hubOwner = unitOfWork.HubOwnerRepository.FindById(EntityID);
+                           if (hubOwner != null)
+                               return hubOwner.Name;
                            break;
                        case Constants.HUB:
-                           return unitOfWork.HubRepository.FindById(EntityID).Name;
+                           var hub = unitOfWork.HubRepository.FindById(EntityID);
+                           if (hub != null)
+                               return hub.Name;
                            break;
                    }
                }
