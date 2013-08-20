@@ -58,6 +58,14 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IHubService>().To<HubService>();
             kernel.Bind<IReceiveService>().To<ReceiveService>();
             kernel.Bind<IConstantsService>().To<ConstantsService>();
+            kernel.Bind<ITranslationService>().To<TranslationService>();
+            kernel.Bind<ITransactionGroupService>().To<TransactionGroupService>();
+            kernel.Bind<IStackEventTypeService>().To<StackEventTypeService>();
+            kernel.Bind<IStackEventService>().To<StackEventService>();
+            kernel.Bind<ISMSService>().To<SMSService>();
+            kernel.Bind<ISettingService>().To<SettingService>();
+            kernel.Bind<ISessionHistoryService>().To<SessionHistoryService>();
+            kernel.Bind<ISessionAttemptService>().To<SessionAttemptService>();
         }
     }
 }
