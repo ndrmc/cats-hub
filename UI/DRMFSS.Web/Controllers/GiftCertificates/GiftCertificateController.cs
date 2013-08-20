@@ -9,42 +9,48 @@ using Telerik.Web.Mvc;
 
 namespace DRMFSS.Web.Controllers
 {
-     [Authorize]
+    [Authorize]
     public class GiftCertificateController : BaseController
     {
-         private readonly IGiftCertificateService _giftCertificateService;
-         private readonly ICommodityService _commodityService;
-         private readonly IUserProfileService _userProfileService;
-         private readonly IReceiptAllocationService _receiptAllocationService;
-         private readonly ICommodityTypeService _commodityTypeService;
-         private readonly IDetailService _detailService;
-         private readonly IDonorService _donorService;
-         private readonly IProgramService _programService;
-         private readonly IGiftCertificateDetailService _giftCertificateDetailService;
+        private readonly IGiftCertificateService _giftCertificateService;
+        private readonly ICommodityService _commodityService;
+        private readonly IUserProfileService _userProfileService;
+        private readonly IReceiptAllocationService _receiptAllocationService;
+        private readonly ICommodityTypeService _commodityTypeService;
+        private readonly IDetailService _detailService;
+        private readonly IDonorService _donorService;
+        private readonly IProgramService _programService;
+        private readonly IGiftCertificateDetailService _giftCertificateDetailService;
 
-         public GiftCertificateController(IGiftCertificateService giftCertificateService,ICommodityService commodityService,
-                                          IUserProfileService userProfileService,IReceiptAllocationService receiptAllocationService,
-                                          IDetailService detailService,ICommodityTypeService commodityTypeService,
-                                          IDonorService donorService,IProgramService programService,IGiftCertificateDetailService giftCertificateDetailService)
-         {
-             _giftCertificateService = giftCertificateService;
-             _commodityService = commodityService;
-             _userProfileService = userProfileService;
-             _receiptAllocationService = receiptAllocationService;
-             _detailService = detailService;
-             _commodityTypeService = commodityTypeService;
-             _donorService = donorService;
-             _programService = programService;
-             _giftCertificateDetailService = giftCertificateDetailService;
+        public GiftCertificateController(
+            IGiftCertificateService giftCertificateService,
+            ICommodityService commodityService,
+           IUserProfileService userProfileService,
+            IReceiptAllocationService receiptAllocationService,
+            IDetailService detailService,
+            ICommodityTypeService commodityTypeService,
+           IDonorService donorService,
+            IProgramService programService,
+            IGiftCertificateDetailService giftCertificateDetailService)
+        {
+            _giftCertificateService = giftCertificateService;
+            _commodityService = commodityService;
+            _userProfileService = userProfileService;
+            _receiptAllocationService = receiptAllocationService;
+            _detailService = detailService;
+            _commodityTypeService = commodityTypeService;
+            _donorService = donorService;
+            _programService = programService;
+            _giftCertificateDetailService = giftCertificateDetailService;
 
-         }
+        }
 
         public virtual ActionResult NotUnique(string SINumber, int GiftCertificateID)
         {
 
             GiftCertificate gift = _giftCertificateService.FindBySINumber(SINumber);
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
-            bool inReceiptAllocation = _receiptAllocationService.FindBySINumber(SINumber).Any(p=>p.CommoditySourceID == 
+            bool inReceiptAllocation = _receiptAllocationService.FindBySINumber(SINumber).Any(p => p.CommoditySourceID ==
                 BLL.CommoditySource.Constants.LOCALPURCHASE);
 
             if ((gift == null || (gift.GiftCertificateID == GiftCertificateID)) && !(inReceiptAllocation))// new one or edit no problem 
@@ -55,11 +61,11 @@ namespace DRMFSS.Web.Controllers
             {
                 return Json(string.Format("{0} is invalid, there is an existing record with the same SI Number ", SINumber),
                         JsonRequestBehavior.AllowGet);
-                
+
             }
         }
 
-        public  ViewResult Index()
+        public ViewResult Index()
         {
             return View(_giftCertificateService.GetAllGiftCertificate().OrderByDescending(o => o.GiftCertificateID));
         }
@@ -106,13 +112,13 @@ namespace DRMFSS.Web.Controllers
                 {
                     return View(new GridModel(new List<GiftCertificateDetailsViewModel>()));
                 }
-             }
+            }
         }
 
         //
         // GET: /GiftCertificate/Details/5
 
-        public  ViewResult Details(int id)
+        public ViewResult Details(int id)
         {
             return View(_giftCertificateService.FindById(id));
         }
@@ -120,29 +126,29 @@ namespace DRMFSS.Web.Controllers
         //
         // GET: /GiftCertificate/Create
 
-        public  ActionResult Create()
+        public ActionResult Create()
         {
-            
-            ViewBag.Commodities =  _commodityService.GetAllCommodity().OrderBy(o=>o.Name);
+
+            ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
             ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name");
             ViewBag.DCurrencies = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
             ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
             ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
             ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o => o.Name), "DonorID", "Name");
             ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
-            ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder),"DetailID", "Name");
+            ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name");
 
             List<Models.GiftCertificateDetailsViewModel> GiftCertificateDetails = new List<Models.GiftCertificateDetailsViewModel>();
             ViewBag.GiftCertificateDetails = GiftCertificateDetails;
 
             return View(new GiftCertificateViewModel());
-        } 
+        }
 
         //
         // POST: /GiftCertificate/Create
 
         [HttpPost]
-        public  ActionResult Create(GiftCertificateViewModel giftcertificate)
+        public ActionResult Create(GiftCertificateViewModel giftcertificate)
         {
             if (ModelState.IsValid)
             {
@@ -150,13 +156,13 @@ namespace DRMFSS.Web.Controllers
 
                 InsertGiftCertificate(giftcertificate, giftCertificateModel);
                 //repository.Add( giftCertificate );
-                return RedirectToAction("Index");  
+                return RedirectToAction("Index");
             }
 
             ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
             ViewBag.CommodityTypes = _commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name);
 
-            ViewBag.DCurrencies= _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
+            ViewBag.DCurrencies = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
             ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
             ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
             ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o => o.Name), "DonorID", "Name");
@@ -184,7 +190,7 @@ namespace DRMFSS.Web.Controllers
             List<Models.GiftCertificateDetailsViewModel> giftCertificateDetails = null;
             if (!string.IsNullOrEmpty(jsonArray))
             {
-               // giftCertificateDetails = JsonConvert.DeserializeObject<List<Models.GiftCertificateDetailsViewModel>>(jsonArray);
+                // giftCertificateDetails = JsonConvert.DeserializeObject<List<Models.GiftCertificateDetailsViewModel>>(jsonArray);
             }
             return giftCertificateDetails;
         }
@@ -210,8 +216,8 @@ namespace DRMFSS.Web.Controllers
                                 DBudgetTypeID = g.DBudgetTypeID,
                                 GiftCertificateDetailID = g.GiftCertificateDetailID,
                                 GiftCertificateID = g.GiftCertificateID,
-                                ExpiryDate =  g.ExpiryDate
-                             };
+                                ExpiryDate = g.ExpiryDate
+                            };
                 return gifts.ToList();
             }
             else
@@ -220,7 +226,7 @@ namespace DRMFSS.Web.Controllers
             }
         }
 
-        public  ActionResult Edit(int id)
+        public ActionResult Edit(int id)
         {
             GiftCertificate giftcertificate = _giftCertificateService.FindById(id);
             ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
@@ -230,7 +236,7 @@ namespace DRMFSS.Web.Controllers
             ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
 
             ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftcertificate.GiftCertificateDetails.FirstOrDefault().Commodity.CommodityTypeID);
-            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy( o => o.Name), "DonorID", "Name", giftcertificate.DonorID);
+            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o => o.Name), "DonorID", "Name", giftcertificate.DonorID);
             ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
             ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name");
 
@@ -238,7 +244,7 @@ namespace DRMFSS.Web.Controllers
         }
 
         [HttpPost]
-        public  ActionResult Edit(GiftCertificateViewModel giftcertificate)
+        public ActionResult Edit(GiftCertificateViewModel giftcertificate)
         {
             //just incase the user meses with the the hidden GiftCertificateID field
             GiftCertificate giftcert = _giftCertificateService.FindById(giftcertificate.GiftCertificateID);
@@ -252,42 +258,42 @@ namespace DRMFSS.Web.Controllers
                 List<Models.GiftCertificateDetailsViewModel> deletedCommodities = GetSelectedGiftCertificateDetails(giftcertificate.JSONDeletedGiftCertificateDetails);
                 List<Models.GiftCertificateDetailsViewModel> updateCommodities = GetSelectedGiftCertificateDetails(giftcertificate.JSONUpdatedGiftCertificateDetails);
 
-               _giftCertificateService.Update(giftCertificateModel, GenerateGiftCertificate(insertCommodities),
-                    GenerateGiftCertificate(updateCommodities),
-                    GenerateGiftCertificate(deletedCommodities));
+                _giftCertificateService.Update(giftCertificateModel, GenerateGiftCertificate(insertCommodities),
+                     GenerateGiftCertificate(updateCommodities),
+                     GenerateGiftCertificate(deletedCommodities));
 
                 return RedirectToAction("Index");
             }
             ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
-            
+
 
             ViewBag.DCurrencies = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
             ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
             ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
 
             ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftcert.GiftCertificateDetails.FirstOrDefault().Commodity.CommodityTypeID);
-            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o=>o.Name), "DonorID", "Name", giftcertificate.DonorID);
-            ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name",giftcertificate.ProgramID);
+            ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o => o.Name), "DonorID", "Name", giftcertificate.DonorID);
+            ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name", giftcertificate.ProgramID);
             ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name", giftcertificate.DModeOfTransport);
             return View(giftcertificate);
         }
 
-        public  ActionResult Delete(int id)
+        public ActionResult Delete(int id)
         {
             GiftCertificate giftcertificate = _giftCertificateService.FindById(id);
             return View(giftcertificate);
         }
 
-      
+
         [HttpPost, ActionName("Delete")]
-        public  ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
             _giftCertificateService.DeleteById(id);
             return RedirectToAction("Index");
         }
 
 
-        public  ActionResult MonthlySummary()
+        public ActionResult MonthlySummary()
         {
             ViewBag.MonthlySummary = _giftCertificateService.GetMonthlySummary().ToList();
             ViewBag.MonthlySummaryETA = _giftCertificateService.GetMonthlySummaryETA().ToList();
@@ -302,8 +308,8 @@ namespace DRMFSS.Web.Controllers
         }
 
         public ActionResult IsBillOfLoadingDuplicate(string BillOfLoading)
-         {
-             return Json(_giftCertificateDetailService.IsBillOfLoadingDuplicate(BillOfLoading), JsonRequestBehavior.AllowGet);
-         }
+        {
+            return Json(_giftCertificateDetailService.IsBillOfLoadingDuplicate(BillOfLoading), JsonRequestBehavior.AllowGet);
+        }
     }
 }

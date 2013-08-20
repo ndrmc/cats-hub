@@ -90,7 +90,7 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<ISMSService>().To<SMSService>();
             kernel.Bind<ISessionHistoryService>().To<SessionHistoryService>();
             kernel.Bind<ISessionAttemptService>().To<SessionAttemptService>();
-
+            kernel.Bind<IDetailService>().To<DetailService>();
         }
     }
 }
