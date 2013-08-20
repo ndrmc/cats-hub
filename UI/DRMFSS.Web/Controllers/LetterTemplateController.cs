@@ -12,10 +12,10 @@ namespace DRMFSS.Web.Controllers
 {
     public class LetterTemplateController : BaseController
     {
-        private IUnitOfWork repositories = new UnitOfWork();
+       
         private readonly ILetterTemplateService _letterTemplateService;
 
-        private LetterTemplateController(ILetterTemplateService letterTemplateService)
+        public LetterTemplateController(ILetterTemplateService letterTemplateService)
         {
             _letterTemplateService = letterTemplateService;
         }
