@@ -219,10 +219,29 @@ namespace DRMFSS.Web.Controllers
             if (receiveId != "" && receiveId != null)
             {
                 BLL.Receive receive = _receiveService.FindById(Guid.Parse(receiveId));
-
+                var stacks = new List<AdminUnitItem>();
                 if (receive != null && (receive.HubID == user.DefaultHub.HubID))
                 {
-                    return View("Create", ReceiveViewModel.GenerateReceiveModel(receive, commodities, commodityGrades, transporters, commodityTypes, commoditySources, programs, donors, hubs, user));
+                  var rViewModel=  ReceiveViewModel.GenerateReceiveModel(receive, commodities, commodityGrades, transporters,
+                                                          commodityTypes, commoditySources, programs, donors, hubs, user);
+                    
+                    //TODO:=====================================Refactored from viewmodel needs refactor============================
+                  
+                    if (rViewModel.StoreID != 0)
+                    {
+                        BLL.Store store = _storeService.FindById(rViewModel.StoreID);
+                        
+                        foreach (var i in store.Stacks)
+                        {
+                            stacks.Add(new AdminUnitItem { Name = i.ToString(), Id = i });
+                        }
+                        
+                    }
+                    rViewModel.Stacks = stacks;
+                   //===============================================================================================================
+
+
+                    return View("Create", rViewModel);
                 }
                 else if (receive != null && (receive.HubID != user.DefaultHub.HubID))
                 {
@@ -238,7 +257,7 @@ namespace DRMFSS.Web.Controllers
             List<Models.ReceiveDetailViewModel> receiveCommodities = new List<Models.ReceiveDetailViewModel>();
             ViewBag.ReceiveCommodities = receiveCommodities;
             //TODO:Stacks shuld be sent basend storeID
-            var receiveViewModel = new Models.ReceiveViewModel(commodities, commodityGrades, transporters, commodityTypes, commoditySources, programs, donors, hubs, user, new List<AdminUnitItem>(), units);
+            var receiveViewModel = new Models.ReceiveViewModel(commodities, commodityGrades, transporters, commodityTypes, commoditySources, programs, donors, hubs, user);
             if (Request["type"] != null)
             {
                 receiveViewModel.CommoditySourceID = Convert.ToInt32(Request["type"]);
@@ -351,7 +370,7 @@ namespace DRMFSS.Web.Controllers
             ViewBag.Stacks = new SelectList(Enumerable.Empty<SelectListItem>());
             List<Models.ReceiveDetailViewModel> ReceiveCommodities = new List<Models.ReceiveDetailViewModel>();
             ViewBag.ReceiveCommodities = ReceiveCommodities;
-            var viewmode = new Models.ReceiveViewModel(commodities,commodityGrades,transporters,commodityTypes,commoditySources,programs,donors,hubs,user,new List<AdminUnitItem>(),units);
+            var viewmode = new Models.ReceiveViewModel(commodities,commodityGrades,transporters,commodityTypes,commoditySources,programs,donors,hubs,user);
            // viewmode.GRN = grnNo;
             return PartialView("_ReceivePartial", viewmode);
         }
