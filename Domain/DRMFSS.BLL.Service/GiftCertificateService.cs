@@ -178,6 +178,12 @@ namespace DRMFSS.BLL.Services
 
         }
 
+
+
+        public IEnumerable<GiftCertificate> Get(Expression<Func<GiftCertificate, bool>> filter = null, Func<IQueryable<GiftCertificate>, IOrderedQueryable<GiftCertificate>> orderBy = null, string includeProperties = "")
+        {
+            return _unitOfWork.GiftCertificateRepository.Get(filter, orderBy, includeProperties);
+        }
     }
 }
 
