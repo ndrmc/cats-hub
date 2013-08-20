@@ -57,13 +57,34 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IPeriodService>().To<PeriodService>();
             kernel.Bind<IHubService>().To<HubService>();
             kernel.Bind<IReceiveService>().To<ReceiveService>();
-            kernel.Bind<IConstantsService>().To<ConstantsService>();
             kernel.Bind<IMembershipWrapper>().To<MembershipWrapper>(); ;
             kernel.Bind<IUrlHelperWrapper>().To<UrlHelperWrapper>();
             kernel.Bind<IFormsAuthenticationWrapper>().To<FormsAuthenticationWrapper>();
             kernel.Bind<IForgetPasswordRequestService>().To<ForgetPasswordRequestService>();
             kernel.Bind<ISettingService>().To<SettingService>();
-        //
+            kernel.Bind<IAccountService>().To<AccountService>();
+            kernel.Bind<IAdjustmentReasonService>().To<AdjustmentReasonService>();
+            kernel.Bind<IAdjustmentService>().To<AdjustmentService>();
+            kernel.Bind<IAuditService>().To<AuditSevice>();
+            kernel.Bind<ICommonService>().To<CommonService>();
+            kernel.Bind<IDonorService>().To<DonorService>();
+            kernel.Bind<IErrorLogService>().To<ErrorLogService>();
+            kernel.Bind<IGiftCertificateDetailService>().To<GiftCertificateDetailService>();
+            kernel.Bind<IGiftCertificateService>().To<GiftCertificateService>();
+            kernel.Bind<IHubOwnerService>().To<HubOwnerService>();
+            kernel.Bind<IHubService>().To<HubService>();
+            kernel.Bind<IHubSettingService>().To<HubSettingService>();
+            kernel.Bind<IHubSettingValueService>().To<HubSettingValueService>();
+            kernel.Bind<ILedgerService>().To<LedgerService>();
+            kernel.Bind<ILedgerTypeService>().To<LedgerTypeService>();
+            kernel.Bind<ILetterTemplateService>().To<LetterTemplateService>();
+            kernel.Bind<IMasterService>().To<MasterService>();
+            kernel.Bind<IPartitionService>().To<PartitionService>();
+            kernel.Bind<IReceiptAllocationService>().To<ReceiptAllocationService>();
+            kernel.Bind<IReceiveDetailService>().To<ReceiveDetailService>();
+            kernel.Bind<IReleaseNoteService>().To<ReleaseNoteService>();
+            kernel.Bind<IRoleService>().To<RoleService>();
+            //
         }
     }
 }

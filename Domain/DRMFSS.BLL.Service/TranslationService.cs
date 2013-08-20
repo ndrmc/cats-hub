@@ -16,9 +16,10 @@ namespace DRMFSS.BLL.Services
         public string GetForText(string text, string langauge)
         {
             var Trans = _unitOfWork.TranslationRepository.FindBy(t => t.Phrase.Trim() == text.Trim() && t.LanguageCode == langauge).FirstOrDefault();
-            var Translation = Trans.TranslatedText;
+           
+            var Translation1 = Trans !=null ? Trans.TranslatedText : null;
 
-            if (Translation == null)
+            if (Translation1 == null)
             {
                 Translation translation = new Translation();
                 translation.LanguageCode = langauge;
@@ -46,7 +47,7 @@ namespace DRMFSS.BLL.Services
                 }
                 return text;
             }
-            return Translation;
+            return Translation1;
         }
 
         public List<Translation> GetAll(string languageCode)

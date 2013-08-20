@@ -7,7 +7,7 @@ using DRMFSS.BLL.ViewModels.Report;
 
 namespace DRMFSS.BLL.Services
 {
-    public class ConstantsService : IConstantsService
+    public class ConstantsService 
     {
         public static List<ViewModels.Report.CodesViewModel> GetAllCodes()
         {
@@ -18,16 +18,7 @@ namespace DRMFSS.BLL.Services
             return codes;
         }
 
-        List<TypeViewModel> IConstantsService.GetAllTypes()
-        {
-            return GetAllTypes();
-        }
-
-        List<CodesViewModel> IConstantsService.GetAllCodes()
-        {
-            return GetAllCodes();
-        }
-
+       
         public static List<ViewModels.Report.TypeViewModel> GetAllTypes()
         {
             List<ViewModels.Report.TypeViewModel> types = new List<ViewModels.Report.TypeViewModel>();

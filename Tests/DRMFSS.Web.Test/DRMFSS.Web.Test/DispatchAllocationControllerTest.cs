@@ -23,6 +23,42 @@ namespace DRMFSS.Web.Test
         public void Init()
         {
             var dispatchAllocationService = new Mock<IDispatchAllocationService>();
+
+            dispatchAllocationService.Setup(t => t.GetAvailableCommodities(It.IsAny<string>())).Returns(new List
+                                                                                                            <Commodity>()
+                                                                                                            {
+                                                                                                                new Commodity
+                                                                                                                    ()
+                                                                                                                    {
+                                                                                                                        CommodityID
+                                                                                                                            =
+                                                                                                                            1,
+                                                                                                                        CommodityCode
+                                                                                                                            =
+                                                                                                                            "Com-1"
+                                                                                                                    }
+                                                                                                            });
+            var list = new List<SIBalance>()
+                                           {
+                                               new SIBalance()
+                                                   {
+                                                       Commodity = "CSB",
+                                                       SINumberID = 1,
+                                                       CommitedToFDP = 20,
+                                                       ProjectCodeID = 1,
+                                                       SINumber = "1",
+                                                       AvailableBalance = 40,
+                                                       CommitedToOthers = 10,
+                                                       Dispatchable = 30,
+                                                       Program = "Relief",
+                                                       Project = "1",
+                                                       ReaminingExpectedReceipts = 1,
+                                                       TotalDispatchable = 20
+                                                   }};
+            dispatchAllocationService.Setup(
+                t => t.GetUncommitedSIBalance(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>())).Returns(
+                    (int hubId, int commodityId, string unitMeasure) => list
+                       );
             var userProfileService = new Mock<IUserProfileService>();
             var shippingInstructionService = new Mock<IShippingInstructionService>();
             var projectCodeService = new Mock<IProjectCodeService>();
@@ -35,13 +71,13 @@ namespace DRMFSS.Web.Test
             var commodityTypeService = new Mock<ICommodityTypeService>();
 
             this._dispatchAllocationController = new DispatchAllocationController(
-                dispatchAllocationService.Object, 
-                userProfileService.Object, 
+                dispatchAllocationService.Object,
+                userProfileService.Object,
                 otherDispatchAllocationService.Object,
-                shippingInstructionService.Object, 
-                projectCodeService.Object, 
+                shippingInstructionService.Object,
+                projectCodeService.Object,
                 transporterService.Object,
-                commonService.Object, 
+                commonService.Object,
                 adminUnitService.Object,
                 fdpService.Object,
                 hubService.Object,
@@ -72,8 +108,8 @@ namespace DRMFSS.Web.Test
         public void ShouldDisplayListOfDispatchAllocations()
         {
             //Act
-            var result = (ViewResult) _dispatchAllocationController.AllocationList();
-            
+            var result = (ViewResult)_dispatchAllocationController.AllocationList();
+
             //Assert
             Assert.IsInstanceOf<IEnumerable<DispatchAllocationViewModelDto>>(result.Model);
         }
@@ -101,11 +137,11 @@ namespace DRMFSS.Web.Test
         public void ShouldReturnSIBalance()
         {
             //Act
-            var result =(ViewResult) _dispatchAllocationController.SiBalances("R-001");
+            var result = (ViewResult)_dispatchAllocationController.SiBalances("R-001");
 
             //Assert
-            var x =new JsonResult();
-            
+            var x = new JsonResult();
+
             Assert.IsInstanceOf<List<SIBalance>>(result.Model);
         }
 
@@ -113,22 +149,22 @@ namespace DRMFSS.Web.Test
         public void ShouldDisplayFDPAllocationForOneCommodity()
         {
             //Act
-            var result = (ViewResult) _dispatchAllocationController.GetAllocations("R-001", 1, true);
+            var result = (ViewResult)_dispatchAllocationController.GetAllocations("R-001", 1, true);
 
             //Assert
             Assert.IsInstanceOf<List<DispatchAllocationViewModelDto>>(result.Model);
 
         }
 
-       [Test]
+        [Test]
         public void ShouldDisplayAllSIBalances()
-       {
-           //Act
-           var result = (ViewResult)_dispatchAllocationController.GetSIBalances();
+        {
+            //Act
+            var result = (ViewResult)_dispatchAllocationController.GetSIBalances();
 
-           //Assert
-           Assert.IsInstanceOf<List<SIBalance>>(result.Model);
-       }
+            //Assert
+            Assert.IsInstanceOf<List<SIBalance>>(result.Model);
+        }
         [Test]
         public void ShouldReturnAvailableRequisitions()
         {
@@ -142,7 +178,7 @@ namespace DRMFSS.Web.Test
         public void ShouldPrepareForCreateDispatchAllocation()
         {
             //Act
-            var result =(ViewResult) _dispatchAllocationController.Create();
+            var result = (ViewResult)_dispatchAllocationController.Create();
 
             //Assert
             Assert.IsInstanceOf<DispatchAllocationViewModel>(result.Model);
@@ -153,7 +189,8 @@ namespace DRMFSS.Web.Test
         {
             //Act
             var id = Guid.NewGuid();
-            var dispatchAllocation = new DispatchAllocationViewModel(){
+            var dispatchAllocation = new DispatchAllocationViewModel()
+            {
                 CommodityID = 1,
                 Amount = 10,
                 Beneficiery = 120,
@@ -182,7 +219,7 @@ namespace DRMFSS.Web.Test
             var result = (ViewResult)_dispatchAllocationController.Index();
 
             //Assert
-            Assert.AreEqual(2,((List<string>)result.Model).Count);
+            Assert.AreEqual(2, ((List<string>)result.Model).Count);
 
         }
 
@@ -190,7 +227,7 @@ namespace DRMFSS.Web.Test
         public void CanPrepareCreateLoan()
         {
             //Act
-            var result =(ViewResult) _dispatchAllocationController.CreateLoan();
+            var result = (ViewResult)_dispatchAllocationController.CreateLoan();
 
             //Assert
             Assert.IsInstanceOf<OtherDispatchAllocationViewModel>(result.Model);
@@ -200,7 +237,7 @@ namespace DRMFSS.Web.Test
         public void CanPrepareEditLoan()
         {
             //Act
-            var result = (ViewResult) _dispatchAllocationController.EditLoan("L-001");
+            var result = (ViewResult)_dispatchAllocationController.EditLoan("L-001");
 
             //Assert
             Assert.IsInstanceOf<OtherDispatchAllocationViewModel>(result.Model);
@@ -211,29 +248,30 @@ namespace DRMFSS.Web.Test
         {
             //Arrange
             var id = Guid.NewGuid();
-            var dispatchAllocation = new OtherDispatchAllocationViewModel(){
+            var dispatchAllocation = new OtherDispatchAllocationViewModel()
+            {
                 CommodityID = 1,
                 CommodityTypeID = 1,
                 PartitionID = 1,
                 ProgramID = 1,
-                AgreementDate=DateTime.Today,
-                EstimatedDispatchDate=DateTime.Today.AddDays(3),
-                FromHubID=2,
-                ToHubID=1,
-                IsClosed=true,
-                OtherDispatchAllocationID=id,
-                 ProjectCode="P-001",
-                 QuantityInMT=12,
-                 QuantityInUnit=12,
-                 ReasonID=1,
-                 ReferenceNumber="Rf-001",
-                 UnitID=1
-              
+                AgreementDate = DateTime.Today,
+                EstimatedDispatchDate = DateTime.Today.AddDays(3),
+                FromHubID = 2,
+                ToHubID = 1,
+                IsClosed = true,
+                OtherDispatchAllocationID = id,
+                ProjectCode = "P-001",
+                QuantityInMT = 12,
+                QuantityInUnit = 12,
+                ReasonID = 1,
+                ReferenceNumber = "Rf-001",
+                UnitID = 1
+
             };
             //Act
 
             var result = _dispatchAllocationController.SaveLoan(dispatchAllocation);
-            
+
             //Assert
             Assert.IsInstanceOf<RedirectToRouteResult>(result);
         }

@@ -43,13 +43,10 @@ namespace DRMFSS.Web.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
-        //public AccountController(IUserProfileService userProfileService,
-        //    IForgetPasswordRequestService forgetPasswordRequestService,ISettingService settingService)
+        //public AccountController()
         //    : this(new MembershipWrapper(), new FormsAuthenticationWrapper(), null)
         //{
-        //    _userProfileService = userProfileService;
-        //    _forgetPasswordRequestService = forgetPasswordRequestService;
-        //    _settingService = settingService;
+           
         //}
 
         /// <summary>
@@ -60,11 +57,17 @@ namespace DRMFSS.Web.Controllers
         /// <param name="urlHelper">The URL helper.</param>
         public AccountController(IMembershipWrapper membershipObject,
                                     IFormsAuthenticationWrapper formsAuthenticationObject,
-                                    IUrlHelperWrapper urlHelper)
+                                    IUrlHelperWrapper urlHelper,
+                                    IUserProfileService userProfileService,
+                                    IForgetPasswordRequestService forgetPasswordRequestService,
+                                     ISettingService settingService)
         {
             this.membership = membershipObject;
             this.Url = urlHelper;
             this.authentication = formsAuthenticationObject;
+            this._forgetPasswordRequestService = forgetPasswordRequestService;
+            this._settingService = settingService;
+            this._userProfileService = userProfileService;
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace DRMFSS.Web.Controllers
         /// <param name="returnUrl">The return URL.</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult LogOn(LogOnModel model, string returnUrl)
+        public ActionResult LogOn(LogOnModel model, string returnUrl="")
         {
             if (ModelState.IsValid)
             {
@@ -95,15 +98,16 @@ namespace DRMFSS.Web.Controllers
                 {
                     //FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                     authentication.SetAuthCookie(model.UserName, model.RememberMe);
-                    if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
-                        && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
-                    {
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
+                    //TODO:Check if this could be made runable
+                    //if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
+                    //    && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
+                    //{
+                    //    return Redirect(returnUrl);
+                    //}
+                    //else
+                    //{
                         return RedirectToAction("Index", "Home");
-                    }
+                    //}
                 }
                 else
                 {

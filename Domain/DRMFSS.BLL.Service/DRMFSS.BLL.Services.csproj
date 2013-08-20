@@ -85,7 +85,6 @@
     <Compile Include="Interfaces\ICommoditySourceService.cs" />
     <Compile Include="Interfaces\ICommodityTypeService.cs" />
     <Compile Include="Interfaces\ICommonService.cs" />
-    <Compile Include="Interfaces\IConstantsService.cs" />
     <Compile Include="Interfaces\IContactService.cs" />
     <Compile Include="Interfaces\IDetailService.cs" />
     <Compile Include="Interfaces\IDispatchAllocationService.cs" />
