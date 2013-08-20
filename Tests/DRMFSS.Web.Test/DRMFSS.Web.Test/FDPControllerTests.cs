@@ -16,6 +16,7 @@ namespace DRMFSS.Web.Test
         #region SetUp / TearDown
 
         private FDPController _fdpController;
+        
         [SetUp]
         public void Init()
         {
@@ -25,8 +26,9 @@ namespace DRMFSS.Web.Test
                     new FDP {Name = "FDP 2", FDPID = 2,AdminUnitID=4,NameAM="FDP Hulet"},
                 };
             var fdpService = new Mock<IFDPService>();
+            var adminUnitService = new Mock<IAdminUnitService>();
             fdpService.Setup(t => t.GetAllFDP()).Returns(fdps);
-            _fdpController = new FDPController(fdpService.Object);
+            _fdpController = new FDPController(fdpService.Object, adminUnitService.Object);
 
         }
 

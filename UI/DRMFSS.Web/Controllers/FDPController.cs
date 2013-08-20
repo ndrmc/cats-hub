@@ -15,16 +15,20 @@ namespace DRMFSS.Web.Controllers
     {
 
         private readonly IFDPService _FDPService;
-
-        public FDPController(IFDPService FDPServiceParam)
+        private readonly IAdminUnitService _adminUnitService;
+        public FDPController(IFDPService FDPServiceParam, IAdminUnitService adminUnitService)
         {
             this._FDPService = FDPServiceParam;
+            _adminUnitService = adminUnitService;
         }
+
         //
         // GET: /FDP/
 
         public virtual ViewResult Index()
+        
         {
+            ViewBag.Regions = _adminUnitService.GetRegions();
             var fdps = _FDPService.GetAllFDP();
             return View(fdps);
         }
