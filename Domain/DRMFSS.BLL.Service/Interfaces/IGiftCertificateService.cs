@@ -48,6 +48,7 @@ namespace DRMFSS.BLL.Services
         /// </summary>
         /// <returns></returns>
         List<BLL.SIBalance> GetSIBalances();
+        IEnumerable<GiftCertificate> Get(Expression<Func<GiftCertificate, bool>> filter = null, Func<IQueryable<GiftCertificate>, IOrderedQueryable<GiftCertificate>> orderBy = null, string includeProperties = "");
     }
 }
 

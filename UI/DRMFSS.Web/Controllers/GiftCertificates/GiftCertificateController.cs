@@ -190,7 +190,7 @@ namespace DRMFSS.Web.Controllers
             List<Models.GiftCertificateDetailsViewModel> giftCertificateDetails = null;
             if (!string.IsNullOrEmpty(jsonArray))
             {
-                // giftCertificateDetails = JsonConvert.DeserializeObject<List<Models.GiftCertificateDetailsViewModel>>(jsonArray);
+                giftCertificateDetails = JsonConvert.DeserializeObject<List<Models.GiftCertificateDetailsViewModel>>(jsonArray);
             }
             return giftCertificateDetails;
         }
@@ -228,14 +228,14 @@ namespace DRMFSS.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            GiftCertificate giftcertificate = _giftCertificateService.FindById(id);
+            GiftCertificate giftcertificate = _giftCertificateService.Get(t => t.GiftCertificateID == id, null, "GiftCertificateDetails,GiftCertificateDetails.Commodity").FirstOrDefault();
             ViewBag.Commodities = _commodityService.GetAllCommodity().OrderBy(o => o.Name);
 
             ViewBag.DCurrencies = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.CURRENCY).OrderBy(o => o.SortOrder);
             ViewBag.DFundSources = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.FUND_SOURCE).OrderBy(o => o.SortOrder);
             ViewBag.DBudgetTypes = _detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.BUDGET_TYPE).OrderBy(o => o.SortOrder);
-
-            ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftcertificate.GiftCertificateDetails.FirstOrDefault().Commodity.CommodityTypeID);
+            var giftCertificateDetails = giftcertificate.GiftCertificateDetails.FirstOrDefault();
+            ViewBag.CommodityTypes = new SelectList(_commodityTypeService.GetAllCommodityType().OrderBy(o => o.Name), "CommodityTypeID", "Name", giftCertificateDetails==null?string.Empty:giftCertificateDetails.Commodity.CommodityTypeID.ToString());
             ViewBag.Donors = new SelectList(_donorService.GetAllDonor().OrderBy(o => o.Name), "DonorID", "Name", giftcertificate.DonorID);
             ViewBag.Programs = new SelectList(_programService.GetAllProgram(), "ProgramID", "Name");
             ViewBag.DModeOfTransports = new SelectList(_detailService.GetAllDetail().Where(d => d.MasterID == BLL.Master.Constants.TRANSPORT_MODE).OrderBy(o => o.SortOrder), "DetailID", "Name");

@@ -73,6 +73,7 @@ namespace DRMFSS.BLL
         public DbSet<UserHub> UserHubs { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+       
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

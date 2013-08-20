@@ -33,7 +33,7 @@ namespace DRMFSS.Web.Models
 
         #region List of Things used in the recieve view model
 
-        //private IUnitOfWork _Repository  = new UnitOfWork();
+        private IUnitOfWork _Repository  = new UnitOfWork();
         private UserProfile _UserProfile = null;
         /// <summary>
         /// Lists of important Lookups,
@@ -44,10 +44,10 @@ namespace DRMFSS.Web.Models
         {
             get
             {
-                //if (_units == null)
-                //{
-                //    _units = _Repository.Unit.GetAll().OrderBy(o => o.Name).ToList();
-                //}
+                if (_units == null)
+                {
+                    _units = _Repository.UnitRepository.GetAll().OrderBy(o => o.Name).ToList();
+                }
                 return _units;
             }
 
@@ -68,19 +68,20 @@ namespace DRMFSS.Web.Models
             get
             {
                 //TODO:Make sure constractor stacks variable brings same data with the same logic
-                //if (this.StoreID != 0)
-                //{
-                //    BLL.Store store = _Repository.Store.FindById(StoreID);
-                //    var stacks = new List<AdminUnitItem>();
-                //    foreach (var i in store.Stacks)
-                //    {
-                //        stacks.Add(new AdminUnitItem { Name = i.ToString(), Id = i });
-                //    }
-                //    return stacks;
-                //}
-                //return new List<AdminUnitItem>();
+                if (this.StoreID != 0)
+                {
+                    BLL.Store store = _Repository.StoreRepository.FindById(StoreID);
+                    var stacks = new List<AdminUnitItem>();
+                    foreach (var i in store.Stacks)
+                    {
+                        stacks.Add(new AdminUnitItem { Name = i.ToString(), Id = i });
+                    }
+                    return stacks;
+                }
+                return new List<AdminUnitItem>();
                 return _stacks;
             }
+            set { _stacks = value; }
         }
         #endregion
 
@@ -99,9 +100,8 @@ namespace DRMFSS.Web.Models
         /// the user is required because we need to decide what wareshouses to display for her.
         /// </summary>
         public ReceiveViewModel(List<Commodity> commodities, List<CommodityGrade> commodityGrades, List<Transporter> transporters, List<CommodityType> commodityTypes,
-            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user, List<AdminUnitItem> stacks)
+            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user )
         {
-            _stacks = stacks;
             _UserProfile = user;
             InitalizeViewModel(commodities, commodityGrades, transporters, commodityTypes,
              commoditySources, programs, donors, hubs, user);

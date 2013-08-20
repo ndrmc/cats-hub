@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,13 @@ namespace DRMFSS.BLL
 {
     public partial class DispatchAllocation
     {
-
+        [NotMapped]
         public Decimal AmountInUnit
         {
             set { ; }
             get { return this.Amount; }
         }
-
+           [NotMapped]
         public decimal RemainingQuantityInQuintals
         {
             set { ; }
@@ -22,7 +23,7 @@ namespace DRMFSS.BLL
                     return this.Amount - DispatchedAmount;
                 }
         }
-
+           [NotMapped]
         public decimal RemainingQuantityInUnit
         {
             set { ; }
@@ -31,13 +32,13 @@ namespace DRMFSS.BLL
                 return this.Amount - DispatchedAmountInUnit;
             }
         }
-
+           [NotMapped]
         public decimal DispatchedAmount
         {
             set { ; }
             get { return GetRelatedDispatchsAmountInQuintals(); }
         }
-
+           [NotMapped]
         public Decimal DispatchedAmountInUnit
         {
             set { ; }
