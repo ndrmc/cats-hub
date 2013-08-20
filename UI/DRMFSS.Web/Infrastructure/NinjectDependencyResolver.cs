@@ -57,6 +57,7 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IPeriodService>().To<PeriodService>();
             kernel.Bind<IHubService>().To<HubService>();
             kernel.Bind<IReceiveService>().To<ReceiveService>();
+
             kernel.Bind<IMembershipWrapper>().To<MembershipWrapper>(); ;
             kernel.Bind<IUrlHelperWrapper>().To<UrlHelperWrapper>();
             kernel.Bind<IFormsAuthenticationWrapper>().To<FormsAuthenticationWrapper>();
@@ -84,7 +85,16 @@ namespace DRMFSS.Web.Infrastructure
             kernel.Bind<IReceiveDetailService>().To<ReceiveDetailService>();
             kernel.Bind<IReleaseNoteService>().To<ReleaseNoteService>();
             kernel.Bind<IRoleService>().To<RoleService>();
-            //
+
+            kernel.Bind<ITranslationService>().To<TranslationService>();
+            kernel.Bind<ITransactionGroupService>().To<TransactionGroupService>();
+            kernel.Bind<IStackEventTypeService>().To<StackEventTypeService>();
+            kernel.Bind<IStackEventService>().To<StackEventService>();
+            kernel.Bind<ISMSService>().To<SMSService>();
+            kernel.Bind<ISettingService>().To<SettingService>();
+            kernel.Bind<ISessionHistoryService>().To<SessionHistoryService>();
+            kernel.Bind<ISessionAttemptService>().To<SessionAttemptService>();
+
         }
     }
 }
