@@ -99,8 +99,9 @@ namespace DRMFSS.Web.Models
         /// the user is required because we need to decide what wareshouses to display for her.
         /// </summary>
         public ReceiveViewModel(List<Commodity> commodities, List<CommodityGrade> commodityGrades, List<Transporter> transporters, List<CommodityType> commodityTypes,
-            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user, List<AdminUnitItem> stacks)
+            List<CommoditySource> commoditySources, List<Program> programs, List<Donor> donors, List<Hub> hubs, UserProfile user, List<AdminUnitItem> stacks,List<Unit> units )
         {
+            _units = units;
             _stacks = stacks;
             _UserProfile = user;
             InitalizeViewModel(commodities, commodityGrades, transporters, commodityTypes,

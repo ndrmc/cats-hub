@@ -211,6 +211,8 @@ namespace DRMFSS.Web.Controllers
 
             var programs = _programService.GetAllProgram().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
             var donors = _donorService.GetAllDonor().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
+            var units = _unitService.GetAllUnit().OrderBy(o => o.Name).ToList();
+      
 
             var hubs = _hubService.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name).ToList();
 
@@ -236,7 +238,7 @@ namespace DRMFSS.Web.Controllers
             List<Models.ReceiveDetailViewModel> receiveCommodities = new List<Models.ReceiveDetailViewModel>();
             ViewBag.ReceiveCommodities = receiveCommodities;
             //TODO:Stacks shuld be sent basend storeID
-            var receiveViewModel = new Models.ReceiveViewModel(commodities, commodityGrades, transporters, commodityTypes, commoditySources, programs, donors, hubs, user, new List<AdminUnitItem>());
+            var receiveViewModel = new Models.ReceiveViewModel(commodities, commodityGrades, transporters, commodityTypes, commoditySources, programs, donors, hubs, user, new List<AdminUnitItem>(), units);
             if (Request["type"] != null)
             {
                 receiveViewModel.CommoditySourceID = Convert.ToInt32(Request["type"]);
@@ -330,7 +332,7 @@ namespace DRMFSS.Web.Controllers
         
             var programs=_programService.GetAllProgram().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
            var donors=_donorService.GetAllDonor().DefaultIfEmpty().OrderBy(o => o.Name).ToList();
-          
+           var units = _unitService.GetAllUnit().OrderBy(o => o.Name).ToList();
 
             BLL.UserProfile user = _userProfileService.GetUser(User.Identity.Name);
             var hubs = _hubService.GetAllWithoutId(user.DefaultHub.HubID).DefaultIfEmpty().OrderBy(o => o.Name).ToList();
@@ -349,7 +351,7 @@ namespace DRMFSS.Web.Controllers
             ViewBag.Stacks = new SelectList(Enumerable.Empty<SelectListItem>());
             List<Models.ReceiveDetailViewModel> ReceiveCommodities = new List<Models.ReceiveDetailViewModel>();
             ViewBag.ReceiveCommodities = ReceiveCommodities;
-            var viewmode = new Models.ReceiveViewModel(commodities,commodityGrades,transporters,commodityTypes,commoditySources,programs,donors,hubs,user,new List<AdminUnitItem>());
+            var viewmode = new Models.ReceiveViewModel(commodities,commodityGrades,transporters,commodityTypes,commoditySources,programs,donors,hubs,user,new List<AdminUnitItem>(),units);
            // viewmode.GRN = grnNo;
             return PartialView("_ReceivePartial", viewmode);
         }

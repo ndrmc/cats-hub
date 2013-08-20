@@ -7,6 +7,7 @@ namespace DRMFSS.BLL
 {
     public class RPT_MonthGiftSummary_Result
     {
+      
         public int Year { get; set; }
         public int Month { get; set; }
         public string MonthName { get; set; }

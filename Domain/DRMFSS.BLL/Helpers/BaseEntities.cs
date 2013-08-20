@@ -367,7 +367,7 @@ namespace DRMFSS.BLL
 
             // If using Code First we need to make sure the model is built before we open the connection
             // This isn't required for models created with the EF Designer
-            Database.Initialize(force: false);
+           Database.Initialize(force: false);
 
             // Create a SQL command to execute the sproc
             var cmd = Database.Connection.CreateCommand();
